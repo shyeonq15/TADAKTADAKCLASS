@@ -1,0 +1,28 @@
+{
+  "track": "english",
+  "title": "영타 기본 연습팩",
+  "source": "예시 지문 (교과서 발췌문으로 교체 예정)",
+  "levels": [
+    { "level": 1, "title": "기본 자리", "mode": "keys", "goalCpm": 50,
+      "items": ["asdf", "jkl", "fjfj", "dkdk", "slsl", "fall", "lads", "flask", "salad", "ask", "dad", "glad", "half", "hash", "all", "sad", "jak", "gas"] },
+    { "level": 2, "title": "윗줄 자리", "mode": "keys", "goalCpm": 70,
+      "items": ["qwer", "uiop", "type", "write", "power", "quiet", "route", "tower", "equip", "query", "pretty", "outer", "upper", "peer", "tire", "your"] },
+    { "level": 3, "title": "아랫줄 자리", "mode": "keys", "goalCpm": 90,
+      "items": ["zxcv", "box", "mix", "cabin", "novel", "zebra", "civic", "banana", "number", "maze", "move", "cave", "zoom", "vacuum", "comma", "brave"] },
+    { "level": 4, "title": "낱말", "mode": "words", "goalCpm": 110,
+      "items": ["computer", "keyboard", "mouse", "monitor", "program", "python", "input", "output", "print", "variable", "string", "number", "list", "loop", "function", "value", "class", "school", "friend", "practice", "data", "robot"] },
+    { "level": 5, "title": "문장", "mode": "sentences", "goalCpm": 130,
+      "items": [
+        "Practice a little every day.",
+        "Type slowly and keep your eyes on the screen.",
+        "A computer follows instructions one step at a time.",
+        "Python is a friendly language for beginners.",
+        "Every bug is a chance to learn something new.",
+        "We grow together as a class.",
+        "Data can tell us a story.",
+        "Keep calm and press the right keys.",
+        "Small steps make big progress.",
+        "Good code is easy to read."
+      ] }
+  ]
+}

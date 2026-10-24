@@ -1,0 +1,17 @@
+{
+  "track": "symbol",
+  "title": "기호 기본 연습팩",
+  "source": "예시 지문",
+  "levels": [
+    { "level": 1, "title": "괄호 친구들", "mode": "keys", "goalCpm": 40,
+      "items": ["()", "[]", "{}", "(a)", "[1]", "{x}", "f(x)", "a[0]", "(1, 2)", "[a, b]", "{k}", "g(y)", "b[2]", "((x))"] },
+    { "level": 2, "title": "따옴표와 콜론", "mode": "keys", "goalCpm": 50,
+      "items": ["'a'", "\"hi\"", "a: b", "x;", "'ok'", "\"yes\"", "key: value", "'2026'", "\"tadak\"", "y: 1;", "'no'", "\"go\""] },
+    { "level": 3, "title": "계산 기호", "mode": "keys", "goalCpm": 60,
+      "items": ["a = 1", "b + c", "x - y", "3 * 4", "8 / 2", "a < b", "c > d", "x == y", "n != 0", "a += 1", "i <= 10", "k >= 5", "7 % 2"] },
+    { "level": 4, "title": "특수 기호", "mode": "keys", "goalCpm": 70,
+      "items": ["#", "_", "!", "@", "%", "&", "|", "my_name", "#comment", "100%", "a & b", "x | y", "is_ok!", "@home", "max_score"] },
+    { "level": 5, "title": "섞어 쓰기", "mode": "words", "goalCpm": 80,
+      "items": ["print('hi')", "nums = [1, 2, 3]", "d = {'a': 1}", "if (a > b):", "x = (1 + 2) * 3", "name = \"tadak\"", "len(nums) >= 3", "s[0] == '#'", "total += n", "ok = not done"] }
+  ]
+}

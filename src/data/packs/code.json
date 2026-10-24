@@ -1,0 +1,37 @@
+{
+  "track": "code",
+  "title": "파이썬 기본 연습팩",
+  "source": "예시 지문",
+  "levels": [
+    { "level": 1, "title": "print 출력", "mode": "code", "goalCpm": 40,
+      "items": [
+        "print(\"Hello, World!\")\nprint(\"Nice to meet you\")\nprint(1 + 2)",
+        "print(\"Python\")\nprint(3 * 4)\nprint(\"a\" + \"b\")",
+        "print(\"tadak tadak\")\nprint(10 - 7)\nprint(\"bye\")"
+      ] },
+    { "level": 2, "title": "변수와 입력", "mode": "code", "goalCpm": 50,
+      "items": [
+        "name = input(\"name: \")\nage = 14\nprint(name, age)",
+        "a = 10\nb = 3\nprint(a + b)\nprint(a % b)",
+        "width = 4\nheight = 5\narea = width * height\nprint(area)"
+      ] },
+    { "level": 3, "title": "조건문", "mode": "code", "goalCpm": 60,
+      "items": [
+        "score = 85\nif score >= 80:\n    print(\"great\")\nelse:\n    print(\"good\")",
+        "x = int(input())\nif x % 2 == 0:\n    print(\"even\")\nelse:\n    print(\"odd\")",
+        "temp = 30\nif temp > 28:\n    print(\"hot\")\nelif temp < 5:\n    print(\"cold\")"
+      ] },
+    { "level": 4, "title": "반복문", "mode": "code", "goalCpm": 70,
+      "items": [
+        "for i in range(5):\n    print(i)\nprint(\"done\")",
+        "total = 0\nfor n in [1, 2, 3, 4]:\n    total += n\nprint(total)",
+        "count = 3\nwhile count > 0:\n    print(count)\n    count -= 1\nprint(\"start!\")"
+      ] },
+    { "level": 5, "title": "함수와 리스트", "mode": "code", "goalCpm": 80,
+      "items": [
+        "def add(a, b):\n    return a + b\nprint(add(2, 3))",
+        "fruits = [\"apple\", \"kiwi\"]\nfruits.append(\"melon\")\nfor f in fruits:\n    print(f.upper())",
+        "def is_even(n):\n    return n % 2 == 0\nprint(is_even(4))"
+      ] }
+  ]
+}

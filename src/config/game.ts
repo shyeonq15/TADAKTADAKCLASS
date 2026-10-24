@@ -60,3 +60,46 @@ export const TIER_RULES = {
   /** 학기 중 티어 하락 없음 */
   canDemote: false,
 } as const;
+
+/* ── 연습 레벨 ── */
+export const LEVEL_CLEAR = {
+  /** 레벨 통과에 필요한 정확도(%). 타수 기준은 연습팩의 레벨마다 따로 있음 */
+  minAccuracy: 90,
+} as const;
+
+/* ── 부정행위 감지 (CLAUDE.md 6장) ── */
+export const INTEGRITY = {
+  /** 이 타수(타/분)를 넘으면 사람이 치기 어려운 속도로 봄 */
+  maxCpm: { korean: 900, english: 800, symbol: 600, code: 600 } as Record<Track, number>,
+  /** 입력 간격의 변동계수(표준편차÷평균)가 이보다 작으면 너무 일정한 입력 */
+  minIntervalVariation: 0.15,
+  /** 위 검사를 하려면 최소 이만큼의 키 입력이 필요 */
+  minKeysForCheck: 40,
+} as const;
+
+/* ── 배치 테스트 ── */
+export const PLACEMENT = {
+  /** 트랙마다 몇 초씩 칠지 (4트랙 × 30초 = 2분) */
+  secondsPerTrack: 30,
+  /** 타수가 이 값 이상이면 그 레벨부터 시작 (레벨 1은 항상 열림) */
+  startLevelCpm: {
+    korean: [0, 80, 140, 200, 260],
+    english: [0, 60, 100, 140, 180],
+    symbol: [0, 50, 80, 110, 140],
+    code: [0, 50, 80, 110, 140],
+  } as Record<Track, number[]>,
+} as const;
+
+/* ── 오늘의 미션 ── */
+export const MISSION = {
+  /** 미션 한 번에 치는 판 수 (3~5분 분량) */
+  rounds: 3,
+} as const;
+
+/* ── 화폐 (지급량은 시범 2주 데이터로 결정, 지금은 임시값) ── */
+export const COINS = {
+  missionPersonal: 30,
+  missionClass: 5,
+  personalBest: 10,
+  practiceRound: 2,
+} as const;
