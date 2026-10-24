@@ -184,14 +184,35 @@
 
 ---
 
-## 7. 기능 ID 참고 (PRD 기준)
+## 7. 폴더 구조
+
+```
+src/
+  app/                 화면(라우트). 학생 화면, teacher/ 교사 화면, api/ 서버 API
+  components/ui/       DESIGN.md 공용 컴포넌트 (PixelButton, RetroWindow, DialogBox, MissionLabel …)
+  components/typing/   TypingArea 등 타자 화면 컴포넌트
+  lib/typing/          타자 엔진 (한글 조합, 타수·정확도 계산). 화면과 분리된 순수 TypeScript
+  lib/scoring/         성장 점수·티어 계산 (서버에서 사용)
+  lib/supabase/        Supabase 클라이언트
+  config/game.ts       점수·티어·화폐 수치 (여기서만 숫자를 바꿈)
+  data/packs/          초기 연습팩 JSON
+public/fonts/          폰트 파일 (네 폰트 모두 SIL OFL, 라이선스 파일 함께 보관)
+supabase/migrations/   데이터베이스 테이블 정의
+```
+
+- Tailwind는 v4라서 `tailwind.config.js`가 없고, `src/app/globals.css`의 `@theme`에 DESIGN.md 토큰이 들어 있음
+- `rounded-*` 클래스는 꺼 두었음 (`border-radius: 0` 규칙)
+
+---
+
+## 8. 기능 ID 참고 (PRD 기준)
 
 - **C** 기반 · **P** 연습 · **G** 성장·보상 · **R** 꾸미기 · **V** 대결 · **S** 보스전 · **T** 교사 · **X** 공개
 - 전체 기능 목록과 완료 기준은 `docs/PRD.md` 4장·5장 참고
 
 ---
 
-## 8. 아직 정하지 않은 것
+## 9. 아직 정하지 않은 것
 
 - [ ] 반 미니룸 배치 권한: 전원 vs 꾸미기 담당 학생
 - [ ] 미니미·아이템 정식 그래픽 (지금은 임시 에셋)
@@ -199,10 +220,14 @@
 
 ---
 
-## 9. 첫 작업 순서 (Claude에게)
+## 10. 첫 작업 순서 (Claude에게)
 
 1. 이 문서, `DESIGN.md`, `docs/PRD.md`를 읽고 이해한 내용을 짧게 요약
 2. Next.js + Tailwind 프로젝트 생성, 폴더 구조 제안
 3. Supabase 프로젝트 연결, 환경 변수 설정 방법 안내
 4. 구글 로그인 (학교 도메인 제한) 구현 → 학교 계정으로 바로 테스트
 5. 타자 엔진부터 구현 시작
+
+---
+
+@AGENTS.md
