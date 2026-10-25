@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ClientOnly } from "@/components/ui/ClientOnly";
 import { DesktopBackground } from "@/components/ui/DesktopBackground";
@@ -9,6 +10,7 @@ import { HomeDashboard } from "./HomeDashboard";
 
 /** 처음 온 학생은 배치 테스트부터 (한 번만) */
 async function PlacementGate({ children }: { children: React.ReactNode }) {
+  await connection(); // 로그인·날짜는 요청마다 새로 확인
   const v = await requireStudent();
   if (v.role === "student" && !(await loadPracticeData(v.userId)).progress.placement) redirect("/placement");
   return children;
