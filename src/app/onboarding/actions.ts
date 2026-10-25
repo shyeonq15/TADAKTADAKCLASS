@@ -50,5 +50,6 @@ export async function saveOnboarding(_: OnboardState, formData: FormData): Promi
   if (mates && mates.length > 0) return { message: "우리 반에 같은 닉네임이 있어요. 다른 닉네임을 골라 주세요." };
 
   await admin.from("profiles").update({ nickname: nick.value }).eq("id", viewer.userId);
-  redirect("/");
+  // 처음이면 배치 테스트부터 (이미 했으면 배치 화면이 결과만 보여줌)
+  redirect("/placement");
 }

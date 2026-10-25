@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { GROWTH, TRACK_LABELS } from "@/config/game";
-import { getLevel } from "@/data/packs";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { BALLOON, COIN } from "@/components/pixel/sprites";
 import { DialogBox } from "@/components/ui/DialogBox";
@@ -11,7 +10,8 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
 import { missionRounds, missionTitle, todayTrack, type MissionRound } from "@/lib/practice/mission";
-import { completeMission, dayKey, todayGrowth, usePracticeData, weakKeys, type SaveResult } from "@/lib/practice/store";
+import { finishMission } from "@/app/(student)/actions";
+import { dayKey, todayGrowth, usePracticeData, useSetPracticeData, weakKeys, type SaveResult } from "@/lib/practice/store";
 
 type Phase =
   | { name: "intro" }
@@ -29,14 +29,15 @@ const GROWTH_LABELS = {
 
 export function MissionRun() {
   const data = usePracticeData();
+  const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "intro" });
   const track = todayTrack();
   const doneToday = data.progress.missionDays.includes(dayKey());
 
   if (phase.name === "intro") {
     const begin = () => {
-      const weak = weakKeys(data.attempts, track, 3).map((w) => w.key);
-      setPhase({ name: "round", rounds: missionRounds(data.progress, weak), index: 0, saves: [] });
+      const hasWeak = weakKeys(data.attempts, track, 3).length > 0;
+      setPhase({ name: "round", rounds: missionRounds(data.progress, hasWeak), index: 0, saves: [] });
     };
     return (
       <RetroWindow title="오늘의 미션.exe" className="mx-auto w-full max-w-xl">
@@ -67,20 +68,18 @@ export function MissionRun() {
         <RoundRunner
           key={phase.index}
           autoStart
-          track={r.track}
-          level={r.level}
-          mode={r.kind === "weak" ? "weak" : (getLevel(r.track, r.level)?.mode ?? "keys")}
-          kind={r.kind}
+          request={r.request}
           title={r.title}
-          buildLines={r.build}
-          onSaved={(save) => {
+          onSaved={async (save) => {
             const saves = [...phase.saves, save];
             if (phase.index + 1 < phase.rounds.length) {
               setPhase({ ...phase, name: "between", saves });
-            } else {
-              const reward = completeMission();
-              setPhase({ name: "reward", saves, coins: reward.coins, classCoins: reward.classCoins });
+              return;
             }
+            const reward = await finishMission();
+            if ("data" in reward) setData(reward.data);
+            const ok = "firstToday" in reward;
+            setPhase({ name: "reward", saves, coins: ok ? (reward.coins ?? 0) : 0, classCoins: ok ? (reward.classCoins ?? 0) : 0 });
           }}
         />
       </div>
@@ -136,7 +135,7 @@ export function MissionRun() {
         <DialogBox key={text} text={text} />
       </div>
 
-      <RetroWindow title="오늘의 성장 점수 (미리보기)" className="w-full">
+      <RetroWindow title="오늘의 성장 점수" className="w-full">
         <table className="w-full font-sans text-body">
           <tbody>
             {(Object.keys(GROWTH_LABELS) as (keyof typeof GROWTH_LABELS)[]).map((k) => (

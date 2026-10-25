@@ -153,7 +153,7 @@ export function imeHint(s: SessionState): "korean" | "english" | null {
 }
 
 /** 맞게 친 글자의 키 입력 수 */
-function correctKeystrokes(target: string, typed: string): number {
+export function correctKeystrokes(target: string, typed: string): number {
   let n = 0;
   for (let i = 0; i < typed.length && i < target.length; i++) {
     if (typed[i] === target[i]) n += toKeys(target[i]).length;

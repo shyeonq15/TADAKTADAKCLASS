@@ -1,23 +1,22 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { TRACK_LABELS, type Track } from "@/config/game";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { TRACK_LABELS } from "@/config/game";
+import { startRound, submitRound } from "@/app/(student)/actions";
+import { Loading } from "@/components/ui/Loading";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
-import { saveAttempt, type Attempt, type AttemptKind, type SaveResult } from "@/lib/practice/store";
+import { useSetPracticeData, type SaveResult } from "@/lib/practice/store";
+import { toSubmission } from "@/lib/practice/submission";
+import type { RoundRequest } from "@/lib/practice/types";
 import { ResultPanel } from "./ResultPanel";
 import { TypingSession, type SessionResult } from "./TypingSession";
 
 type Props = {
-  track: Track;
-  level: number;
-  mode: Attempt["mode"];
-  kind: AttemptKind;
+  request: RoundRequest;
   title: string;
   subtitle?: string;
-  /** 시작할 때마다 새 지문을 만듦 (화면 첫 렌더에서 무작위를 쓰지 않으려고 함수로 받음) */
-  buildLines: () => string[];
   /** 결과 화면 버튼. 기본: 다시 하기 */
   actions?: (save: SaveResult, retry: () => void) => ReactNode;
   /** 준비 화면 없이 바로 시작 (미션 2판째부터) */
@@ -26,39 +25,57 @@ type Props = {
   onSaved?: (save: SaveResult) => void;
 };
 
-type Phase = { name: "ready" } | { name: "typing"; lines: string[]; round: number } | { name: "result"; save: SaveResult };
+type Phase =
+  | { name: "ready" }
+  | { name: "loading" }
+  | { name: "typing"; lines: string[]; token: string }
+  | { name: "saving" }
+  | { name: "result"; save: SaveResult }
+  | { name: "error"; message: string };
 
-/** 한 판 진행: 준비(PRESS START) → 타자 → 결과 */
-export function RoundRunner({ track, level, mode, kind, title, subtitle, buildLines, actions, autoStart, onSaved }: Props) {
-  const [phase, setPhase] = useState<Phase>(() =>
-    autoStart ? { name: "typing", lines: buildLines(), round: 0 } : { name: "ready" },
-  );
+/** 한 판 진행: 준비(PRESS START) → 서버에서 지문 받기 → 타자 → 서버가 채점·저장 → 결과 */
+export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved }: Props) {
+  const setData = useSetPracticeData();
+  const [phase, setPhase] = useState<Phase>(() => (autoStart ? { name: "loading" } : { name: "ready" }));
+  const autoStarted = useRef(false);
+  const track = request.track;
 
-  const start = () => setPhase((p) => ({ name: "typing", lines: buildLines(), round: p.name === "typing" ? p.round + 1 : 0 }));
-
-  const handleFinish = (r: SessionResult) => {
-    const save = saveAttempt({
-      kind,
-      track,
-      level,
-      mode,
-      cpm: r.stats.cpm,
-      accuracy: r.stats.accuracy,
-      keystrokes: r.stats.keystrokes,
-      durationMs: r.stats.elapsedMs,
-      missedKeys: r.missedKeys,
-      flags: r.flags,
-    });
-    if (onSaved) onSaved(save);
-    else setPhase({ name: "result", save });
+  const fetchRound = async () => {
+    const res = await startRound(request);
+    if ("error" in res) return setPhase({ name: "error", message: res.error });
+    setPhase({ name: "typing", lines: res.lines, token: res.token });
   };
+
+  const start = () => {
+    setPhase({ name: "loading" });
+    void fetchRound();
+  };
+
+  // 미션 2판째부터는 바로 시작 (개발 모드에서 두 번 불리지 않게 막음)
+  useEffect(() => {
+    if (!autoStart || autoStarted.current) return;
+    autoStarted.current = true;
+    void fetchRound();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFinish = async (lines: string[], token: string, r: SessionResult) => {
+    setPhase({ name: "saving" });
+    const res = await submitRound(toSubmission(token, lines, r));
+    if ("error" in res) return setPhase({ name: "error", message: res.error });
+    setData(res.data);
+    if (onSaved) onSaved(res.save);
+    else setPhase({ name: "result", save: res.save });
+  };
+
+  const windowTitle = `${TRACK_LABELS[track]} - ${title}`;
 
   if (phase.name === "ready") {
     return (
-      <RetroWindow title={`${TRACK_LABELS[track]} - ${title}`} className="mx-auto w-full max-w-xl">
+      <RetroWindow title={windowTitle} className="mx-auto w-full max-w-xl">
         <div className="flex flex-col items-center gap-5 bg-navy-900 px-6 py-10 text-center">
           <MissionLabel keyword="MISSION">{subtitle ?? title}</MissionLabel>
-          <p className="font-title text-hero text-sky-200 blink">PRESS START</p>
+          <p className="blink font-title text-hero text-sky-200">PRESS START</p>
           <PixelButton variant="success" autoFocus onClick={start}>
             ▶ 시작하기 (Enter)
           </PixelButton>
@@ -68,10 +85,32 @@ export function RoundRunner({ track, level, mode, kind, title, subtitle, buildLi
     );
   }
 
+  if (phase.name === "loading" || phase.name === "saving") {
+    return <Loading text={phase.name === "loading" ? "지문을 가져오는 중..." : "기록을 저장하는 중..."} />;
+  }
+
+  if (phase.name === "error") {
+    return (
+      <RetroWindow title="앗!" className="mx-auto w-full max-w-md">
+        <p className="font-pixel text-body">{phase.message}</p>
+        <div className="mt-4">
+          <PixelButton size="sm" variant="success" autoFocus onClick={start}>
+            다시 시작하기
+          </PixelButton>
+        </div>
+      </RetroWindow>
+    );
+  }
+
   if (phase.name === "typing") {
     return (
-      <RetroWindow title={`${TRACK_LABELS[track]} - ${title}`} className="mx-auto w-full max-w-4xl">
-        <TypingSession key={phase.round} lines={phase.lines} track={track} onFinish={handleFinish} />
+      <RetroWindow title={windowTitle} className="mx-auto w-full max-w-4xl">
+        <TypingSession
+          key={phase.token}
+          lines={phase.lines}
+          track={track}
+          onFinish={(r) => handleFinish(phase.lines, phase.token, r)}
+        />
       </RetroWindow>
     );
   }

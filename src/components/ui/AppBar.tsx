@@ -42,7 +42,7 @@ export function AppBar({ nickname, isTeacher }: { nickname: string; isTeacher: b
           교사 화면
         </Link>
       )}
-      <div className="win-bevel-pressed ml-auto flex h-9 items-center gap-2 px-3 font-pixel text-body" title="내 코인 (미리보기)">
+      <div className="win-bevel-pressed ml-auto flex h-9 items-center gap-2 px-3 font-pixel text-body" title="내 코인">
         <PixelSprite sprite={COIN} scale={2} />
         {progress.coins}
       </div>

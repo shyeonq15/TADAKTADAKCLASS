@@ -22,6 +22,8 @@ export type SessionResult = {
   stats: SessionStats;
   missedKeys: Record<string, number>;
   flags: IntegrityFlag[];
+  /** 서버가 다시 계산할 수 있게 넘기는 원본 (친 내용, 키 시각) */
+  state: SessionState;
 };
 
 type Props = {
@@ -50,7 +52,7 @@ export function TypingSession({ lines, track, timeLimitSec, onFinish }: Props) {
     if (finishedRef.current) return;
     finishedRef.current = true;
     const stats = sessionStats(s, Date.now());
-    onFinish({ stats, missedKeys: s.missedKeys, flags: checkIntegrity(track, stats.cpm, s.keyTimes) });
+    onFinish({ stats, missedKeys: s.missedKeys, flags: checkIntegrity(track, stats.cpm, s.keyTimes), state: s });
   };
 
   const update = (next: SessionState) => {

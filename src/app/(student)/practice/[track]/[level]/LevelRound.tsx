@@ -7,7 +7,6 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
 import { usePracticeData } from "@/lib/practice/store";
-import { buildRound } from "@/lib/typing/passage";
 
 export function LevelRound({ track, level }: { track: Track; level: number }) {
   const router = useRouter();
@@ -34,13 +33,9 @@ export function LevelRound({ track, level }: { track: Track; level: number }) {
 
   return (
     <RoundRunner
-      track={track}
-      level={level}
-      mode={lv.mode}
-      kind="practice"
+      request={{ kind: "practice", track, level }}
       title={`레벨 ${level} · ${lv.title}`}
       subtitle={`${MODE_LABELS[lv.mode]} · 목표 ${lv.goalCpm}타, 정확도 ${LEVEL_CLEAR.minAccuracy}%`}
-      buildLines={() => buildRound(track, lv)}
       actions={(save, retry) => (
         <>
           <PixelButton variant={save.unlockedLevel ? "ghost" : "success"} autoFocus={!save.unlockedLevel} onClick={retry}>

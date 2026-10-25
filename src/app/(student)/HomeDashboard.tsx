@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { GROWTH, TRACK_LABELS, TRACKS } from "@/config/game";
 import { MissionLabel } from "@/components/ui/MissionLabel";
-import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
+import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { missionTitle, todayTrack } from "@/lib/practice/mission";
 import {
   dayKey,
-  resetPractice,
   streakDays,
   todayGrowth,
   usePracticeData,
@@ -66,7 +65,7 @@ export function HomeDashboard() {
           </div>
         </RetroWindow>
 
-        <RetroWindow title="오늘의 성장 점수 (미리보기)">
+        <RetroWindow title="오늘의 성장 점수">
           <div className="flex items-baseline justify-between">
             <span className="font-pixel text-body">오늘 모은 성장 점수</span>
             <span className="font-title text-stat">
@@ -137,18 +136,6 @@ export function HomeDashboard() {
         </RetroWindow>
       </div>
 
-      <div className="flex items-center justify-between gap-4 bg-ink px-4 py-2 font-pixel text-small text-paper md:col-span-2">
-        <span>미리보기: 로그인 연결 전이라 기록과 코인이 이 컴퓨터에만 저장돼요.</span>
-        <PixelButton
-          size="sm"
-          variant="ghost"
-          onClick={() => {
-            if (window.confirm("이 컴퓨터에 저장된 연습 기록을 모두 지울까요?")) resetPractice();
-          }}
-        >
-          기록 지우기
-        </PixelButton>
-      </div>
     </div>
   );
 }
