@@ -1,7 +1,7 @@
 // 오늘의 미션 구성 (PRD P3). 선생님이 지정한 미션이 있으면 그게 먼저예요.
 
 import { GROWTH, MISSION, TRACKS, type Track } from "@/config/game";
-import { getLevel } from "@/data/packs";
+import { getStage, stageName } from "./stages";
 import { median } from "@/lib/scoring/growth";
 import type { PracticeData, RoundRequest, TeacherPack } from "./types";
 
@@ -23,7 +23,7 @@ export const teacherMission = (packs: readonly TeacherPack[]) => packs.find((p) 
  */
 export function missionLevel(data: PracticeData, track: Track) {
   const top = data.progress.unlocked[track];
-  const goal = getLevel(track, top)?.goalCpm ?? 0;
+  const goal = getStage(track, top)?.goalCpm ?? 0;
   const recent = data.attempts
     .filter((a) => a.track === track && a.level === top && (a.kind === "practice" || a.kind === "mission") && !a.suspicious)
     .slice(-3);
@@ -42,11 +42,11 @@ export function missionRounds(data: PracticeData, hasWeakKeys: boolean, now = Da
     }));
   }
   const track = todayTrack(now);
-  const level = getLevel(track, missionLevel(data, track))!;
+  const stage = getStage(track, missionLevel(data, track))!;
   return Array.from({ length: MISSION.rounds }, (_, i) =>
     i === MISSION.rounds - 1 && hasWeakKeys
-      ? { request: { kind: "mission", track, level: level.level, weak: true }, title: "약한 키 맞춤" }
-      : { request: { kind: "mission", track, level: level.level }, title: `레벨 ${level.level} · ${level.title}` },
+      ? { request: { kind: "mission", track, level: stage.stage, weak: true }, title: "약한 키 맞춤" }
+      : { request: { kind: "mission", track, level: stage.stage }, title: `${stageName(stage.stage)} · ${stage.level.title}` },
   );
 }
 

@@ -1,9 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { GROWTH, LEVEL_CLEAR, TIER_LABELS, TRACK_LABELS } from "@/config/game";
+import { GROWTH, TIER_LABELS, TRACK_LABELS } from "@/config/game";
 import { TierBadge } from "@/components/ui/TierBadge";
-import { getLevel } from "@/data/packs";
+import { getStage, stageName } from "@/lib/practice/stages";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { StatCard } from "@/components/ui/StatCard";
@@ -12,13 +12,13 @@ import type { SaveResult } from "@/lib/practice/store";
 /** 결과 화면: 타수, 정확도, 내 평균 대비 변화, 자주 틀린 키 (PRD P4) */
 export function ResultPanel({ save, actions }: { save: SaveResult; actions: ReactNode }) {
   const { attempt, before } = save;
-  const level = getLevel(attempt.track, attempt.level);
+  const level = attempt.level > 0 ? getStage(attempt.track, attempt.level) : undefined;
 
   const messages: string[] = [];
   if (attempt.suspicious) messages.push("이번 기록은 선생님 확인 후에 반영돼요.");
   if (save.coins > 0) messages.push(`코인 ${save.coins}개를 획득했다!`);
-  if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} 레벨 ${attempt.level}을 클리어했다!`);
-  if (save.unlockedLevel) messages.push(`레벨 ${save.unlockedLevel}이 열렸다!`);
+  if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} ${stageName(attempt.level)}를 클리어했다!`);
+  if (save.unlockedLevel) messages.push(`${stageName(save.unlockedLevel)}가 열렸다!`);
   if (save.lessonDone) messages.push(`파이썬 첫걸음 ${save.lessonDone}강을 통과했다!`);
   if (save.tierUp) messages.push(`${TRACK_LABELS[attempt.track]} 티어가 ${TIER_LABELS[save.tierUp]}로 올랐다!`);
 
@@ -83,7 +83,7 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
 
         {level && !save.cleared && attempt.kind === "practice" && (
           <p className="mt-4 font-pixel text-small text-navy-900">
-            레벨 통과 조건: 정확도 {LEVEL_CLEAR.minAccuracy}% 이상 · {level.goalCpm}타 이상. 다음엔 더!
+            {stageName(level.stage)} 통과 조건: 정확도 {level.minAccuracy}% 이상 · {level.goalCpm}타 이상. 다음엔 더!
           </p>
         )}
         {attempt.accuracy < GROWTH.minAccuracyForSpeed && (

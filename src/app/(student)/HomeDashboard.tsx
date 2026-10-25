@@ -30,7 +30,7 @@ const GROWTH_PARTS = [
 export function HomeDashboard() {
   const data = usePracticeData();
   const { attempts, progress } = data;
-  const tiers = allTiers(attempts);
+  const tiers = allTiers(progress.unlocked);
   const tm = teacherMission(data.packs);
   const track = tm?.track ?? todayTrack();
   const missionDone = progress.missionDays.includes(dayKey());
@@ -149,19 +149,19 @@ export function HomeDashboard() {
           </div>
           <ul className="flex flex-col gap-1">
             {TRACKS.map((t) => {
-              const tp = tierProgress(attempts, t);
+              const tp = tierProgress(progress.unlocked, progress.cleared, t);
               return (
                 <li key={t} className="win-bevel-pressed flex items-center gap-2 bg-paper px-2 py-1 font-pixel text-small">
                   <span className="w-8">{TRACK_LABELS[t]}</span>
                   <TierBadge tier={tiers[t]} />
                   {tp.next ? (
-                    <span className="ml-auto text-text-muted" title={`정확도 95% 이상, ${tp.needCpm}타 넘는 기록 ${tp.need}번`}>
-                      → {TIER_LABELS[tp.next]} {tp.needCpm}타{" "}
-                      <span className="text-lime-800">{"●".repeat(tp.have)}</span>
-                      {"○".repeat(tp.need - tp.have)}
+                    <span className="ml-auto text-text-muted" title={`${TIER_LABELS[tp.current]} 5단계를 다 깨면 ${TIER_LABELS[tp.next]}`}>
+                      → {TIER_LABELS[tp.next]}까지{" "}
+                      <span className="text-lime-800">{"●".repeat(tp.done)}</span>
+                      {"○".repeat(tp.need - tp.done)}
                     </span>
                   ) : (
-                    <span className="ml-auto text-lime-800">최고 티어!</span>
+                    <span className="ml-auto text-lime-800">{tp.allDone ? "레전드 완주!" : `레전드 ${tp.done}/${tp.need}`}</span>
                   )}
                 </li>
               );

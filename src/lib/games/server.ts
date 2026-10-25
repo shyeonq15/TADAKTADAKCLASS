@@ -18,6 +18,7 @@ import {
   type Who,
 } from "@/lib/practice/server";
 import { recentMedian } from "@/lib/practice/derive";
+import { contentLevelOf } from "@/lib/practice/stages";
 import type { Attempt, PracticeData } from "@/lib/practice/types";
 import { rainSequence, replayRain, type RainEvent, type RainResult } from "./rain";
 
@@ -29,7 +30,8 @@ export async function issueRain(who: Who, track: Track): Promise<IssuedGame | { 
   if (!TRACKS.includes(track)) return { error: "트랙을 찾을 수 없어요." };
   const data = await loadUncached(who.userId);
   const seed = randomInt(1, 2 ** 31);
-  const lv = data.progress.unlocked[track];
+  // 지금 단계의 글 난이도까지의 단어
+  const lv = contentLevelOf(track, data.progress.unlocked[track]);
   const words = rainSequence(track, lv, seed);
   const ticket: GameTicket = { u: who.userId, g: "rain", track, lv, seed, h: hashLines(words), s: Date.now() };
   return { words, token: makeToken(ticket) };

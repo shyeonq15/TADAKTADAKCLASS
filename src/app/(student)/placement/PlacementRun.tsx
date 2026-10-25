@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PLACEMENT, TRACK_LABELS, TRACKS, type Track } from "@/config/game";
-import { getLevel } from "@/data/packs";
+import { getStage, stageName } from "@/lib/practice/stages";
 import { startRound, submitPlacement, submitRound } from "@/app/(student)/actions";
 import { Loading } from "@/components/ui/Loading";
 import { MissionLabel } from "@/components/ui/MissionLabel";
@@ -115,7 +115,7 @@ function Done({ cpm, start, already }: { cpm: Record<Track, number>; start: Reco
             <tr className="border-b-2 border-navy-900 text-left">
               <th className="py-1">트랙</th>
               <th className="py-1 text-right">타수</th>
-              <th className="py-1 text-right">{already ? "지금 열린 레벨" : "시작 레벨"}</th>
+              <th className="py-1 text-right">{already ? "지금 단계" : "시작 단계"}</th>
             </tr>
           </thead>
           <tbody>
@@ -124,7 +124,7 @@ function Done({ cpm, start, already }: { cpm: Record<Track, number>; start: Reco
                 <td className="py-1">{TRACK_LABELS[t]}</td>
                 <td className="py-1 text-right">{cpm[t]}타</td>
                 <td className="py-1 text-right font-bold">
-                  레벨 {start[t]} · {getLevel(t, start[t])?.title}
+                  {stageName(start[t])} · {getStage(t, start[t])?.level.title}
                 </td>
               </tr>
             ))}

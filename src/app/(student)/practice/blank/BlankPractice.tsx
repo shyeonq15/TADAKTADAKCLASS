@@ -7,6 +7,7 @@ import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
+import { contentLevelOf } from "@/lib/practice/stages";
 import { usePracticeData } from "@/lib/practice/store";
 
 /** 코드 빈칸 채우기: 핵심 부분이 가려진 코드를 설명을 보고 떠올려 치기 */
@@ -14,7 +15,7 @@ export function BlankPractice() {
   const router = useRouter();
   const { progress } = usePracticeData();
   const [level, setLevel] = useState<number | null>(null);
-  const open = PACKS.code.levels.filter((l) => l.level <= progress.unlocked.code);
+  const open = PACKS.code.levels.filter((l) => l.level <= contentLevelOf("code", progress.unlocked.code));
 
   if (level === null) {
     return (

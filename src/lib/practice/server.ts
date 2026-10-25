@@ -6,12 +6,12 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
-import { getLevel, maxLevel } from "@/data/packs";
+import { getLevel } from "@/data/packs";
+import { contentLevelOf, getStage, STAGE_COUNT, startStage, tierOfStage } from "./stages";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
-import { trackTier } from "@/lib/scoring/tier";
 import { correctKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
@@ -219,9 +219,15 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
     const token = makeToken({ u: who.userId, r: { ...req, track: "code" }, h: hashLines(l.lines), s: Date.now() });
     return { lines: l.lines, token, note: l.note };
   } else {
-    const level = getLevel(req.track, req.level);
-    if (!level) return { error: "레벨을 찾을 수 없어요." };
-    if (req.level > data.progress.unlocked[req.track]) return { error: "아직 열리지 않은 레벨이에요." };
+    // 연습·미션의 level 은 단계(1~30), 빈칸 채우기의 level 은 글 난이도(코드 레벨 1~8)
+    const level =
+      req.kind === "blank" ? getLevel(req.track, req.level) : getStage(req.track, req.level)?.level;
+    if (!level) return { error: "단계를 찾을 수 없어요." };
+    const open =
+      req.kind === "blank"
+        ? req.level <= contentLevelOf(req.track, data.progress.unlocked[req.track])
+        : req.level <= data.progress.unlocked[req.track];
+    if (!open) return { error: "아직 열리지 않은 단계예요." };
 
     // 코드: 설명 카드·퀴즈를 붙이고, 빈칸 채우기면 가릴 곳도 알려 줌
     if (level.mode === "code") {
@@ -359,7 +365,7 @@ export async function saveRound(
         ? "placement"
         : level === 0
           ? "weak"
-          : (getLevel(track, level)?.mode ?? "keys");
+          : (getStage(track, level)?.level.mode ?? "keys");
   // 연습팩·빈칸 채우기도 기록 종류는 "연습"
   const kind = req.kind === "pack" || req.kind === "blank" || req.kind === "lesson" ? "practice" : req.kind;
   const missedKeys = Object.fromEntries(
@@ -402,15 +408,15 @@ export async function saveRound(
   const personalBest = !suspicious && req.kind !== "placement" && prevBest > 0 && cpm > prevBest;
 
   // 레벨 통과 → 다음 레벨 열기
-  const lv = level > 0 ? getLevel(track, level) : undefined;
-  const cleared = !!lv && !suspicious && accuracy >= LEVEL_CLEAR.minAccuracy && cpm >= lv.goalCpm;
+  const lv = level > 0 && (req.kind === "practice" || req.kind === "mission") ? getStage(track, level) : undefined;
+  const cleared = !!lv && !suspicious && accuracy >= lv.minAccuracy && cpm >= lv.goalCpm;
   let firstClear = false;
   let unlockedLevel: number | null = null;
   if (cleared) {
     const clear = await admin.from("level_clears").insert({ student_id: who.userId, track, level });
     firstClear = !clear.error;
     const next = level + 1;
-    if (firstClear && next <= maxLevel(track) && next > before.progress.unlocked[track]) {
+    if (firstClear && next <= STAGE_COUNT && next > before.progress.unlocked[track]) {
       await admin.from("track_progress").upsert({ student_id: who.userId, track, unlocked_level: next });
       unlockedLevel = next;
     }
@@ -445,11 +451,8 @@ export async function saveRound(
     unlockedLevel,
     coins,
     lessonDone,
-    tierUp: (() => {
-      const was = trackTier(before.attempts, track);
-      const now = trackTier([...before.attempts, attempt], track);
-      return now !== was ? now : null;
-    })(),
+    // 새 단계가 열리면서 티어가 바뀌었으면 (예: 브론즈 5단계 클리어 → 실버)
+    tierUp: unlockedLevel && tierOfStage(unlockedLevel) !== tierOfStage(before.progress.unlocked[track]) ? tierOfStage(unlockedLevel) : null,
   };
   return { save, data: await loadUncached(who.userId) };
 }
@@ -492,11 +495,7 @@ export async function finishPlacement(who: Who) {
 
   const start = {} as Record<Track, number>;
   for (const t of TRACKS) {
-    let level = 1;
-    PLACEMENT.startLevelCpm[t].forEach((min, i) => {
-      if (cpm[t] >= min) level = i + 1;
-    });
-    start[t] = Math.min(level, maxLevel(t));
+    start[t] = startStage(t, cpm[t]);
   }
 
   await admin.from("track_progress").upsert(

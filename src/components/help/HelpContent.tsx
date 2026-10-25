@@ -6,12 +6,12 @@ import {
   GAME_COINS,
   GAMES,
   GROWTH,
-  LEVEL_CLEAR,
   MISSION,
   PLACEMENT,
+  STAGE_ACCURACY,
+  STAGE_PLAN,
+  STEPS_PER_TIER,
   TIER_LABELS,
-  TIER_MIN_CPM,
-  TIER_RULES,
   TIERS,
   TRACK_LABELS,
   TRACKS,
@@ -71,9 +71,15 @@ export function TierHelp() {
   return (
     <>
       <p>
-        티어는 <strong>지금 내 실력</strong>을 보여 주는 명예 배지예요. 트랙(한글·영타·기호·코드)마다 따로 있어요. 성장 점수와는
-        별개라서, 티어가 낮아도 성장 점수는 많이 받을 수 있어요.
+        연습 트랙은 <strong>티어 6개 × 5단계</strong>로 되어 있어요. 트랙(한글·영타·기호·코드)마다 따로예요.
       </p>
+      <Box>
+        <p>
+          🟫 브론즈 1 → 2 → 3 → 4 → 5 단계를 <strong>다 깨면 → 실버로 승급!</strong>
+        </p>
+        <p>실버 5단계를 다 깨면 → 골드, 그다음 다이아 → 마스터 → 레전드까지 올라가요.</p>
+      </Box>
+      <p>각 티어의 목표 타수 (1단계 → 5단계)</p>
       <Box>
         <table className="w-full font-sans text-small">
           <thead>
@@ -84,39 +90,36 @@ export function TierHelp() {
                   {TRACK_LABELS[t]}
                 </th>
               ))}
+              <th className="py-1 text-right">정확도</th>
             </tr>
           </thead>
           <tbody>
-            {TIERS.map((tier) => (
+            {TIERS.map((tier, ti) => (
               <tr key={tier} className="border-b border-win-shadow">
                 <td className="py-1">
                   <TierBadge tier={tier} />
                 </td>
-                {TRACKS.map((t) => (
-                  <td key={t} className="py-1 text-right">
-                    {TIER_MIN_CPM[t][tier]}타~
-                  </td>
-                ))}
+                {TRACKS.map((t) => {
+                  const steps = STAGE_PLAN[t].slice(ti * STEPS_PER_TIER, (ti + 1) * STEPS_PER_TIER);
+                  return (
+                    <td key={t} className="py-1 text-right">
+                      {steps[0][1]}~{steps[steps.length - 1][1]}타
+                    </td>
+                  );
+                })}
+                <td className="py-1 text-right">{STAGE_ACCURACY[tier]}%</td>
               </tr>
             ))}
           </tbody>
         </table>
       </Box>
       <ul className="list-disc pl-5">
+        <li>티어가 높을수록 글이 어려워져요. 자리 연습 → 낱말 → 문장 → 긴 문장 → 문단 → 정보 이야기 순서예요.</li>
+        <li>한 번 올라간 티어는 내려가지 않아요. 마음 놓고 도전해요!</li>
         <li>
-          정확도 <strong>{TIER_RULES.minAccuracy}% 이상</strong>인 기록만 인정해요.
+          <strong>코드</strong> 트랙에서 {TIER_LABELS.diamond}에 오르면 특별 칭호 <TierBadge tier="diamond" codeMaster />를 받아요.
         </li>
-        <li>
-          기준 타수를 넘은 기록이 <strong>{TIER_RULES.recordsToPromote}번</strong> 쌓이면 올라가요. (한 번 운 좋게 빨랐던 걸로는 안
-          올라가요)
-        </li>
-        <li>
-          학기 중에는 <strong>티어가 내려가지 않아요.</strong> 마음 놓고 도전해요!
-        </li>
-        <li>
-          <strong>코드</strong> 트랙에서 {TIER_LABELS.diamond}가 되면 특별 칭호 <TierBadge tier="diamond" codeMaster />를 받아요.
-        </li>
-        <li>프로필에는 네 트랙 중 가장 높은 티어가 보여요. 게임 기록은 티어에 들어가지 않아요.</li>
+        <li>프로필에는 네 트랙 중 가장 높은 티어가 보여요.</li>
       </ul>
     </>
   );
@@ -126,20 +129,16 @@ export function LevelHelp() {
   return (
     <>
       <p>
-        트랙마다 레벨이 있고, 레벨을 <strong>통과</strong>하면 다음 레벨이 열려요.
+        단계마다 <strong>목표 타수</strong>와 <strong>정확도</strong>가 있어요. 한 판에서 둘 다 넘기면 그 단계를 깨고 다음 단계가 열려요.
       </p>
       <Box>
-        통과 조건: <strong>정확도 {LEVEL_CLEAR.minAccuracy}% 이상</strong> + <strong>레벨마다 정해진 타수 이상</strong> (트랙 맵의
-        핀 아래에 적혀 있어요)
+        예: 브론즈 3단계 = 목표 60타 · 정확도 {STAGE_ACCURACY.bronze}% 이상 (한글). 핀 아래 숫자가 목표 타수예요.
       </Box>
       <p>
-        레벨 1~5는 <strong>기본</strong>, 6~8은 <strong>심화</strong>예요. 심화에서는 긴 문장, 문단, 정보 이야기, 진짜 파이썬 프로그램을
-        쳐요.
+        처음에 한 <strong>배치 테스트</strong>({PLACEMENT.secondsPerTrack}초 × 4트랙) 결과로, 이미 잘하는 트랙은 높은 단계부터
+        시작했어요. 아주 잘하면 골드 1단계부터 시작해요.
       </p>
-      <p className="mt-2">
-        처음에 한 <strong>배치 테스트</strong>({PLACEMENT.secondsPerTrack}초 × 4트랙) 결과로, 이미 잘하는 트랙은 높은 레벨부터
-        시작했어요. 아주 잘하면 심화 레벨 6부터 바로 시작해요.
-      </p>
+      <p className="mt-2">빨리 치는 것보다 정확하게 치는 게 먼저예요. 정확도를 못 넘기면 타수가 높아도 통과가 안 돼요.</p>
     </>
   );
 }
@@ -182,8 +181,8 @@ export function RainHelp() {
 
 export const HELP_SECTIONS = [
   { id: "growth", title: "성장 점수", Body: GrowthHelp },
-  { id: "tier", title: "티어", Body: TierHelp },
-  { id: "level", title: "레벨과 배치 테스트", Body: LevelHelp },
+  { id: "tier", title: "티어와 단계", Body: TierHelp },
+  { id: "level", title: "단계와 배치 테스트", Body: LevelHelp },
   { id: "coin", title: "코인", Body: CoinHelp },
   { id: "rain", title: "단어 비", Body: RainHelp },
 ] as const;
