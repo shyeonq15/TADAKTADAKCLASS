@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { COIN } from "@/components/pixel/sprites";
+import { signOut } from "@/app/login/actions";
 import { usePracticeData } from "@/lib/practice/store";
 
 const LINKS = [
@@ -14,7 +15,7 @@ const LINKS = [
 ] as const;
 
 /** 윈도우 작업 표시줄 모양의 상단 메뉴 */
-export function AppBar() {
+export function AppBar({ nickname, isTeacher }: { nickname: string; isTeacher: boolean }) {
   const pathname = usePathname();
   const { progress } = usePracticeData();
 
@@ -36,10 +37,19 @@ export function AppBar() {
           </Link>
         );
       })}
+      {isTeacher && (
+        <Link href="/teacher" className="win-bevel ml-2 flex h-9 items-center px-4 font-pixel text-body text-navy-900">
+          교사 화면
+        </Link>
+      )}
       <div className="win-bevel-pressed ml-auto flex h-9 items-center gap-2 px-3 font-pixel text-body" title="내 코인 (미리보기)">
         <PixelSprite sprite={COIN} scale={2} />
         {progress.coins}
       </div>
+      <span className="px-2 font-pixel text-body text-navy-900">{nickname}</span>
+      <form action={signOut}>
+        <button className="win-bevel h-9 px-3 font-pixel text-small text-navy-900 active:win-bevel-pressed">로그아웃</button>
+      </form>
     </nav>
   );
 }

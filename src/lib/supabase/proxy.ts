@@ -2,6 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "./env";
 
+/** 로그인 없이 열 수 있는 주소 */
+const PUBLIC_PATHS = ["/login", "/auth", "/api/health", "/themes"];
+
 /** 요청마다 로그인 세션을 갱신하고, 바뀐 쿠키를 응답에 실어 보냅니다. */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -24,7 +27,19 @@ export async function updateSession(request: NextRequest) {
   });
 
   // 세션 확인·갱신. 이 줄과 createServerClient 사이에 다른 코드를 넣지 마세요.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+
+  // 로그인 안 한 사람은 로그인 화면으로 (실제 권한 확인은 각 화면·서버 함수에서 다시 함)
+  const path = request.nextUrl.pathname;
+  const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
+  if (!data?.claims && !isPublic) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
+    return redirect;
+  }
 
   return response;
 }
