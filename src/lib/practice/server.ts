@@ -6,7 +6,8 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel, maxLevel } from "@/data/packs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
@@ -24,6 +25,7 @@ import {
   type RoundRequest,
   type RoundSubmission,
   type SaveResult,
+  type TeacherPack,
 } from "./types";
 
 export type Who = { userId: string; classId: string | null };
@@ -105,7 +107,46 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
         .reverse(),
       missionDays: (missions.data ?? []).map((m) => m.day),
     },
+    packs: await loadPacks(userId),
   };
+}
+
+/** 이 학생이 볼 수 있는 선생님 연습팩: 우리 반에 배포된 것 (교사는 우리 학교 전체) */
+async function loadPacks(userId: string): Promise<TeacherPack[]> {
+  const admin = createAdminClient();
+  const today = dayKeyKST();
+  const { data: me } = await admin.from("profiles").select("role, school_id").eq("id", userId).maybeSingle();
+  type Row = { id: string; title: string; track: Track; passages: { count: number }[] };
+
+  if (me?.role === "teacher") {
+    const { data } = await admin.from("packs").select("id, title, track, passages(count)").eq("school_id", me.school_id);
+    return ((data ?? []) as Row[]).map((p) => ({ id: p.id, title: p.title, track: p.track, rounds: p.passages[0]?.count ?? 0, missionToday: false }));
+  }
+
+  const { data: enr } = await admin
+    .from("enrollments")
+    .select("class_id, classes!inner(school_years!inner(year))")
+    .eq("student_id", userId)
+    .eq("classes.school_years.year", schoolYearOf());
+  const classIds = (enr ?? []).map((e) => e.class_id);
+  if (!classIds.length) return [];
+  const { data } = await admin
+    .from("pack_assignments")
+    .select("mission_day, packs!inner(id, title, track, passages(count))")
+    .in("class_id", classIds);
+  const byId = new Map<string, TeacherPack>();
+  for (const a of data ?? []) {
+    const p = a.packs as unknown as Row;
+    const prev = byId.get(p.id);
+    byId.set(p.id, {
+      id: p.id,
+      title: p.title,
+      track: p.track,
+      rounds: p.passages[0]?.count ?? 0,
+      missionToday: (prev?.missionToday ?? false) || a.mission_day === today,
+    });
+  }
+  return [...byId.values()];
 }
 
 /** 화면용: 한 요청 안에서는 한 번만 조회 */
@@ -113,7 +154,8 @@ export const loadPracticeData = cache(loadUncached);
 
 /* ───────── 지문 발급 (서명된 표) ───────── */
 
-type Ticket = { u: string; r: RoundRequest; h: string; s: number };
+/** m: 선생님 연습팩 지문의 모드 (sentences / code) */
+type Ticket = { u: string; r: RoundRequest; h: string; s: number; m?: string };
 
 const secret = () => {
   const s = process.env.PIN_PEPPER;
@@ -147,10 +189,25 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
   const data = await loadUncached(who.userId);
   let lines: string[];
 
+  const packId = req.kind === "pack" ? req.packId : req.kind === "mission" ? req.packId : undefined;
+  if (packId) {
+    // 선생님 연습팩: 우리 반에 배포된 것만
+    const pack = data.packs.find((p) => p.id === packId);
+    if (!pack) return { error: "이 연습팩은 우리 반에 배포되지 않았어요." };
+    const { data: rows } = await createAdminClient().from("passages").select("body, mode").eq("pack_id", packId);
+    if (!rows?.length) return { error: "연습팩에 지문이 없어요." };
+    const pick = rows[Math.floor(Math.random() * rows.length)];
+    lines = pick.body.split("\n");
+    const ticket: Ticket = { u: who.userId, r: { ...req, track: pack.track }, h: hashLines(lines), s: Date.now(), m: pick.mode };
+    return { lines, token: makeToken(ticket) };
+  }
+
   if (req.kind === "placement") {
     lines = buildPlacementRound(req.track);
   } else if (req.kind === "weak" || (req.kind === "mission" && req.weak)) {
     lines = buildWeakKeyRound(req.track, weakKeys(data.attempts, req.track, 3).map((w) => w.key));
+  } else if (req.kind === "pack") {
+    return { error: "연습팩을 찾을 수 없어요." };
   } else {
     const level = getLevel(req.track, req.level);
     if (!level) return { error: "레벨을 찾을 수 없어요." };
@@ -261,8 +318,20 @@ export async function saveRound(
   if (cpm > INTEGRITY.maxCpm[track]) flags.add("too-fast");
   const suspicious = flags.size > 0;
 
-  const level = req.kind === "practice" || (req.kind === "mission" && !req.weak) ? req.level : 0;
-  const mode = req.kind === "placement" ? "placement" : level === 0 ? "weak" : (getLevel(track, level)?.mode ?? "keys");
+  const isPack = req.kind === "pack" || (req.kind === "mission" && !!req.packId);
+  const level = isPack
+    ? PACK_LEVEL
+    : req.kind === "practice" || (req.kind === "mission" && !req.weak)
+      ? req.level
+      : 0;
+  const mode = isPack
+    ? (ticket.m ?? "sentences")
+    : req.kind === "placement"
+      ? "placement"
+      : level === 0
+        ? "weak"
+        : (getLevel(track, level)?.mode ?? "keys");
+  const kind = req.kind === "pack" ? "practice" : req.kind;
   const missedKeys = Object.fromEntries(
     Object.entries(sub.missedKeys ?? {})
       .filter(([k, v]) => k.length <= 2 && Number.isInteger(v) && v > 0)
@@ -275,7 +344,7 @@ export async function saveRound(
     .insert({
       student_id: who.userId,
       class_id: who.classId,
-      kind: req.kind,
+      kind,
       track,
       level,
       mode,
@@ -303,7 +372,7 @@ export async function saveRound(
   const personalBest = !suspicious && req.kind !== "placement" && prevBest > 0 && cpm > prevBest;
 
   // 레벨 통과 → 다음 레벨 열기
-  const lv = level ? getLevel(track, level) : undefined;
+  const lv = level > 0 ? getLevel(track, level) : undefined;
   const cleared = !!lv && !suspicious && accuracy >= LEVEL_CLEAR.minAccuracy && cpm >= lv.goalCpm;
   let firstClear = false;
   let unlockedLevel: number | null = null;

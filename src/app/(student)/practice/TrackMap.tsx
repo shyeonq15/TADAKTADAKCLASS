@@ -15,7 +15,7 @@ import { allTiers, isCodeMaster } from "@/lib/scoring/tier";
 
 /** DESIGN.md 7장 트랙 선택: START → 레벨 핀 → 트로피. 현재 위치에 내 미니미 */
 export function TrackMap() {
-  const { attempts, progress } = usePracticeData();
+  const { attempts, progress, packs } = usePracticeData();
   const tiers = allTiers(attempts);
 
   return (
@@ -29,6 +29,29 @@ export function TrackMap() {
             배치 테스트
           </PixelLink>
         </div>
+      )}
+
+      {packs.length > 0 && (
+        <RetroWindow title="선생님 연습">
+          <ul className="grid gap-2 md:grid-cols-2">
+            {packs.map((p) => (
+              <li key={p.id}>
+                <Link
+                  href={`/practice/pack/${p.id}`}
+                  className="win-bevel flex items-center justify-between gap-2 px-3 py-2 font-pixel text-body text-navy-900"
+                >
+                  <span>
+                    📝 <strong>{p.title}</strong>
+                    <span className="ml-2 text-small text-text-muted">
+                      {TRACK_LABELS[p.track]} · {p.rounds}판
+                    </span>
+                  </span>
+                  {p.missionToday && <span className="bg-ink px-2 text-small text-paper">오늘의 미션</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </RetroWindow>
       )}
 
       {TRACKS.map((track, ti) => {

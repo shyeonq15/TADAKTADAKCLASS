@@ -11,7 +11,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
 import { GrowthHelp } from "@/components/help/HelpContent";
 import { HelpButton } from "@/components/ui/HelpButton";
-import { missionRounds, missionTitle, todayTrack, type MissionRound } from "@/lib/practice/mission";
+import { missionRounds, missionTitle, teacherMission, todayTrack, type MissionRound } from "@/lib/practice/mission";
 import { finishMission } from "@/app/(student)/actions";
 import { safeCall } from "@/lib/practice/call";
 import { dayKey, todayGrowth, usePracticeData, useSetPracticeData, weakKeys, type SaveResult } from "@/lib/practice/store";
@@ -34,18 +34,19 @@ export function MissionRun() {
   const data = usePracticeData();
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "intro" });
-  const track = todayTrack();
+  const tm = teacherMission(data.packs);
+  const track = tm?.track ?? todayTrack();
   const doneToday = data.progress.missionDays.includes(dayKey());
 
   if (phase.name === "intro") {
     const begin = () => {
       const hasWeak = weakKeys(data.attempts, track, 3).length > 0;
-      setPhase({ name: "round", rounds: missionRounds(data.progress, hasWeak), index: 0, saves: [] });
+      setPhase({ name: "round", rounds: missionRounds(data.progress, hasWeak, data.packs), index: 0, saves: [] });
     };
     return (
       <RetroWindow title="오늘의 미션.exe" className="mx-auto w-full max-w-xl">
         <div className="flex flex-col items-center gap-5 bg-navy-900 px-6 py-10 text-center">
-          <MissionLabel keyword="MISSION">{missionTitle(track)}</MissionLabel>
+          <MissionLabel keyword="MISSION">{tm ? `선생님 미션: ${tm.title}` : missionTitle(track)}</MissionLabel>
           <p className="font-pixel text-body text-sky-100">{TRACK_LABELS[track]} 트랙 · 3판 · 3~5분</p>
           <p className="blink font-title text-hero text-sky-200">PRESS START</p>
           <PixelButton variant="success" autoFocus onClick={begin}>

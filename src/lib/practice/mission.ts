@@ -2,7 +2,7 @@
 
 import { MISSION, TRACKS, type Track } from "@/config/game";
 import { getLevel } from "@/data/packs";
-import type { Progress, RoundRequest } from "./types";
+import type { Progress, RoundRequest, TeacherPack } from "./types";
 
 export type MissionRound = { request: RoundRequest; title: string };
 
@@ -12,8 +12,18 @@ export function todayTrack(now = Date.now()): Track {
   return TRACKS[day % TRACKS.length];
 }
 
-/** 미션 3판: 내 레벨 2판 + (약한 키가 있으면) 약한 키 맞춤 1판 */
-export function missionRounds(progress: Progress, hasWeakKeys: boolean, now = Date.now()): MissionRound[] {
+/** 선생님이 오늘의 미션으로 지정한 연습팩 (있으면 그게 오늘 미션) */
+export const teacherMission = (packs: readonly TeacherPack[]) => packs.find((p) => p.missionToday) ?? null;
+
+/** 미션 3판: 선생님 미션이 있으면 그 연습팩 3판, 없으면 내 레벨 2판 + (약한 키가 있으면) 약한 키 맞춤 1판 */
+export function missionRounds(progress: Progress, hasWeakKeys: boolean, packs: readonly TeacherPack[] = [], now = Date.now()): MissionRound[] {
+  const tm = teacherMission(packs);
+  if (tm) {
+    return Array.from({ length: MISSION.rounds }, () => ({
+      request: { kind: "mission", track: tm.track, level: 0, packId: tm.id },
+      title: `선생님 미션 · ${tm.title}`,
+    }));
+  }
   const track = todayTrack(now);
   const level = getLevel(track, progress.unlocked[track])!;
   return Array.from({ length: MISSION.rounds }, (_, i) =>

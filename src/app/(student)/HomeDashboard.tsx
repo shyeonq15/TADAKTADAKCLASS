@@ -7,7 +7,7 @@ import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
-import { missionTitle, todayTrack } from "@/lib/practice/mission";
+import { missionTitle, teacherMission, todayTrack } from "@/lib/practice/mission";
 import {
   dayKey,
   streakDays,
@@ -31,7 +31,8 @@ export function HomeDashboard() {
   const data = usePracticeData();
   const { attempts, progress } = data;
   const tiers = allTiers(attempts);
-  const track = todayTrack();
+  const tm = teacherMission(data.packs);
+  const track = tm?.track ?? todayTrack();
   const missionDone = progress.missionDays.includes(dayKey());
   const growth = todayGrowth(data);
   const weak = weakKeys(attempts);
@@ -50,7 +51,7 @@ export function HomeDashboard() {
               <h1 className="title-lime text-hero">타닥타닥 우리반</h1>
               <p className="mt-1 font-pixel text-small tracking-[0.3em] text-navy-700">TADAK TADAK CLASS</p>
             </div>
-            <MissionLabel keyword="MISSION">{missionTitle(track)}</MissionLabel>
+            <MissionLabel keyword="MISSION">{tm ? `선생님 미션: ${tm.title}` : missionTitle(track)}</MissionLabel>
             {missionDone ? (
               <>
                 <p className="font-pixel text-body">오늘 미션 완료! 내일도 만나요 ♡</p>

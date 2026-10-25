@@ -63,6 +63,9 @@ export const TIER_RULES = {
   canDemote: false,
 } as const;
 
+/** 선생님 연습팩 기록의 레벨 값 (성장 점수 기준값을 선생님 연습끼리 비교) */
+export const PACK_LEVEL = -100;
+
 /* ── 연습 레벨 ── */
 export const LEVEL_CLEAR = {
   /** 레벨 통과에 필요한 정확도(%). 타수 기준은 연습팩의 레벨마다 따로 있음 */

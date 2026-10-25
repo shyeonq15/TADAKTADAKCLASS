@@ -44,10 +44,14 @@ export type Progress = {
   missionDays: string[];
 };
 
-export type PracticeData = { attempts: Attempt[]; progress: Progress };
+/** 선생님이 우리 반에 배포한 연습팩 */
+export type TeacherPack = { id: string; title: string; track: Track; rounds: number; missionToday: boolean };
+
+export type PracticeData = { attempts: Attempt[]; progress: Progress; packs: TeacherPack[] };
 
 export const EMPTY_DATA: PracticeData = {
   attempts: [],
+  packs: [],
   progress: {
     unlocked: { korean: 1, english: 1, symbol: 1, code: 1 },
     cleared: [],
@@ -77,7 +81,8 @@ export type SaveResult = {
 export type RoundRequest =
   | { kind: "practice"; track: Track; level: number }
   | { kind: "weak"; track: Track }
-  | { kind: "mission"; track: Track; level: number; weak?: boolean }
+  | { kind: "mission"; track: Track; level: number; weak?: boolean; packId?: string }
+  | { kind: "pack"; track: Track; packId: string }
   | { kind: "placement"; track: Track };
 
 /** 서버가 내준 지문 + 서명된 표 */
