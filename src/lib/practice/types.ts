@@ -13,7 +13,7 @@ export type Attempt = {
   track: Track;
   level: number;
   /** 게임이면 게임 이름 (rain …) */
-  mode: PracticeMode | "weak" | "placement" | "rain" | "blank" | "lesson";
+  mode: PracticeMode | "weak" | "placement" | "rain" | "runner" | "blank" | "lesson";
   cpm: number;
   accuracy: number;
   keystrokes: number;

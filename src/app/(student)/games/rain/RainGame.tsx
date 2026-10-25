@@ -1,23 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react";
-import { GAMES, TRACK_LABELS, TRACKS, type Track } from "@/config/game";
-import { startRain, submitRain } from "@/app/(student)/actions";
-import { PixelSprite } from "@/components/pixel/PixelSprite";
-import { BUNNY, COIN } from "@/components/pixel/sprites";
-import { DialogBox } from "@/components/ui/DialogBox";
-import { Loading } from "@/components/ui/Loading";
-import { MissionLabel } from "@/components/ui/MissionLabel";
-import { HelpButton } from "@/components/ui/HelpButton";
+import { GAMES } from "@/config/game";
 import { RainHelp } from "@/components/help/HelpContent";
-import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
-import { RetroWindow } from "@/components/ui/RetroWindow";
-import { StatCard } from "@/components/ui/StatCard";
-import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
+import { PixelSprite } from "@/components/pixel/PixelSprite";
+import { BUNNY } from "@/components/pixel/sprites";
 import { fallMs, rainStage, spawnMs, startsLike, type RainEvent } from "@/lib/games/rain";
-import type { GameSave } from "@/lib/games/server";
-import { safeCall } from "@/lib/practice/call";
-import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
+import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
+import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
 
 const RAIN = GAMES.rain;
 const FIELD_H = 420;
@@ -31,27 +21,11 @@ type Pop = { id: number; text: string; x: number; y: number; at: number };
 type View = { t: number; active: Falling[]; pops: Pop[]; hits: number; misses: number; combo: number; score: number };
 const EMPTY_VIEW: View = { t: 0, active: [], pops: [], hits: 0, misses: 0, combo: 0, score: 0 };
 
-type Phase =
-  | { name: "select" }
-  | { name: "loading" }
-  | { name: "playing"; words: string[]; token: string }
-  | { name: "saving" }
-  | { name: "result"; save: GameSave; reason: "hearts" | "time" }
-  | { name: "error"; message: string };
-
 const IGNORED_KEYS = new Set(["Shift", "Control", "Alt", "Meta", "CapsLock", "HangulMode", "Lang1", "Escape", "Tab"]);
 
 /* ───────── 게임 판 ───────── */
 
-function Field({
-  words,
-  track,
-  onEnd,
-}: {
-  words: string[];
-  track: Track;
-  onEnd: (r: { events: RainEvent[]; durationMs: number; keyTimes: number[]; reason: "hearts" | "time" }) => void;
-}) {
+function Field({ words, track, onEnd }: FieldProps) {
   const [view, setView] = useState<View>(EMPTY_VIEW);
   const [value, setValue] = useState("");
   const [shake, setShake] = useState(0);
@@ -272,147 +246,22 @@ function Field({
   );
 }
 
-/* ───────── 전체 흐름 ───────── */
+/* ───────── 전체 흐름 (공통) ───────── */
 
 export function RainGame() {
-  const data = usePracticeData();
-  const setData = useSetPracticeData();
-  const [phase, setPhase] = useState<Phase>({ name: "select" });
-  const [track, setTrack] = useState<Track>("korean");
-
-  const bestOf = (t: Track) =>
-    Math.max(0, ...data.attempts.filter((a) => a.kind === "game" && a.mode === "rain" && a.track === t && !a.suspicious).map((a) => a.score ?? 0));
-
-  const start = async (t: Track) => {
-    setTrack(t);
-    setPhase({ name: "loading" });
-    const res = await safeCall(() => startRain(t));
-    if ("error" in res) return setPhase({ name: "error", message: res.error });
-    setPhase({ name: "playing", words: res.words, token: res.token });
-  };
-
-  if (phase.name === "select") {
-    return (
-      <RetroWindow title="단어 비.exe" className="mx-auto w-full max-w-2xl">
-        <div className="flex flex-col items-center gap-4 bg-navy-900 px-6 py-8 text-center">
-          <p className="title-lime text-hero">단어 비</p>
-          <MissionLabel keyword="MISSION">떨어지는 단어를 바닥에 닿기 전에 터뜨려요!</MissionLabel>
-          <ul className="font-pixel text-small leading-6 text-sky-100">
-            <li>♥ 하트 {RAIN.hearts}개 · 단어가 바닥에 닿으면 하나씩 줄어요</li>
-            <li>{RAIN.hitsPerStage}개 터뜨릴 때마다 단계가 올라가서 더 빨라져요</li>
-            <li>연속으로 맞히면 콤보 점수! · 최대 {Math.floor(RAIN.maxSeconds / 60)}분 {RAIN.maxSeconds % 60}초</li>
-          </ul>
-          <div className="grid w-full grid-cols-2 gap-3 md:grid-cols-4">
-            {TRACKS.map((t, i) => (
-              <PixelButton key={t} variant={i === 0 ? "success" : "ghost"} autoFocus={i === 0} onClick={() => start(t)}>
-                <span className="flex flex-col leading-tight">
-                  {TRACK_LABELS[t]}
-                  <span className="text-small font-normal">최고 {bestOf(t)}점</span>
-                </span>
-              </PixelButton>
-            ))}
-          </div>
-          <p className="flex items-center gap-2 font-pixel text-small text-sky-100">
-            내가 연 레벨까지의 단어가 떨어져요.
-            <HelpButton title="단어 비 규칙">
-              <RainHelp />
-            </HelpButton>
-          </p>
-        </div>
-      </RetroWindow>
-    );
-  }
-
-  if (phase.name === "loading") return <Loading text="구름을 모으는 중..." />;
-  if (phase.name === "saving") return <Loading text="점수를 계산하는 중..." />;
-
-  if (phase.name === "error") {
-    return (
-      <RetroWindow title="앗!" className="mx-auto w-full max-w-md">
-        <p className="font-pixel text-body">{phase.message}</p>
-        <PixelButton size="sm" variant="success" className="mt-4" autoFocus onClick={() => setPhase({ name: "select" })}>
-          돌아가기
-        </PixelButton>
-      </RetroWindow>
-    );
-  }
-
-  if (phase.name === "playing") {
-    const token = phase.token;
-    return (
-      <RetroWindow title={`단어 비 - ${TRACK_LABELS[track]}`} className="mx-auto w-full max-w-4xl">
-        <Field
-          words={phase.words}
-          track={track}
-          onEnd={async ({ events, durationMs, keyTimes, reason }) => {
-            setPhase({ name: "saving" });
-            const res = await safeCall(() => submitRain({ token, events, durationMs, keyTimes }));
-            if ("error" in res) return setPhase({ name: "error", message: res.error });
-            setData(res.data);
-            setPhase({ name: "result", save: res.save, reason });
-          }}
-        />
-      </RetroWindow>
-    );
-  }
-
-  // 결과
-  const { save, reason } = phase;
-  const r = save.result;
-  const before = save.before;
-  const messages = [
-    save.attempt.suspicious ? "이번 기록은 선생님 확인 후에 반영돼요." : "",
-    save.coins > 0 ? `코인 ${save.coins}개를 획득했다!` : "",
-    save.newBest ? "최고 점수를 갱신했다!" : "",
-  ].filter(Boolean);
-
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <div className="text-center">
-        <p className="title-lime text-hero">{save.newBest ? "NEW RECORD!" : reason === "time" ? "TIME UP!" : "GAME OVER"}</p>
-        <p className="font-pixel text-body text-navy-900">
-          {reason === "time" ? "끝까지 버텼어요! 대단해요." : "다음엔 더! 한 번 더 해 볼까요?"}
-        </p>
-      </div>
-      <RetroWindow title="단어 비 결과">
-        <div className="flex gap-2">
-          <StatCard label="점수" value={r.score} />
-          <StatCard label="터뜨린 단어" value={r.hits} unit="개" />
-          <StatCard label="최고 콤보" value={r.maxCombo} />
-        </div>
-        <div className="mt-2 flex gap-2">
-          <StatCard
-            label="타수"
-            value={save.attempt.cpm}
-            unit="타/분"
-            diff={before ? { value: Math.round(save.attempt.cpm - before.cpm), unit: "타" } : null}
-          />
-          <StatCard label="정확도" value={`${save.attempt.accuracy}%`} />
-          <StatCard label="내 최고 점수" value={save.best} />
-        </div>
-        <p className="mt-3 font-pixel text-small text-text-muted">
-          {before ? `▲▼ 는 최근 단어 비 5판의 가운데 값(${Math.round(before.cpm)}타)과 비교한 거예요.` : "첫 판이에요! 다음 판부터 내 기록과 비교해 줄게요."}
-        </p>
-      </RetroWindow>
-      {messages.length > 0 && (
-        <div className="flex items-center gap-3">
-          {save.coins > 0 && <PixelSprite sprite={COIN} scale={4} />}
-          <div className="flex-1">
-            <DialogBox key={messages.join("|")} text={messages.join(" ")} />
-          </div>
-        </div>
-      )}
-      <div className="flex flex-wrap justify-center gap-3">
-        <PixelButton variant="success" autoFocus onClick={() => start(track)}>
-          ↻ 한 판 더
-        </PixelButton>
-        <PixelButton variant="ghost" onClick={() => setPhase({ name: "select" })}>
-          트랙 바꾸기
-        </PixelButton>
-        <PixelLink href="/games" variant="ghost">
-          게임 목록
-        </PixelLink>
-      </div>
-    </div>
+    <SoloGameFlow
+      game="rain"
+      Field={Field}
+      mission="떨어지는 단어를 바닥에 닿기 전에 터뜨려요!"
+      rules={[
+        `♥ 하트 ${RAIN.hearts}개 · 단어가 바닥에 닿으면 하나씩 줄어요`,
+        `${RAIN.hitsPerStage}개 터뜨릴 때마다 단계가 올라가서 더 빨라져요`,
+        `연속으로 맞히면 콤보 점수! · 최대 ${Math.floor(RAIN.maxSeconds / 60)}분 ${RAIN.maxSeconds % 60}초`,
+      ]}
+      help={<RainHelp />}
+      loadingText="구름을 모으는 중..."
+      hitLabel="터뜨린 단어"
+    />
   );
 }

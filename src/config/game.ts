@@ -161,6 +161,23 @@ export const GAMES = {
   },
 } as const;
 
+/** 혼자 하는 게임 이름 */
+export type SoloGame = "rain" | "runner";
+export const GAME_LABELS: Record<SoloGame, string> = { rain: "단어 비", runner: "토끼 달리기" };
+
+/** 토끼 달리기: 앞에서 다가오는 장애물 단어를 쳐서 점프. 점수 계산은 단어 비와 같음 */
+export const RUNNER = {
+  level: -2,
+  hearts: 3,
+  maxSeconds: 150,
+  /** 몇 개 넘을 때마다 빨라지는지 */
+  hitsPerStage: 6,
+  /** 장애물이 화면 오른쪽 끝에서 토끼까지 오는 시간(초): 처음 → 최소 */
+  approachSeconds: { start: 7, min: 3, perStage: 0.6 },
+  /** 장애물 사이 간격(초) */
+  gapSeconds: { start: 2.6, min: 1.1, perStage: 0.25 },
+} as const;
+
 export const GAME_COINS = {
   /** 게임 한 판 */
   play: 3,

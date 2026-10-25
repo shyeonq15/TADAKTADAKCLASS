@@ -1,8 +1,8 @@
 "use server";
 
-import type { Track } from "@/config/game";
+import type { SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
-import { issueRain, saveRain, type RainSubmission } from "@/lib/games/server";
+import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 
@@ -36,12 +36,12 @@ export async function submitPlacement() {
 
 /* ───── 혼자 하는 게임 ───── */
 
-export async function startRain(track: Track) {
+export async function startGame(game: SoloGame, track: Track) {
   const w = await who();
-  return w ? issueRain(w, track) : NOT_LOGGED_IN;
+  return w ? issueGame(w, game, track) : NOT_LOGGED_IN;
 }
 
-export async function submitRain(sub: RainSubmission) {
+export async function submitGame(sub: GameSubmission) {
   const w = await who();
-  return w ? saveRain(w, sub) : NOT_LOGGED_IN;
+  return w ? saveGame(w, sub) : NOT_LOGGED_IN;
 }
