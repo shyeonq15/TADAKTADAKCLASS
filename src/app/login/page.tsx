@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { FOLDER, HEART, THUMBS } from "@/components/pixel/sprites";
@@ -35,6 +36,13 @@ export default function LoginPage() {
             <LoginForms showGoogle={process.env.ENABLE_GOOGLE_LOGIN === "true"} />
           </Suspense>
         </RetroWindow>
+        {/* 작성지침: 로그인과 상관없이 첫 화면에서 바로 찾을 수 있게, 다른 안내와 구분되게 굵게 */}
+        <Link
+          href="/privacy"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-paper px-3 py-1 font-pixel text-body font-bold text-navy-900 underline underline-offset-4"
+        >
+          개인정보 처리방침
+        </Link>
       </main>
     </DesktopBackground>
   );
