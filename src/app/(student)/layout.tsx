@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { AppBar } from "@/components/ui/AppBar";
 import { Loading } from "@/components/ui/Loading";
@@ -7,6 +8,7 @@ import { PracticeDataProvider } from "@/lib/practice/store";
 
 /** 학생 화면: 로그인 + 반 + 닉네임이 있어야 들어올 수 있음. 내 기록을 서버에서 읽어 화면에 넘김 */
 async function StudentGate({ children }: { children: React.ReactNode }) {
+  await connection(); // 로그인·날짜는 요청마다 새로 확인
   const v = await requireStudent();
   const data = await loadPracticeData(v.userId);
   return (

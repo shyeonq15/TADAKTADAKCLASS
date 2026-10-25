@@ -103,3 +103,31 @@ export const COINS = {
   personalBest: 10,
   practiceRound: 2,
 } as const;
+
+/* ── 혼자 하는 게임 ── */
+export const GAMES = {
+  rain: {
+    /** 성장 점수 기준값을 게임끼리만 비교하려고 쓰는 레벨 값 */
+    level: -1,
+    hearts: 3,
+    /** 한 판 최대 시간(초) */
+    maxSeconds: 150,
+    /** 몇 개 터뜨릴 때마다 단계가 오르는지 */
+    hitsPerStage: 8,
+    /** 바닥까지 떨어지는 시간(초): 처음 → 최소 */
+    fallSeconds: { start: 9, min: 3.5, perStage: 0.7 },
+    /** 새 단어가 나오는 간격(초): 처음 → 최소 */
+    spawnSeconds: { start: 2.4, min: 0.9, perStage: 0.2 },
+    maxOnScreen: 8,
+    /** 콤보 5개마다 점수 배율 +0.5 */
+    comboStep: 5,
+    comboBonus: 0.5,
+  },
+} as const;
+
+export const GAME_COINS = {
+  /** 게임 한 판 */
+  play: 3,
+  /** 게임 최고 점수 갱신 */
+  best: 10,
+} as const;

@@ -4,14 +4,15 @@ import type { Track } from "@/config/game";
 import type { PracticeMode } from "@/data/packs";
 import type { IntegrityFlag } from "@/lib/typing/integrity";
 
-export type AttemptKind = "practice" | "mission" | "weak" | "placement";
+export type AttemptKind = "practice" | "mission" | "weak" | "placement" | "game";
 
 export type Attempt = {
   id: string;
   kind: AttemptKind;
   track: Track;
   level: number;
-  mode: PracticeMode | "weak" | "placement";
+  /** 게임이면 게임 이름 (rain …) */
+  mode: PracticeMode | "weak" | "placement" | "rain";
   cpm: number;
   accuracy: number;
   keystrokes: number;
@@ -19,6 +20,8 @@ export type Attempt = {
   missedKeys: Record<string, number>;
   flags: IntegrityFlag[];
   suspicious: boolean;
+  /** 게임 점수 (게임만) */
+  score: number | null;
   at: number;
 };
 

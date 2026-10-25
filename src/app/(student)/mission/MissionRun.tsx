@@ -11,6 +11,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
 import { missionRounds, missionTitle, todayTrack, type MissionRound } from "@/lib/practice/mission";
 import { finishMission } from "@/app/(student)/actions";
+import { safeCall } from "@/lib/practice/call";
 import { dayKey, todayGrowth, usePracticeData, useSetPracticeData, weakKeys, type SaveResult } from "@/lib/practice/store";
 
 type Phase =
@@ -76,7 +77,7 @@ export function MissionRun() {
               setPhase({ ...phase, name: "between", saves });
               return;
             }
-            const reward = await finishMission();
+            const reward = await safeCall(() => finishMission());
             if ("data" in reward) setData(reward.data);
             const ok = "firstToday" in reward;
             setPhase({ name: "reward", saves, coins: ok ? (reward.coins ?? 0) : 0, classCoins: ok ? (reward.classCoins ?? 0) : 0 });

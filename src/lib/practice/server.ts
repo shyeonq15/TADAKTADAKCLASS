@@ -25,11 +25,11 @@ import {
   type SaveResult,
 } from "./types";
 
-type Who = { userId: string; classId: string | null };
+export type Who = { userId: string; classId: string | null };
 
 /* ───────── 읽기 ───────── */
 
-type AttemptRow = {
+export type AttemptRow = {
   id: string;
   kind: Attempt["kind"];
   track: Track;
@@ -42,10 +42,11 @@ type AttemptRow = {
   missed_keys: Record<string, number>;
   flags: IntegrityFlag[];
   suspicious: boolean;
+  score: number | null;
   created_at: string;
 };
 
-const toAttempt = (r: AttemptRow): Attempt => ({
+export const toAttempt = (r: AttemptRow): Attempt => ({
   id: r.id,
   kind: r.kind,
   track: r.track,
@@ -58,11 +59,12 @@ const toAttempt = (r: AttemptRow): Attempt => ({
   missedKeys: r.missed_keys ?? {},
   flags: r.flags ?? [],
   suspicious: r.suspicious,
+  score: r.score ?? null,
   at: new Date(r.created_at).getTime(),
 });
 
 /** 학생 한 명의 기록·진행 상황 (저장 직후처럼 새로 읽어야 할 때 직접 부름) */
-async function loadUncached(userId: string): Promise<PracticeData> {
+export async function loadUncached(userId: string): Promise<PracticeData> {
   const admin = createAdminClient();
   const [attempts, progress, clears, wallet, coinLog, classCoins, missions] = await Promise.all([
     admin.from("attempts").select("*").eq("student_id", userId).order("created_at", { ascending: false }).limit(300),
@@ -117,22 +119,22 @@ const secret = () => {
   if (!s) throw new Error(".env.local 에 PIN_PEPPER 가 없어요.");
   return `round:${s}`;
 };
-const hashLines = (lines: readonly string[]) => createHash("sha256").update(lines.join("\n")).digest("base64url");
+export const hashLines = (lines: readonly string[]) => createHash("sha256").update(lines.join("\n")).digest("base64url");
 const sign = (body: string) => createHmac("sha256", secret()).update(body).digest("base64url");
 
-function makeToken(t: Ticket) {
+export function makeToken(t: object) {
   const body = Buffer.from(JSON.stringify(t)).toString("base64url");
   return `${body}.${sign(body)}`;
 }
 
-function readToken(token: string): Ticket | null {
+export function readToken<T = Ticket>(token: string): T | null {
   const [body, sig] = token.split(".");
   if (!body || !sig) return null;
   const want = Buffer.from(sign(body));
   const got = Buffer.from(sig);
   if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
   try {
-    return JSON.parse(Buffer.from(body, "base64url").toString()) as Ticket;
+    return JSON.parse(Buffer.from(body, "base64url").toString()) as T;
   } catch {
     return null;
   }
@@ -161,7 +163,7 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
 /* ───────── 저장 ───────── */
 
 /** 개인 지갑에 코인 넣기 + 내역 */
-async function addCoins(userId: string, amount: number, reason: string) {
+export async function addCoins(userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   const admin = createAdminClient();
   const { data } = await admin.from("wallets").select("coins").eq("student_id", userId).maybeSingle();
@@ -179,7 +181,7 @@ async function addClassCoins(classId: string, userId: string, amount: number, re
 }
 
 /** 오늘의 성장 점수를 다시 계산해서 저장 */
-async function refreshGrowth(who: Who) {
+export async function refreshGrowth(who: Who) {
   const data = await loadUncached(who.userId);
   const today = dayKeyKST();
   const scored = data.attempts.filter((a) => a.kind !== "placement");
@@ -293,7 +295,9 @@ export async function saveRound(
   // 개인 기록 갱신
   const prevBest = Math.max(
     0,
-    ...before.attempts.filter((a) => a.track === track && !a.suspicious && a.kind !== "placement").map((a) => a.cpm),
+    ...before.attempts
+      .filter((a) => a.track === track && !a.suspicious && a.kind !== "placement" && a.kind !== "game")
+      .map((a) => a.cpm),
   );
   const personalBest = !suspicious && req.kind !== "placement" && prevBest > 0 && cpm > prevBest;
 

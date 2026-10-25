@@ -2,11 +2,14 @@
 
 import { TIER_MIN_CPM, TIER_RULES, TIERS, TRACKS, type Tier, type Track } from "@/config/game";
 
-export type TierAttempt = { track: Track; cpm: number; accuracy: number; suspicious: boolean };
+export type TierAttempt = { track: Track; cpm: number; accuracy: number; suspicious: boolean; kind?: string };
 
 /** 정확도 95% 이상 기록 중 기준을 넘은 것이 3번 이상인 가장 높은 티어 */
 export function trackTier(attempts: readonly TierAttempt[], track: Track): Tier {
-  const valid = attempts.filter((a) => a.track === track && !a.suspicious && a.accuracy >= TIER_RULES.minAccuracy);
+  // 게임 기록은 티어에 넣지 않음 (게임 타수는 기다리는 시간이 섞여 있음)
+  const valid = attempts.filter(
+    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.accuracy >= TIER_RULES.minAccuracy,
+  );
   let best: Tier = "bronze";
   for (const tier of TIERS) {
     const count = valid.filter((a) => a.cpm >= TIER_MIN_CPM[track][tier]).length;

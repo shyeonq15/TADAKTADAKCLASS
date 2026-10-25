@@ -8,6 +8,7 @@ import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { useSetPracticeData, type SaveResult } from "@/lib/practice/store";
+import { safeCall } from "@/lib/practice/call";
 import { toSubmission } from "@/lib/practice/submission";
 import type { RoundRequest } from "@/lib/practice/types";
 import { ResultPanel } from "./ResultPanel";
@@ -41,7 +42,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   const track = request.track;
 
   const fetchRound = async () => {
-    const res = await startRound(request);
+    const res = await safeCall(() => startRound(request));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     setPhase({ name: "typing", lines: res.lines, token: res.token });
   };
@@ -61,7 +62,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
 
   const handleFinish = async (lines: string[], token: string, r: SessionResult) => {
     setPhase({ name: "saving" });
-    const res = await submitRound(toSubmission(token, lines, r));
+    const res = await safeCall(() => submitRound(toSubmission(token, lines, r)));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     setData(res.data);
     if (onSaved) onSaved(res.save);

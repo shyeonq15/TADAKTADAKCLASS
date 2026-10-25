@@ -10,6 +10,7 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TypingSession, type SessionResult } from "@/components/typing/TypingSession";
 import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
+import { safeCall } from "@/lib/practice/call";
 import { toSubmission } from "@/lib/practice/submission";
 
 type Phase =
@@ -32,18 +33,18 @@ export function PlacementRun() {
 
   const begin = async (index: number) => {
     setPhase({ name: "loading", index });
-    const res = await startRound({ kind: "placement", track: TRACKS[index] });
+    const res = await safeCall(() => startRound({ kind: "placement", track: TRACKS[index] }));
     if ("error" in res) return setPhase({ name: "error", index, message: res.error });
     setPhase({ name: "typing", index, lines: res.lines, token: res.token });
   };
 
   const onFinish = async (index: number, lines: string[], token: string, r: SessionResult) => {
     setPhase({ name: "loading", index });
-    const saved = await submitRound(toSubmission(token, lines, r));
+    const saved = await safeCall(() => submitRound(toSubmission(token, lines, r)));
     if ("error" in saved) return setPhase({ name: "error", index, message: saved.error });
     if (index + 1 < TRACKS.length) return setPhase({ name: "ready", index: index + 1 });
 
-    const res = await submitPlacement();
+    const res = await safeCall(() => submitPlacement());
     if ("data" in res) setData(res.data);
     if ("error" in res) return setPhase({ name: "error", index, message: res.error ?? "" });
     setPhase({ name: "done", cpm: res.cpm, start: res.start });

@@ -212,6 +212,12 @@ img {
     inset -2px -2px 0 var(--win-light);
 }
 
+/* 틀렸을 때 입력칸 좌우 흔들림 (DESIGN.md 8장: 2px, 1회) */
+@keyframes shake {
+  0%, 100% { translate: 0; }
+  50% { translate: 2px; }
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
@@ -219,7 +225,8 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blink {
+  .blink,
+  [class*="animate-"] {
     animation: none;
   }
 }
