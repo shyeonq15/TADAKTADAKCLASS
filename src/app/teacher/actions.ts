@@ -3,10 +3,10 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { newJoinCode, newPin, pinEmail, pinPassword } from "@/lib/auth/pin";
+import { newJoinCode, pinEmail } from "@/lib/auth/pin";
 import { ensureSchoolYear, getViewer } from "@/lib/auth/viewer";
 
-export type ActionState = { ok: boolean; message: string; pins?: { number: number; name: string; pin: string }[] } | null;
+export type ActionState = { ok: boolean; message: string } | null;
 
 async function teacherOrNull() {
   const v = await getViewer();
@@ -48,10 +48,10 @@ export async function createClass(_: ActionState, formData: FormData): Promise<A
 }
 
 /**
- * PIN 로그인 학생 등록. 한 줄에 "번호 이름" (예: 1 김타닥).
- * 만든 PIN은 이때 한 번만 보여 줍니다 (서버에는 PIN 자체를 저장하지 않음).
+ * 학생 명단 등록. 한 줄에 "번호 이름" (예: 1 김타닥).
+ * 비밀번호는 학생이 처음 로그인할 때 그림 4개로 직접 정합니다.
  */
-export async function addPinStudents(_: ActionState, formData: FormData): Promise<ActionState> {
+export async function addStudents(_: ActionState, formData: FormData): Promise<ActionState> {
   const t = await teacherOrNull();
   if (!t) return { ok: false, message: "교사만 할 수 있어요." };
   const classId = String(formData.get("classId"));
@@ -68,7 +68,7 @@ export async function addPinStudents(_: ActionState, formData: FormData): Promis
   if (rows.length === 0 || rows.some((r) => !r)) return { ok: false, message: '한 줄에 "번호 이름" 형식으로 적어 주세요. 예: 1 김타닥' };
 
   const admin = createAdminClient();
-  const pins: { number: number; name: string; pin: string }[] = [];
+  let added = 0;
   const skipped: number[] = [];
 
   for (const r of rows as { number: number; name: string }[]) {
@@ -84,20 +84,19 @@ export async function addPinStudents(_: ActionState, formData: FormData): Promis
       continue;
     }
     const id = created.data.user.id;
-    const pin = newPin();
-    await admin.auth.admin.updateUserById(id, { password: pinPassword(id, pin) });
-    await admin.from("profiles").insert({ id, role: "student", school_id: t.schoolId, real_name: r.name, email, login_method: "pin" });
+    await admin.from("profiles").insert({ id, role: "student", school_id: t.schoolId, real_name: r.name, email, login_method: "pin", secret_set: false });
     await admin.from("wallets").upsert({ student_id: id });
     await admin.from("enrollments").insert({ student_id: id, class_id: classId, number: r.number });
-    pins.push({ ...r, pin });
+    added++;
   }
 
   revalidatePath(`/teacher/classes/${classId}`);
   const note = skipped.length ? ` (이미 있는 번호라 건너뜀: ${skipped.join(", ")}번)` : "";
-  return { ok: true, message: `${pins.length}명을 등록했어요.${note} 아래 PIN은 지금만 보여요. 인쇄하거나 적어 두세요.`, pins };
+  return { ok: true, message: `${added}명을 등록했어요.${note} 학생은 학번으로 들어와서 그림 비밀번호를 직접 정해요.` };
 }
 
-export async function resetPin(_: ActionState, formData: FormData): Promise<ActionState> {
+/** 비밀번호 초기화: 학생이 다음 로그인 때 그림 비밀번호를 다시 정함 (허용이 켜져 있어야 함) */
+export async function resetSecret(_: ActionState, formData: FormData): Promise<ActionState> {
   const t = await teacherOrNull();
   if (!t) return { ok: false, message: "교사만 할 수 있어요." };
   const classId = String(formData.get("classId"));
@@ -105,17 +104,24 @@ export async function resetPin(_: ActionState, formData: FormData): Promise<Acti
   if (!(await ownClass(classId, t.schoolId))) return { ok: false, message: "반을 찾을 수 없어요." };
 
   const admin = createAdminClient();
-  const { data: enr } = await admin
-    .from("enrollments")
-    .select("id, number, profiles!inner(real_name, login_method)")
-    .eq("class_id", classId)
-    .eq("student_id", studentId)
-    .maybeSingle();
-  const p = enr?.profiles as unknown as { real_name: string; login_method: string } | undefined;
-  if (!enr || p?.login_method !== "pin") return { ok: false, message: "PIN 로그인 학생이 아니에요." };
+  const { data: enr } = await admin.from("enrollments").select("id").eq("class_id", classId).eq("student_id", studentId).maybeSingle();
+  if (!enr) return { ok: false, message: "학생을 찾을 수 없어요." };
 
-  const pin = newPin();
-  await admin.auth.admin.updateUserById(studentId, { password: pinPassword(studentId, pin) });
+  // 예전 비밀번호로는 못 들어오게 무작위 값으로 바꾸고, "아직 안 정함"으로 표시
+  await admin.auth.admin.updateUserById(studentId, { password: randomUUID() });
+  await admin.from("profiles").update({ secret_set: false }).eq("id", studentId);
   await admin.from("pin_failures").delete().eq("enrollment_id", enr.id);
-  return { ok: true, message: `${enr.number}번 새 PIN`, pins: [{ number: enr.number, name: p.real_name, pin }] };
+  revalidatePath(`/teacher/classes/${classId}`);
+  return { ok: true, message: "초기화했어요" };
+}
+
+/** 반마다 "처음 비밀번호 정하기 허용" 켜기·끄기 */
+export async function toggleSecretSetup(formData: FormData) {
+  const t = await teacherOrNull();
+  if (!t) return;
+  const classId = String(formData.get("classId"));
+  if (!(await ownClass(classId, t.schoolId))) return;
+  const open = formData.get("open") === "true";
+  await createAdminClient().from("classes").update({ allow_secret_setup: open }).eq("id", classId);
+  revalidatePath(`/teacher/classes/${classId}`);
 }

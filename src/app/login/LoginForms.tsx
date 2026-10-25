@@ -3,19 +3,20 @@
 import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 import { PixelButton } from "@/components/ui/PixelButton";
-import { pinLogin, signInWithGoogle, teacherLogin } from "./actions";
+import { signInWithGoogle, teacherLogin } from "./actions";
+import { StudentLogin } from "./StudentLogin";
 
 const ERRORS: Record<string, string> = {
-  domain: "학교 계정(@senedu.kr)으로만 들어올 수 있어요. 다른 계정이면 PIN으로 로그인해 주세요.",
+  domain: "학교 계정(@senedu.kr)으로만 들어올 수 있어요. 학생 탭에서 학번으로 로그인해 주세요.",
   link: "로그인 링크가 만료됐거나 다른 브라우저에서 열렸어요. 다시 시도해 주세요.",
   google: "구글 로그인을 시작하지 못했어요. 잠시 뒤 다시 해 주세요.",
-  "google-off": "구글 로그인은 아직 준비 중이에요. 반 코드 + PIN으로 로그인해 주세요.",
+  "google-off": "구글 로그인은 아직 준비 중이에요. 학생 탭에서 학번으로 로그인해 주세요.",
 };
 
 type Tab = "google" | "pin" | "teacher";
 
 const ALL_TABS: { id: Tab; label: string }[] = [
-  { id: "pin", label: "학생 (반 코드 + PIN)" },
+  { id: "pin", label: "학생" },
   { id: "google", label: "학교 구글 계정" },
   { id: "teacher", label: "선생님" },
 ];
@@ -47,7 +48,6 @@ export function LoginForms({ showGoogle }: { showGoogle: boolean }) {
   const error = useSearchParams().get("error");
   const TABS = ALL_TABS.filter((t) => showGoogle || t.id !== "google");
   const [tab, setTab] = useState<Tab>("pin");
-  const [pinState, pinAction, pinPending] = useActionState(pinLogin, null);
   const [teacherState, teacherAction, teacherPending] = useActionState(teacherLogin, null);
 
   return (
@@ -79,18 +79,7 @@ export function LoginForms({ showGoogle }: { showGoogle: boolean }) {
           </form>
         )}
 
-        {tab === "pin" && (
-          <form action={pinAction} className="flex flex-col gap-3">
-            <Field label="반 코드" name="code" required maxLength={6} autoComplete="off" placeholder="예: K7M2QP" className="uppercase" />
-            <Field label="번호" name="number" required type="number" min={1} max={50} inputMode="numeric" />
-            <Field label="PIN" name="pin" required type="password" inputMode="numeric" maxLength={4} pattern="\d{4}" autoComplete="off" />
-            <PixelButton variant="success" type="submit" disabled={pinPending}>
-              {pinPending ? "확인 중..." : "로그인"}
-            </PixelButton>
-            <Message state={pinState} />
-            <p className="font-pixel text-small text-text-muted">반 코드와 PIN은 선생님이 알려 줘요.</p>
-          </form>
-        )}
+        {tab === "pin" && <StudentLogin />}
 
         {tab === "teacher" && (
           <form action={teacherAction} className="flex flex-col gap-3">
