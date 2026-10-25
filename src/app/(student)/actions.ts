@@ -2,6 +2,7 @@
 
 import type { SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
+import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/lib/games/boss";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
@@ -44,4 +45,18 @@ export async function startGame(game: SoloGame, track: Track) {
 export async function submitGame(sub: GameSubmission) {
   const w = await who();
   return w ? saveGame(w, sub) : NOT_LOGGED_IN;
+}
+
+/* ───── 보스전 ───── */
+
+export async function startBoss(bossId: string) {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  return issueBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, bossId);
+}
+
+export async function submitBoss(sub: BossSubmission) {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  return saveBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, sub);
 }
