@@ -35,6 +35,10 @@ type Props = {
   mask?: Mask;
   /** 타자 칸 위에 계속 보여 줄 문제·풀이 (지금 치는 줄 번호를 받음) */
   codeHint?: (lineIndex: number) => ReactNode;
+  /** 레이스 화면처럼 타자 칸 위에 그릴 것 (지금 진행률·통계를 받음) */
+  header?: (stats: SessionStats) => ReactNode;
+  /** 친 글자 수가 바뀔 때마다 (보스 기록·친구 대결 진행 알림용) */
+  onProgress?: (doneChars: number, elapsedMs: number, stats: SessionStats) => void;
   onFinish: (result: SessionResult) => void;
 };
 
@@ -44,7 +48,7 @@ const fmtTime = (ms: number) => {
 };
 
 /** 실시간 타수·정확도·진행률 + TypingArea. 한 판이 끝나면 onFinish를 한 번 부릅니다. */
-export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, onFinish }: Props) {
+export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, header, onProgress, onFinish }: Props) {
   const code = track === "code";
   const [session, setSession] = useState<SessionState>(() => createSession(lines, { autoIndent: code }));
   const [now, setNow] = useState(() => Date.now());
@@ -60,6 +64,11 @@ export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, onFi
   };
 
   const update = (next: SessionState) => {
+    if (onProgress && next.startedAt !== null) {
+      const t = Date.now();
+      const done = next.doneLines.reduce((n, l) => n + l.length, 0) + (isFinished(next) ? 0 : next.typed.length);
+      onProgress(done, (next.finishedAt ?? t) - next.startedAt, sessionStats(next, t));
+    }
     ref.current = next;
     setSession(next);
     if (isFinished(next)) finish(next);
@@ -98,6 +107,7 @@ export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, onFi
         />
       </div>
       <PixelProgressBar value={stats.progress} label="진행률" />
+      {header?.(stats)}
       {codeHint?.(Math.min(session.lineIndex, lines.length - 1))}
 
       <TypingArea

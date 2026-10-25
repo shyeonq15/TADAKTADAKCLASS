@@ -178,7 +178,17 @@ export const RUNNER = {
   gapSeconds: { start: 2.6, min: 1.1, perStage: 0.25 },
 } as const;
 
+/** 보스전: 선생님 고스트와 레이스 */
+export const BOSS = {
+  level: -3,
+  /** 이기려면 이 정확도 이상 */
+  minAccuracy: 90,
+} as const;
+
 export const GAME_COINS = {
+  /** 보스 처음 이겼을 때 (개인 + 반 지갑) */
+  bossWin: 20,
+  bossClass: 5,
   /** 게임 한 판 */
   play: 3,
   /** 게임 최고 점수 갱신 */
