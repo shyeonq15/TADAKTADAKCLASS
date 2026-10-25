@@ -32,16 +32,29 @@ export function blankMask(lines: readonly string[], note: CodeNote) {
 
 /* ───────── 파이썬 첫걸음 (print부터 함수까지 14강) ───────── */
 
-type LessonRow = CodeNote & { code: string };
+/** 설명 슬라이드 한 장: 글 + (예시 코드와 결과) + (확인 문제, 첫 보기가 정답) */
+export type LessonSlide = {
+  title: string;
+  body: string[];
+  code?: string;
+  output?: string;
+  check?: { q: string; choices: string[]; answer: number; why: string };
+};
 
-export const LESSON_COUNT = (LESSONS as LessonRow[]).length;
+type LessonRow = Omit<CodeNote, "explain"> & { code: string; summary: string; slides: LessonSlide[] };
+
+export const LESSON_COUNT = (LESSONS as unknown as LessonRow[]).length;
 
 /** n강 (1부터) */
 export function lesson(n: number): { note: CodeNote; lines: string[] } | null {
-  const row = (LESSONS as LessonRow[])[n - 1];
+  const row = (LESSONS as unknown as LessonRow[])[n - 1];
   if (!row) return null;
-  const { code, ...note } = row;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { code, summary, slides, ...rest } = row;
+  const note: CodeNote = { ...rest, explain: summary };
   return { note, lines: code.split("\n") };
 }
 
-export const lessonTitle = (n: number) => (LESSONS as LessonRow[])[n - 1]?.concept ?? "";
+export const lessonTitle = (n: number) => (LESSONS as unknown as LessonRow[])[n - 1]?.concept ?? "";
+
+export const lessonSlides = (n: number): LessonSlide[] => (LESSONS as unknown as LessonRow[])[n - 1]?.slides ?? [];

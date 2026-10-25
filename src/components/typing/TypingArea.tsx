@@ -75,8 +75,9 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
   const composingRef = useRef(false);
 
   const { lines, lineIndex, typed, composing, doneLines } = session;
-  const first = Math.max(0, lineIndex - 1);
-  const last = Math.min(lines.length, lineIndex + 1 + LOOKAHEAD);
+  // 코드는 전체 흐름이 보여야 하니 친 줄도 모두 남겨 둠 (코드 지문은 12줄 안쪽)
+  const first = code ? 0 : Math.max(0, lineIndex - 1);
+  const last = code ? lines.length : Math.min(lines.length, lineIndex + 1 + LOOKAHEAD);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const native = e.nativeEvent as InputEvent;
@@ -137,7 +138,7 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
           const i = first + k;
           if (i < lineIndex) {
             return (
-              <div key={i} className="opacity-50">
+              <div key={i} className={code ? "opacity-80" : "opacity-50"}>
                 <Line text={text} states={lineStates(text, doneLines[i] ?? "", false)} code={code} number={i + 1} />
               </div>
             );
