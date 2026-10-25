@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { GROWTH, LEVEL_CLEAR, TRACK_LABELS } from "@/config/game";
+import { GROWTH, LEVEL_CLEAR, TIER_LABELS, TRACK_LABELS } from "@/config/game";
+import { TierBadge } from "@/components/ui/TierBadge";
 import { getLevel } from "@/data/packs";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { RetroWindow } from "@/components/ui/RetroWindow";
@@ -18,6 +19,7 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
   if (save.coins > 0) messages.push(`코인 ${save.coins}개를 획득했다!`);
   if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} 레벨 ${attempt.level}을 클리어했다!`);
   if (save.unlockedLevel) messages.push(`레벨 ${save.unlockedLevel}이 열렸다!`);
+  if (save.tierUp) messages.push(`${TRACK_LABELS[attempt.track]} 티어가 ${TIER_LABELS[save.tierUp]}로 올랐다!`);
 
   const missed = Object.entries(attempt.missedKeys)
     .filter(([k]) => k.trim())
@@ -34,6 +36,12 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
           </>
         ) : (
           <p className="title-lime text-hero">CLEAR!</p>
+        )}
+        {save.tierUp && (
+          <p className="mt-2 flex items-center justify-center gap-2 font-title text-heading text-navy-900">
+            <span className="blink bg-ink px-2 text-paper">TIER UP</span>
+            <TierBadge tier={save.tierUp} />
+          </p>
         )}
       </div>
 

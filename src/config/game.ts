@@ -34,7 +34,7 @@ export const GROWTH = {
 } as const;
 
 /* ── 실력 티어 (개인 명예용, 트랙별) ── */
-export const TIERS = ["bronze", "silver", "gold", "diamond"] as const;
+export const TIERS = ["bronze", "silver", "gold", "diamond", "master", "legend"] as const;
 export type Tier = (typeof TIERS)[number];
 
 export const TIER_LABELS: Record<Tier, string> = {
@@ -42,14 +42,16 @@ export const TIER_LABELS: Record<Tier, string> = {
   silver: "실버",
   gold: "골드",
   diamond: "다이아",
+  master: "마스터",
+  legend: "레전드",
 };
 
 /** 각 티어의 최소 타수(타/분). 기호와 코드는 같은 기준을 씁니다. */
 export const TIER_MIN_CPM: Record<Track, Record<Tier, number>> = {
-  korean: { bronze: 0, silver: 150, gold: 250, diamond: 350 },
-  english: { bronze: 0, silver: 100, gold: 180, diamond: 260 },
-  symbol: { bronze: 0, silver: 80, gold: 140, diamond: 200 },
-  code: { bronze: 0, silver: 80, gold: 140, diamond: 200 },
+  korean: { bronze: 0, silver: 150, gold: 250, diamond: 350, master: 450, legend: 550 },
+  english: { bronze: 0, silver: 100, gold: 180, diamond: 260, master: 340, legend: 420 },
+  symbol: { bronze: 0, silver: 80, gold: 140, diamond: 200, master: 260, legend: 320 },
+  code: { bronze: 0, silver: 80, gold: 140, diamond: 200, master: 260, legend: 320 },
 };
 
 export const TIER_RULES = {

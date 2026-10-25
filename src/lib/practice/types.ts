@@ -1,6 +1,6 @@
 // 연습 기록·진행 상황 타입. 서버와 화면이 같이 씁니다.
 
-import type { Track } from "@/config/game";
+import type { Tier, Track } from "@/config/game";
 import type { PracticeMode } from "@/data/packs";
 import type { IntegrityFlag } from "@/lib/typing/integrity";
 
@@ -69,6 +69,8 @@ export type SaveResult = {
   firstClear: boolean;
   unlockedLevel: number | null;
   coins: number;
+  /** 이번 판으로 오른 티어 (안 올랐으면 null) */
+  tierUp: Tier | null;
 };
 
 /** 한 판을 시작할 때 서버에 보내는 요청 */

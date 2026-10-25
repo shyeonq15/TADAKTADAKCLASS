@@ -10,6 +10,7 @@ import { COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PLACEMENT, TRACKS, type Track }
 import { getLevel, maxLevel } from "@/data/packs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
+import { trackTier } from "@/lib/scoring/tier";
 import { correctKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPlacementRound, buildRound, buildWeakKeyRound } from "@/lib/typing/passage";
@@ -337,6 +338,11 @@ export async function saveRound(
     firstClear,
     unlockedLevel,
     coins,
+    tierUp: (() => {
+      const was = trackTier(before.attempts, track);
+      const now = trackTier([...before.attempts, attempt], track);
+      return now !== was ? now : null;
+    })(),
   };
   return { save, data: await loadUncached(who.userId) };
 }
