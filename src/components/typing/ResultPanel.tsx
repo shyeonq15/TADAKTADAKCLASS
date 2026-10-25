@@ -19,6 +19,7 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
   if (save.coins > 0) messages.push(`코인 ${save.coins}개를 획득했다!`);
   if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} 레벨 ${attempt.level}을 클리어했다!`);
   if (save.unlockedLevel) messages.push(`레벨 ${save.unlockedLevel}이 열렸다!`);
+  if (save.lessonDone) messages.push(`파이썬 첫걸음 ${save.lessonDone}강을 통과했다!`);
   if (save.tierUp) messages.push(`${TRACK_LABELS[attempt.track]} 티어가 ${TIER_LABELS[save.tierUp]}로 올랐다!`);
 
   const missed = Object.entries(attempt.missedKeys)

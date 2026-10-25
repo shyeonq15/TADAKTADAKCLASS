@@ -25,7 +25,14 @@ export function CodeExplainCard({
           <span className="bg-ink px-2 py-1 font-title text-small text-paper">개념</span>
           <strong className="text-heading">{note.concept}</strong>
         </p>
-        <p className="font-pixel text-body leading-7">{note.explain}</p>
+        <div className="flex flex-col gap-2 font-pixel text-body leading-7">
+          {note.explain.split("\n").map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
+        {note.tip && (
+          <p className="border-3 border-navy-900 bg-yellow-400 px-3 py-2 font-pixel text-small text-navy-900">💡 {note.tip}</p>
+        )}
         <table className="w-full border-3 border-navy-900 bg-surface">
           <tbody>
             {lines.map((line, i) => {
@@ -55,6 +62,25 @@ export function CodeExplainCard({
         </div>
       </div>
     </RetroWindow>
+  );
+}
+
+/** 치는 동안 위에 계속 보이는 문제·풀이 (지금 치는 줄의 풀이가 따라 바뀜) */
+export function CodeHint({ note, lineIndex, mask }: { note: CodeNote; lineIndex: number; mask?: Mask }) {
+  const lineNote = note.lines[lineIndex];
+  return (
+    <div className="flex flex-col gap-1 border-3 border-navy-900 bg-cream px-4 py-2 font-pixel text-body text-navy-900">
+      <p className="flex flex-wrap items-center gap-2">
+        <span className="bg-ink px-2 font-title text-small text-paper">개념</span>
+        <strong>{note.concept}</strong>
+        <span className="text-small text-text-muted">· {note.explain.split("\n")[0]}</span>
+      </p>
+      <p>
+        <span className="font-bold">{lineIndex + 1}번 줄</span>{" "}
+        {mask && mask.line === lineIndex && <span className="bg-lime-200 px-1">🧩 빈칸이 있는 줄!</span>}{" "}
+        {lineNote ? `← ${lineNote}` : ""}
+      </p>
+    </div>
   );
 }
 

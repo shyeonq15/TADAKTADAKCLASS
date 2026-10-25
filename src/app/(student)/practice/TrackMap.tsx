@@ -70,6 +70,11 @@ export function TrackMap() {
               </div>
               <div className="flex gap-2">
                 {track === "code" && (
+                  <PixelLink href="/learn" size="sm" variant="success">
+                    📘 파이썬 첫걸음
+                  </PixelLink>
+                )}
+                {track === "code" && (
                   <PixelLink href="/practice/blank" size="sm" variant="primary">
                     🧩 빈칸 채우기
                   </PixelLink>

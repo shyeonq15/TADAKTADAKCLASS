@@ -6,7 +6,7 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { BLANK_LEVEL, COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, LEVEL_CLEAR, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel, maxLevel } from "@/data/packs";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -15,7 +15,7 @@ import { trackTier } from "@/lib/scoring/tier";
 import { correctKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
-import { blankMask, codeNote } from "@/data/codeNotes";
+import { blankMask, codeNote, lesson } from "@/data/codeNotes";
 import { dayKeyKST } from "./day";
 import { recentMedian, streakDays, weakKeys } from "./derive";
 import {
@@ -209,6 +209,15 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
     lines = buildWeakKeyRound(req.track, weakKeys(data.attempts, req.track, 3).map((w) => w.key));
   } else if (req.kind === "pack") {
     return { error: "연습팩을 찾을 수 없어요." };
+  } else if (req.kind === "lesson") {
+    // 파이썬 첫걸음: 앞 강의를 통과해야 다음 강의가 열림
+    const l = lesson(req.lesson);
+    if (!l) return { error: "강의를 찾을 수 없어요." };
+    if (req.lesson > 1 && !data.progress.cleared.includes(`lesson-${req.lesson - 1}`)) {
+      return { error: `${req.lesson - 1}강을 먼저 끝내 주세요.` };
+    }
+    const token = makeToken({ u: who.userId, r: { ...req, track: "code" }, h: hashLines(l.lines), s: Date.now() });
+    return { lines: l.lines, token, note: l.note };
   } else {
     const level = getLevel(req.track, req.level);
     if (!level) return { error: "레벨을 찾을 수 없어요." };
@@ -335,20 +344,24 @@ export async function saveRound(
     ? PACK_LEVEL
     : req.kind === "blank"
       ? BLANK_LEVEL
-      : req.kind === "practice" || (req.kind === "mission" && !req.weak)
+      : req.kind === "lesson"
+        ? LESSON_LEVEL
+        : req.kind === "practice" || (req.kind === "mission" && !req.weak)
         ? req.level
         : 0;
   const mode = isPack
     ? (ticket.m ?? "sentences")
     : req.kind === "blank"
       ? "blank"
-      : req.kind === "placement"
+      : req.kind === "lesson"
+        ? "lesson"
+        : req.kind === "placement"
         ? "placement"
         : level === 0
           ? "weak"
           : (getLevel(track, level)?.mode ?? "keys");
   // 연습팩·빈칸 채우기도 기록 종류는 "연습"
-  const kind = req.kind === "pack" || req.kind === "blank" ? "practice" : req.kind;
+  const kind = req.kind === "pack" || req.kind === "blank" || req.kind === "lesson" ? "practice" : req.kind;
   const missedKeys = Object.fromEntries(
     Object.entries(sub.missedKeys ?? {})
       .filter(([k, v]) => k.length <= 2 && Number.isInteger(v) && v > 0)
@@ -403,6 +416,13 @@ export async function saveRound(
     }
   }
 
+  // 파이썬 첫걸음 강의 통과
+  let lessonDone: number | null = null;
+  if (req.kind === "lesson" && !suspicious && accuracy >= LESSON_PASS_ACCURACY) {
+    const done = await admin.from("level_clears").insert({ student_id: who.userId, track: "lesson", level: req.lesson });
+    if (!done.error) lessonDone = req.lesson;
+  }
+
   // 코인
   let coins = 0;
   if (!suspicious && req.kind !== "placement") {
@@ -424,6 +444,7 @@ export async function saveRound(
     firstClear,
     unlockedLevel,
     coins,
+    lessonDone,
     tierUp: (() => {
       const was = trackTier(before.attempts, track);
       const now = trackTier([...before.attempts, attempt], track);

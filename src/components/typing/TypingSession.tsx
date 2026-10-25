@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Track } from "@/config/game";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { StatCard } from "@/components/ui/StatCard";
@@ -33,6 +33,8 @@ type Props = {
   timeLimitSec?: number;
   /** 빈칸 채우기에서 가릴 곳 */
   mask?: Mask;
+  /** 타자 칸 위에 계속 보여 줄 문제·풀이 (지금 치는 줄 번호를 받음) */
+  codeHint?: (lineIndex: number) => ReactNode;
   onFinish: (result: SessionResult) => void;
 };
 
@@ -42,7 +44,7 @@ const fmtTime = (ms: number) => {
 };
 
 /** 실시간 타수·정확도·진행률 + TypingArea. 한 판이 끝나면 onFinish를 한 번 부릅니다. */
-export function TypingSession({ lines, track, timeLimitSec, mask, onFinish }: Props) {
+export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, onFinish }: Props) {
   const code = track === "code";
   const [session, setSession] = useState<SessionState>(() => createSession(lines, { autoIndent: code }));
   const [now, setNow] = useState(() => Date.now());
@@ -96,6 +98,7 @@ export function TypingSession({ lines, track, timeLimitSec, mask, onFinish }: Pr
         />
       </div>
       <PixelProgressBar value={stats.progress} label="진행률" />
+      {codeHint?.(Math.min(session.lineIndex, lines.length - 1))}
 
       <TypingArea
         session={session}

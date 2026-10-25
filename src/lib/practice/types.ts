@@ -13,7 +13,7 @@ export type Attempt = {
   track: Track;
   level: number;
   /** 게임이면 게임 이름 (rain …) */
-  mode: PracticeMode | "weak" | "placement" | "rain" | "blank";
+  mode: PracticeMode | "weak" | "placement" | "rain" | "blank" | "lesson";
   cpm: number;
   accuracy: number;
   keystrokes: number;
@@ -76,6 +76,8 @@ export type SaveResult = {
   coins: number;
   /** 이번 판으로 오른 티어 (안 올랐으면 null) */
   tierUp: Tier | null;
+  /** 이번 판으로 처음 통과한 강의 번호 (파이썬 첫걸음) */
+  lessonDone?: number | null;
 };
 
 /** 한 판을 시작할 때 서버에 보내는 요청 */
@@ -86,6 +88,8 @@ export type RoundRequest =
   | { kind: "pack"; track: Track; packId: string }
   /** 코드 빈칸 채우기 */
   | { kind: "blank"; track: Track; level: number }
+  /** 파이썬 첫걸음 n강 */
+  | { kind: "lesson"; track: Track; lesson: number }
   | { kind: "placement"; track: Track };
 
 /** 서버가 내준 지문 + 서명된 표 (+ 코드면 설명 카드, 빈칸이면 가릴 곳) */

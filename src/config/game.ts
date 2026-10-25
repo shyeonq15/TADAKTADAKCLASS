@@ -67,6 +67,10 @@ export const TIER_RULES = {
 export const PACK_LEVEL = -100;
 /** 코드 빈칸 채우기 기록의 레벨 값 */
 export const BLANK_LEVEL = -200;
+/** 파이썬 첫걸음 기록의 레벨 값 */
+export const LESSON_LEVEL = -300;
+/** 강의 통과에 필요한 정확도(%) */
+export const LESSON_PASS_ACCURACY = 80;
 
 /* ── 연습 레벨 ── */
 export const LEVEL_CLEAR = {

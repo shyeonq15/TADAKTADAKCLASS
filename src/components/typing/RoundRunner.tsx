@@ -12,7 +12,7 @@ import { safeCall } from "@/lib/practice/call";
 import { toSubmission } from "@/lib/practice/submission";
 import type { RoundRequest } from "@/lib/practice/types";
 import type { CodeNote } from "@/data/codeNotes";
-import { CodeExplainCard, CodeQuizCard, quizChoices } from "./CodeCards";
+import { CodeExplainCard, CodeHint, CodeQuizCard, quizChoices } from "./CodeCards";
 import { ResultPanel } from "./ResultPanel";
 import type { Mask } from "./TypingArea";
 import { TypingSession, type SessionResult } from "./TypingSession";
@@ -133,6 +133,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           lines={phase.lines}
           track={track}
           mask={phase.mask}
+          codeHint={phase.note ? (i) => <CodeHint note={phase.note!} lineIndex={i} mask={phase.mask} /> : undefined}
           onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}
         />
       </RetroWindow>

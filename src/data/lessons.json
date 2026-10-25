@@ -1,0 +1,134 @@
+[
+  {
+    "concept": "print로 말하기",
+    "explain": "print()는 컴퓨터에게 \"화면에 보여 줘!\"라고 말하는 명령이에요.\n괄호 ( ) 안에 보여 줄 내용을 넣어요. 글자는 따옴표 \" \" 로 감싸야 해요.\n코드는 위에서 아래로 한 줄씩 차례대로 실행돼요.",
+    "tip": "괄호와 따옴표는 꼭 짝을 맞춰요. 하나라도 빠지면 오류가 나요.",
+    "code": "print(\"Hello\")\nprint(\"Python\")",
+    "lines": ["화면에 Hello를 보여 줘", "그다음 줄에 Python을 보여 줘"],
+    "output": "Hello\nPython",
+    "choices": ["\"Hello\"\n\"Python\"", "Hello Python", "print(\"Hello\")\nprint(\"Python\")"],
+    "blank": { "line": 0, "text": "print" }
+  },
+  {
+    "concept": "숫자 계산",
+    "explain": "print() 안에 따옴표 없이 식을 넣으면 컴퓨터가 계산해서 결과를 보여 줘요.\n더하기 +, 빼기 -, 곱하기 *, 나누기 / 를 써요. 곱하기는 x가 아니라 * 예요!\n나누기 / 의 결과는 늘 소수점이 붙어요. (8 / 2 → 4.0)",
+    "tip": "키보드에서 * 는 Shift + 8, + 는 Shift + = 이에요.",
+    "code": "print(2 + 3)\nprint(10 - 4)\nprint(3 * 5)\nprint(8 / 2)",
+    "lines": ["더하기 → 5", "빼기 → 6", "곱하기는 * → 15", "나누기는 / → 4.0"],
+    "output": "5\n6\n15\n4.0",
+    "choices": ["5\n6\n15\n4", "2 + 3\n10 - 4\n3 * 5\n8 / 2", "5\n6\n8\n4.0"],
+    "blank": { "line": 2, "text": "*" }
+  },
+  {
+    "concept": "글자와 숫자는 달라요",
+    "explain": "따옴표로 감싸면 \"글자\", 감싸지 않으면 \"숫자\"예요.\n\"2 + 3\"은 그냥 글자라서 계산하지 않고 그대로 보여 줘요.\n글자에 * 숫자를 하면 그 글자를 여러 번 이어 붙여요.",
+    "code": "print(\"2 + 3\")\nprint(2 + 3)\nprint(\"ha\" * 3)",
+    "lines": ["따옴표 안 → 글자 그대로", "따옴표 없음 → 계산해서 5", "글자 ha를 3번 이어 붙이기"],
+    "output": "2 + 3\n5\nhahaha",
+    "choices": ["5\n5\nhahaha", "2 + 3\n5\nha3", "2 + 3\n2 + 3\nha ha ha"],
+    "blank": { "line": 2, "text": "* 3" }
+  },
+  {
+    "concept": "변수: 이름표 붙인 상자",
+    "explain": "변수는 값을 담아 두는 상자예요. x = 5 는 \"x라는 상자에 5를 넣어\"라는 뜻이에요.\n여기서 = 는 \"같다\"가 아니라 \"넣는다\"예요!\n상자에 새 값을 넣으면 예전 값은 사라지고 새 값으로 바뀌어요.",
+    "tip": "변수 이름은 영어로, 띄어쓰기 없이 지어요. (my_score 처럼 _ 는 써도 돼요)",
+    "code": "x = 5\ny = 3\nprint(x + y)\nx = 10\nprint(x)",
+    "lines": ["x 상자에 5", "y 상자에 3", "5 + 3 → 8", "x 상자를 10으로 바꿈", "지금 x에 든 값"],
+    "output": "8\n10",
+    "choices": ["8\n5", "x + y\nx", "53\n10"],
+    "blank": { "line": 3, "text": "=" }
+  },
+  {
+    "concept": "변수로 글자 다루기",
+    "explain": "변수에는 글자도 담을 수 있어요.\n글자끼리 + 를 하면 이어 붙여요. 띄어쓰기도 글자라서 따옴표 안에 넣어야 해요.",
+    "code": "name = \"Tadak\"\ngreeting = \"Hi, \" + name\nprint(greeting)",
+    "lines": ["name 상자에 글자 Tadak", "\"Hi, \"와 name을 이어 붙여 greeting에", "greeting에 든 글자 출력"],
+    "output": "Hi, Tadak",
+    "choices": ["Hi,Tadak", "greeting", "\"Hi, \" + name"],
+    "blank": { "line": 1, "text": "+ name" }
+  },
+  {
+    "concept": "input으로 입력받기",
+    "explain": "input()은 키보드로 입력한 글자를 받아 와요. 괄호 안의 글자는 질문처럼 먼저 보여 줘요.\n받아 온 값은 변수에 넣어 두고 쓰면 돼요.\nprint에 쉼표 , 로 여러 값을 넣으면 사이에 띄어쓰기를 넣어 보여 줘요.",
+    "code": "name = input(\"name? \")\nprint(\"Hello\", name)",
+    "lines": ["질문을 보여 주고, 입력한 글자를 name에", "Hello와 name을 띄어서 출력"],
+    "question": "name? 다음에 Mina를 입력했어요. 마지막 줄에 출력되는 것은?",
+    "output": "Hello Mina",
+    "choices": ["HelloMina", "Hello name", "name? Mina"],
+    "blank": { "line": 0, "text": "input" }
+  },
+  {
+    "concept": "숫자 입력은 int()로",
+    "explain": "input()으로 받은 값은 숫자처럼 보여도 사실은 \"글자\"예요.\n계산하려면 int()로 감싸서 진짜 숫자로 바꿔야 해요.\nint(input()) 처럼 괄호 안에 괄호를 넣을 수 있어요. 닫는 괄호 개수를 꼭 맞춰요!",
+    "code": "age = int(input(\"age? \"))\nprint(age + 1)",
+    "lines": ["입력한 글자를 숫자로 바꿔 age에", "내년 나이 = age + 1"],
+    "question": "age? 다음에 13을 입력했어요. 출력되는 것은?",
+    "output": "14",
+    "choices": ["131", "age + 1", "13"],
+    "blank": { "line": 0, "text": "int" }
+  },
+  {
+    "concept": "비교하기: True와 False",
+    "explain": "두 값을 비교하면 결과는 True(참) 아니면 False(거짓)예요.\n> 크다, < 작다, >= 크거나 같다, == 같다, != 다르다.\n같은지 볼 때는 = 하나가 아니라 == 두 개예요! (= 하나는 상자에 넣기)",
+    "code": "print(5 > 3)\nprint(2 == 3)\nprint(4 != 4)",
+    "lines": ["5는 3보다 크다 → True", "2와 3은 같다 → False", "4와 4는 다르다 → False"],
+    "output": "True\nFalse\nFalse",
+    "choices": ["True\nFalse\nTrue", "5 > 3\n2 == 3\n4 != 4", "True\nTrue\nFalse"],
+    "blank": { "line": 1, "text": "==" }
+  },
+  {
+    "concept": "if: 만약 ~라면",
+    "explain": "if 뒤의 조건이 True일 때만 그 아래 들여쓴 줄을 실행해요.\n조건 끝에는 콜론 : 을 붙이고, 다음 줄은 스페이스 4칸 들여써요. (여기서는 자동으로 채워 줘요)\n들여쓰지 않은 줄은 조건과 상관없이 항상 실행돼요.",
+    "tip": "콜론 : 은 Shift + ; 이에요.",
+    "code": "rain = True\nif rain:\n    print(\"umbrella\")\nprint(\"go to school\")",
+    "lines": ["비가 온다 = True", "만약 비가 오면", "우산 챙기기 (들여씀 → 조건이 참일 때만)", "들여쓰지 않음 → 항상 실행"],
+    "output": "umbrella\ngo to school",
+    "choices": ["go to school", "umbrella", "rain\ngo to school"],
+    "blank": { "line": 1, "text": "if" }
+  },
+  {
+    "concept": "if-else: 아니면",
+    "explain": "else는 \"그렇지 않으면\"이에요. if 조건이 False일 때 else 아래 줄을 실행해요.\nif와 else 중 딱 하나만 실행돼요.",
+    "code": "score = 70\nif score >= 80:\n    print(\"pass\")\nelse:\n    print(\"try again\")",
+    "lines": ["점수 70", "80 이상인가? → False", "참일 때만 (이번엔 건너뜀)", "그렇지 않으면", "이번엔 여기가 실행"],
+    "output": "try again",
+    "choices": ["pass", "pass\ntry again", "70"],
+    "blank": { "line": 3, "text": "else" }
+  },
+  {
+    "concept": "for: 정해진 만큼 반복",
+    "explain": "for는 들여쓴 줄을 여러 번 반복해요.\nrange(3)은 0, 1, 2 세 개의 수를 만들어요. 1부터가 아니라 0부터 시작해요!\n반복할 때마다 i에 그 수가 차례로 들어가요.",
+    "code": "for i in range(3):\n    print(\"hi\", i)",
+    "lines": ["i에 0, 1, 2를 차례로 넣으며 반복", "hi와 지금 i 출력"],
+    "output": "hi 0\nhi 1\nhi 2",
+    "choices": ["hi 1\nhi 2\nhi 3", "hi 0\nhi 1\nhi 2\nhi 3", "hi i\nhi i\nhi i"],
+    "blank": { "line": 0, "text": "range" }
+  },
+  {
+    "concept": "while: 조건이 참인 동안",
+    "explain": "while은 조건이 True인 동안 계속 반복해요.\n반복 안에서 값을 바꾸지 않으면 영원히 끝나지 않으니, 꼭 조건이 언젠가 False가 되게 해요.\nn += 1 은 n = n + 1 과 같은 뜻이에요.",
+    "code": "n = 1\nwhile n <= 3:\n    print(n)\n    n += 1",
+    "lines": ["1부터 시작", "n이 3 이하일 동안 반복", "지금 n 출력", "n을 1 늘리기"],
+    "output": "1\n2\n3",
+    "choices": ["1\n2\n3\n4", "0\n1\n2", "1"],
+    "blank": { "line": 3, "text": "+= 1" }
+  },
+  {
+    "concept": "리스트: 여러 값을 한 번에",
+    "explain": "리스트는 대괄호 [ ] 안에 여러 값을 쉼표로 나열해 한 변수에 담아요.\nappend()로 맨 뒤에 추가하고, [번호]로 꺼내요. 번호는 0부터 시작해요!\nlen()은 리스트에 든 개수를 알려 줘요.",
+    "code": "pets = [\"cat\", \"dog\"]\npets.append(\"rabbit\")\nprint(pets[0])\nprint(len(pets))",
+    "lines": ["동물 2개가 든 리스트", "rabbit을 맨 뒤에 추가", "0번째 = 첫 번째 값", "지금 개수 → 3"],
+    "output": "cat\n3",
+    "choices": ["dog\n3", "cat\n2", "rabbit\n3"],
+    "blank": { "line": 1, "text": "append" }
+  },
+  {
+    "concept": "함수: 나만의 명령 만들기",
+    "explain": "def로 자주 쓰는 명령을 묶어 이름을 붙일 수 있어요. 이것을 함수라고 해요.\n괄호 안의 name은 함수를 부를 때 넘겨주는 값을 받는 자리예요.\n한 번 만들어 두면 이름만 불러서 몇 번이든 쓸 수 있어요.",
+    "code": "def hello(name):\n    print(\"Hi,\", name)\nhello(\"Kim\")\nhello(\"Lee\")",
+    "lines": ["hello라는 함수 만들기 (name을 받음)", "받은 name에게 인사", "Kim을 넘겨서 부르기", "Lee를 넘겨서 부르기"],
+    "output": "Hi, Kim\nHi, Lee",
+    "choices": ["Hi, name\nHi, name", "Hi, Kim", "hello(\"Kim\")\nhello(\"Lee\")"],
+    "blank": { "line": 0, "text": "def" }
+  }
+]
