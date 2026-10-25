@@ -6,12 +6,12 @@ import { PixelButton } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 
-/** 확인 문제: 고르면 바로 맞았는지 + 이유를 보여 줌 (점수에는 안 들어감) */
+/** 확인 문제: 틀리면 그 보기만 막고 다시 고르게 함. 맞히면 이유를 보여 줌 (점수에는 안 들어감) */
 function Check({ check }: { check: NonNullable<LessonSlide["check"]> }) {
   // 보기 순서는 처음 그릴 때 한 번만 섞음 (정답은 데이터에서 0번)
   const [order] = useState(() => check.choices.map((_, i) => i).sort(() => Math.random() - 0.5));
-  const [picked, setPicked] = useState<number | null>(null);
-  const answered = picked !== null;
+  const [wrong, setWrong] = useState<number[]>([]);
+  const [solved, setSolved] = useState(false);
 
   return (
     <div className="flex flex-col gap-2 border-3 border-navy-900 bg-paper px-4 py-3">
@@ -19,19 +19,21 @@ function Check({ check }: { check: NonNullable<LessonSlide["check"]> }) {
       <div className="flex flex-col gap-2">
         {order.map((i) => {
           const isAnswer = i === check.answer;
-          const style = !answered
-            ? "win-bevel"
-            : isAnswer
+          const isWrong = wrong.includes(i);
+          const style =
+            solved && isAnswer
               ? "border-3 border-navy-900 bg-lime-400"
-              : i === picked
-                ? "border-3 border-red-500 bg-[var(--typing-space-error)]"
-                : "border-3 border-win-shadow opacity-60";
+              : isWrong
+                ? "border-3 border-red-500 bg-[var(--typing-space-error)] line-through decoration-red-500"
+                : solved
+                  ? "border-3 border-win-shadow opacity-60"
+                  : "win-bevel";
           return (
             <button
               key={i}
               type="button"
-              disabled={answered}
-              onClick={() => setPicked(i)}
+              disabled={solved || isWrong}
+              onClick={() => (isAnswer ? setSolved(true) : setWrong([...wrong, i]))}
               className={`whitespace-pre-wrap px-3 py-1 text-left font-typing text-body text-navy-900 ${style}`}
             >
               {check.choices[i]}
@@ -39,10 +41,14 @@ function Check({ check }: { check: NonNullable<LessonSlide["check"]> }) {
           );
         })}
       </div>
-      {answered && (
-        <p className={`font-pixel text-body ${picked === check.answer ? "text-lime-800" : "text-red-500"}`}>
-          {picked === check.answer ? "정답! " : "아쉬워요. "}
-          <span className="text-navy-900">{check.why}</span>
+      {!solved && wrong.length > 0 && (
+        <p role="status" className="font-pixel text-body text-red-500">
+          아쉬워요! 위 설명을 다시 읽어 보고, 다른 답을 골라 볼까요?
+        </p>
+      )}
+      {solved && (
+        <p className="font-pixel text-body text-lime-800">
+          정답! <span className="text-navy-900">{check.why}</span>
         </p>
       )}
     </div>

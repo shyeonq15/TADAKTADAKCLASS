@@ -97,9 +97,9 @@ export function CodeQuizCard({
   choices: string[];
   onDone: (correct: boolean) => void;
 }) {
-  const [picked, setPicked] = useState<number | null>(null);
-  const answered = picked !== null;
-  const correct = answered && choices[picked] === note.output;
+  // 틀린 보기는 빨갛게 막고 다시 고르게 함. 정답을 고를 때까지 답을 보여 주지 않음
+  const [wrong, setWrong] = useState<number[]>([]);
+  const [solved, setSolved] = useState(false);
 
   return (
     <RetroWindow title="결과 맞히기" className="mx-auto w-full max-w-3xl">
@@ -109,20 +109,22 @@ export function CodeQuizCard({
         <div className="grid gap-2 md:grid-cols-2">
           {choices.map((c, i) => {
             const isAnswer = c === note.output;
-            const style = !answered
-              ? "win-bevel"
-              : isAnswer
+            const isWrong = wrong.includes(i);
+            const style =
+              solved && isAnswer
                 ? "border-3 border-navy-900 bg-lime-400"
-                : i === picked
-                  ? "border-3 border-red-500 bg-[var(--typing-space-error)]"
-                  : "border-3 border-win-shadow bg-paper opacity-60";
+                : isWrong
+                  ? "border-3 border-red-500 bg-[var(--typing-space-error)] line-through decoration-red-500"
+                  : solved
+                    ? "border-3 border-win-shadow bg-paper opacity-60"
+                    : "win-bevel";
             return (
               <button
                 key={i}
                 type="button"
-                disabled={answered}
+                disabled={solved || isWrong}
                 autoFocus={i === 0}
-                onClick={() => setPicked(i)}
+                onClick={() => (isAnswer ? setSolved(true) : setWrong([...wrong, i]))}
                 className={`flex items-start gap-3 px-3 py-2 text-left ${style}`}
               >
                 <span className="font-title text-body">{i + 1}</span>
@@ -131,17 +133,22 @@ export function CodeQuizCard({
             );
           })}
         </div>
-        {answered && (
+        {!solved && wrong.length > 0 && (
+          <p role="status" className="font-pixel text-body text-red-500">
+            &gt; 아쉬워요! 코드를 한 줄씩 다시 읽어 보고, 다른 답을 골라 볼까요?
+          </p>
+        )}
+        {solved && (
           <div className="flex flex-col gap-3">
-            <p className={`font-pixel text-heading ${correct ? "text-lime-800" : "text-red-500"}`}>
-              {correct ? "> 정답! 코드를 읽는 눈이 생겼다!" : "> 아쉬워요! 다음엔 맞힐 수 있어요."}
+            <p className="font-pixel text-heading text-lime-800">
+              {wrong.length === 0 ? "> 한 번에 정답! 코드를 읽는 눈이 생겼다!" : "> 정답! 끝까지 생각해서 찾아냈다!"}
             </p>
             <div>
               <p className="font-pixel text-small text-text-muted">실제 출력</p>
               <pre className="bg-ink px-4 py-3 font-typing text-body text-lime-400">{note.output}</pre>
             </div>
             <div className="flex justify-center">
-              <PixelButton variant="success" autoFocus onClick={() => onDone(correct)}>
+              <PixelButton variant="success" autoFocus onClick={() => onDone(wrong.length === 0)}>
                 계속하기 ▶
               </PixelButton>
             </div>
