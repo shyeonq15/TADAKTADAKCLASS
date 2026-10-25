@@ -133,8 +133,12 @@ export function LevelHelp() {
         핀 아래에 적혀 있어요)
       </Box>
       <p>
+        레벨 1~5는 <strong>기본</strong>, 6~8은 <strong>심화</strong>예요. 심화에서는 긴 문장, 문단, 정보 이야기, 진짜 파이썬 프로그램을
+        쳐요.
+      </p>
+      <p className="mt-2">
         처음에 한 <strong>배치 테스트</strong>({PLACEMENT.secondsPerTrack}초 × 4트랙) 결과로, 이미 잘하는 트랙은 높은 레벨부터
-        시작했어요.
+        시작했어요. 아주 잘하면 심화 레벨 6부터 바로 시작해요.
       </p>
     </>
   );

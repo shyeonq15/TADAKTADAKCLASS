@@ -25,7 +25,7 @@ export function rainPool(track: Track, unlockedLevel: number): string[] {
   for (const lv of PACKS[track].levels) {
     if (lv.level > unlockedLevel) continue;
     for (const item of lv.items) {
-      if (lv.mode === "sentences") {
+      if (lv.mode === "sentences" || lv.mode === "paragraph") {
         for (const w of item.split(" ")) {
           const clean = w.replace(/[.,!?]/g, "");
           if (clean.length >= 2) words.add(clean);

@@ -89,7 +89,7 @@ export function TrackMap() {
                 const pin = (
                   <span
                     className={`flex size-12 items-center justify-center border-3 border-navy-900 font-title text-heading shadow-pixel-sm ${
-                      cleared ? "bg-lime-400" : open ? "bg-yellow-400" : "bg-win-gray text-text-muted"
+                      cleared ? "bg-lime-400" : open ? (lv.advanced ? "bg-pink-400" : "bg-yellow-400") : "bg-win-gray text-text-muted"
                     }`}
                   >
                     {cleared ? "✓" : open ? lv.level : "🔒"}
@@ -97,7 +97,13 @@ export function TrackMap() {
                 );
                 return (
                   <li key={lv.level} className="relative z-10 flex flex-col items-center gap-1">
-                    {here ? <PixelSprite sprite={BUNNY} scale={3} /> : <span className="h-9" />}
+                    <span className="flex h-9 items-end">
+                      {here ? (
+                        <PixelSprite sprite={BUNNY} scale={3} />
+                      ) : lv.advanced ? (
+                        <span className="bg-ink px-1 font-pixel text-small text-paper">심화</span>
+                      ) : null}
+                    </span>
                     {open ? (
                       <Link href={`/practice/${track}/${lv.level}`} aria-label={`레벨 ${lv.level} ${lv.title}`}>
                         {pin}

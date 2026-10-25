@@ -3,15 +3,115 @@
   "title": "영타 기본 연습팩",
   "source": "예시 지문 (교과서 발췌문으로 교체 예정)",
   "levels": [
-    { "level": 1, "title": "기본 자리", "mode": "keys", "goalCpm": 50,
-      "items": ["asdf", "jkl", "fjfj", "dkdk", "slsl", "fall", "lads", "flask", "salad", "ask", "dad", "glad", "half", "hash", "all", "sad", "jak", "gas"] },
-    { "level": 2, "title": "윗줄 자리", "mode": "keys", "goalCpm": 70,
-      "items": ["qwer", "uiop", "type", "write", "power", "quiet", "route", "tower", "equip", "query", "pretty", "outer", "upper", "peer", "tire", "your"] },
-    { "level": 3, "title": "아랫줄 자리", "mode": "keys", "goalCpm": 90,
-      "items": ["zxcv", "box", "mix", "cabin", "novel", "zebra", "civic", "banana", "number", "maze", "move", "cave", "zoom", "vacuum", "comma", "brave"] },
-    { "level": 4, "title": "낱말", "mode": "words", "goalCpm": 110,
-      "items": ["computer", "keyboard", "mouse", "monitor", "program", "python", "input", "output", "print", "variable", "string", "number", "list", "loop", "function", "value", "class", "school", "friend", "practice", "data", "robot"] },
-    { "level": 5, "title": "문장", "mode": "sentences", "goalCpm": 130,
+    {
+      "level": 1,
+      "title": "기본 자리",
+      "mode": "keys",
+      "goalCpm": 50,
+      "items": [
+        "asdf",
+        "jkl",
+        "fjfj",
+        "dkdk",
+        "slsl",
+        "fall",
+        "lads",
+        "flask",
+        "salad",
+        "ask",
+        "dad",
+        "glad",
+        "half",
+        "hash",
+        "all",
+        "sad",
+        "jak",
+        "gas"
+      ]
+    },
+    {
+      "level": 2,
+      "title": "윗줄 자리",
+      "mode": "keys",
+      "goalCpm": 70,
+      "items": [
+        "qwer",
+        "uiop",
+        "type",
+        "write",
+        "power",
+        "quiet",
+        "route",
+        "tower",
+        "equip",
+        "query",
+        "pretty",
+        "outer",
+        "upper",
+        "peer",
+        "tire",
+        "your"
+      ]
+    },
+    {
+      "level": 3,
+      "title": "아랫줄 자리",
+      "mode": "keys",
+      "goalCpm": 90,
+      "items": [
+        "zxcv",
+        "box",
+        "mix",
+        "cabin",
+        "novel",
+        "zebra",
+        "civic",
+        "banana",
+        "number",
+        "maze",
+        "move",
+        "cave",
+        "zoom",
+        "vacuum",
+        "comma",
+        "brave"
+      ]
+    },
+    {
+      "level": 4,
+      "title": "낱말",
+      "mode": "words",
+      "goalCpm": 110,
+      "items": [
+        "computer",
+        "keyboard",
+        "mouse",
+        "monitor",
+        "program",
+        "python",
+        "input",
+        "output",
+        "print",
+        "variable",
+        "string",
+        "number",
+        "list",
+        "loop",
+        "function",
+        "value",
+        "class",
+        "school",
+        "friend",
+        "practice",
+        "data",
+        "robot"
+      ]
+    },
+    {
+      "level": 5,
+      "title": "문장",
+      "mode": "sentences",
+      "goalCpm": 130,
       "items": [
         "Practice a little every day.",
         "Type slowly and keep your eyes on the screen.",
@@ -23,6 +123,51 @@
         "Keep calm and press the right keys.",
         "Small steps make big progress.",
         "Good code is easy to read."
-      ] }
+      ]
+    },
+    {
+      "level": 6,
+      "title": "긴 문장",
+      "mode": "sentences",
+      "goalCpm": 150,
+      "advanced": true,
+      "items": [
+        "A variable is like a labeled box that stores a value for later.",
+        "When the program runs, the computer reads each line from top to bottom.",
+        "Always save your work before you close the editor.",
+        "If the condition is true, the code inside the block will run.",
+        "Loops help us repeat the same task without writing it again.",
+        "Strong passwords use letters, numbers, and symbols together.",
+        "Read the error message carefully because it often tells you what went wrong.",
+        "Data becomes useful when we organize it and look for patterns.",
+        "A function is a named group of instructions that you can use many times.",
+        "Respect other people online just like you do in the classroom."
+      ]
+    },
+    {
+      "level": 7,
+      "title": "문단",
+      "mode": "paragraph",
+      "goalCpm": 170,
+      "advanced": true,
+      "items": [
+        "Computers follow instructions exactly as they are written. They never guess what we mean. That is why programmers must be clear and careful. A tiny typo, like a missing bracket, can stop the whole program.",
+        "Python was created to be easy to read. Its code often looks like plain English, so beginners can understand it quickly. Today, people use Python to build websites, analyze data, and train artificial intelligence.",
+        "Debugging is the process of finding and fixing mistakes in code. Good programmers test small parts of their program often. When something breaks, they change one thing at a time and check the result again.",
+        "The internet connects billions of devices around the world. When you send a message, it is broken into small packets. Each packet travels its own path and is put back together when it arrives."
+      ]
+    },
+    {
+      "level": 8,
+      "title": "Tech English",
+      "mode": "paragraph",
+      "goalCpm": 190,
+      "advanced": true,
+      "items": [
+        "An algorithm is a step-by-step plan to solve a problem. Sorting algorithms, such as bubble sort, compare two items at a time and swap them if they are in the wrong order. After many passes, the whole list becomes sorted.",
+        "A list in Python can hold many values in a single variable. You can add items with append(), remove them with remove(), and count them with len(). Lists start counting from zero, so the first item is at index 0.",
+        "Artificial intelligence learns from examples instead of fixed rules. If we show a model thousands of labeled pictures, it can learn to recognize cats and dogs. However, if the training data is biased, the results will be biased too."
+      ]
+    }
   ]
 }

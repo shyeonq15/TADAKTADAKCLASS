@@ -86,12 +86,12 @@ export const INTEGRITY = {
 export const PLACEMENT = {
   /** 트랙마다 몇 초씩 칠지 (4트랙 × 30초 = 2분) */
   secondsPerTrack: 30,
-  /** 타수가 이 값 이상이면 그 레벨부터 시작 (레벨 1은 항상 열림) */
+  /** 타수가 이 값 이상이면 그 레벨부터 시작 (레벨 1은 항상 열림). 마지막 값을 넘으면 심화 레벨 6부터 */
   startLevelCpm: {
-    korean: [0, 80, 140, 200, 260],
-    english: [0, 60, 100, 140, 180],
-    symbol: [0, 50, 80, 110, 140],
-    code: [0, 50, 80, 110, 140],
+    korean: [0, 80, 140, 200, 260, 320],
+    english: [0, 60, 100, 140, 180, 220],
+    symbol: [0, 50, 80, 110, 140, 170],
+    code: [0, 50, 80, 110, 140, 170],
   } as Record<Track, number[]>,
 } as const;
 

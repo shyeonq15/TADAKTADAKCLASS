@@ -4,8 +4,8 @@ import english from "./english.json";
 import korean from "./korean.json";
 import symbol from "./symbol.json";
 
-/** keys: 자리연습 · words: 낱말 · sentences: 문장 · code: 코드 따라치기 */
-export type PracticeMode = "keys" | "words" | "sentences" | "code";
+/** keys: 자리연습 · words: 낱말 · sentences: 문장 · paragraph: 문단 · code: 코드 따라치기 */
+export type PracticeMode = "keys" | "words" | "sentences" | "paragraph" | "code";
 
 export type Level = {
   level: number;
@@ -13,6 +13,8 @@ export type Level = {
   mode: PracticeMode;
   /** 레벨 통과에 필요한 타수(타/분) */
   goalCpm: number;
+  /** 심화 레벨 (6~8) */
+  advanced?: boolean;
   items: string[];
 };
 
@@ -29,6 +31,7 @@ export const MODE_LABELS: Record<PracticeMode, string> = {
   keys: "자리연습",
   words: "낱말",
   sentences: "문장",
+  paragraph: "문단",
   code: "코드",
 };
 
