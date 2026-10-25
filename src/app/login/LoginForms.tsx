@@ -9,6 +9,7 @@ const ERRORS: Record<string, string> = {
   domain: "학교 계정(@senedu.kr)으로만 들어올 수 있어요. 다른 계정이면 PIN으로 로그인해 주세요.",
   link: "로그인 링크가 만료됐거나 다른 브라우저에서 열렸어요. 다시 시도해 주세요.",
   google: "구글 로그인을 시작하지 못했어요. 잠시 뒤 다시 해 주세요.",
+  "google-off": "구글 로그인은 아직 준비 중이에요. 반 코드 + PIN으로 로그인해 주세요.",
 };
 
 type Tab = "google" | "pin" | "teacher";

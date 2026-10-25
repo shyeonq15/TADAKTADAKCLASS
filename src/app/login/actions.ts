@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { authConfig, isTeacherEmail, schoolYearOf } from "@/lib/auth/config";
 import { requestOrigin } from "@/lib/auth/origin";
@@ -10,7 +11,20 @@ import { isPin, PIN_LOCK, pinPassword } from "@/lib/auth/pin";
 export type FormState = { ok: boolean; message: string } | null;
 
 /** 학교 구글 계정으로 로그인 → 구글 → /auth/callback */
+/** Supabase에서 구글 로그인이 켜져 있는지 */
+async function googleEnabled() {
+  const { url, key } = requireSupabaseEnv();
+  try {
+    const res = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } });
+    const settings = (await res.json()) as { external?: Record<string, boolean> };
+    return !!settings.external?.google;
+  } catch {
+    return false;
+  }
+}
+
 export async function signInWithGoogle() {
+  if (!(await googleEnabled())) redirect("/login?error=google-off");
   const supabase = await createClient();
   const { allowedDomain } = authConfig();
   const { data, error } = await supabase.auth.signInWithOAuth({
