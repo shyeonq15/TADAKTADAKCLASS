@@ -32,7 +32,7 @@ export default function LoginPage() {
             <p className="font-title text-heading text-navy-900">놀러오세요..</p>
           </div>
           <Suspense>
-            <LoginForms />
+            <LoginForms showGoogle={process.env.ENABLE_GOOGLE_LOGIN === "true"} />
           </Suspense>
         </RetroWindow>
       </main>

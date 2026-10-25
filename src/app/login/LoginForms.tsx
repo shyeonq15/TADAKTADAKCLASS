@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 import { PixelButton } from "@/components/ui/PixelButton";
-import { pinLogin, sendTeacherLink, signInWithGoogle } from "./actions";
+import { pinLogin, signInWithGoogle, teacherLogin } from "./actions";
 
 const ERRORS: Record<string, string> = {
   domain: "학교 계정(@senedu.kr)으로만 들어올 수 있어요. 다른 계정이면 PIN으로 로그인해 주세요.",
@@ -14,9 +14,9 @@ const ERRORS: Record<string, string> = {
 
 type Tab = "google" | "pin" | "teacher";
 
-const TABS: { id: Tab; label: string }[] = [
+const ALL_TABS: { id: Tab; label: string }[] = [
+  { id: "pin", label: "학생 (반 코드 + PIN)" },
   { id: "google", label: "학교 구글 계정" },
-  { id: "pin", label: "반 코드 + PIN" },
   { id: "teacher", label: "선생님" },
 ];
 
@@ -42,11 +42,13 @@ function Message({ state }: { state: { ok: boolean; message: string } | null }) 
   );
 }
 
-export function LoginForms() {
+/** showGoogle: 구글 로그인을 켰을 때만 탭이 보임 (ENABLE_GOOGLE_LOGIN) */
+export function LoginForms({ showGoogle }: { showGoogle: boolean }) {
   const error = useSearchParams().get("error");
-  const [tab, setTab] = useState<Tab>("google");
+  const TABS = ALL_TABS.filter((t) => showGoogle || t.id !== "google");
+  const [tab, setTab] = useState<Tab>("pin");
   const [pinState, pinAction, pinPending] = useActionState(pinLogin, null);
-  const [mailState, mailAction, mailPending] = useActionState(sendTeacherLink, null);
+  const [teacherState, teacherAction, teacherPending] = useActionState(teacherLogin, null);
 
   return (
     <div className="px-6 pb-6">
@@ -91,15 +93,13 @@ export function LoginForms() {
         )}
 
         {tab === "teacher" && (
-          <form action={mailAction} className="flex flex-col gap-3">
-            <Field label="이메일" name="email" type="email" required autoComplete="email" />
-            <PixelButton variant="primary" type="submit" disabled={mailPending}>
-              {mailPending ? "보내는 중..." : "로그인 링크 받기"}
+          <form action={teacherAction} className="flex flex-col gap-3">
+            <Field label="이메일" name="email" type="email" required autoComplete="username" />
+            <Field label="비밀번호" name="password" type="password" required autoComplete="current-password" />
+            <PixelButton variant="primary" type="submit" disabled={teacherPending}>
+              {teacherPending ? "확인 중..." : "로그인"}
             </PixelButton>
-            <Message state={mailState} />
-            <p className="font-pixel text-small text-text-muted">
-              교사로 등록된 이메일로 로그인 링크를 보내 드려요. 학교 구글 계정이 있으면 첫 번째 탭을 써도 돼요.
-            </p>
+            <Message state={teacherState} />
           </form>
         )}
       </div>

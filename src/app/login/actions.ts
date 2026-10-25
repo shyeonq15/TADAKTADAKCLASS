@@ -7,10 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 import { authConfig, isTeacherEmail, schoolYearOf } from "@/lib/auth/config";
 import { requestOrigin } from "@/lib/auth/origin";
 import { isPin, PIN_LOCK, pinPassword } from "@/lib/auth/pin";
+import { ensureProfile } from "@/lib/auth/viewer";
 
 export type FormState = { ok: boolean; message: string } | null;
 
-/** 학교 구글 계정으로 로그인 → 구글 → /auth/callback */
+/** 학교 구글 계정으로 로그인 → 구글 → /auth/callback (지금은 꺼 둠: ENABLE_GOOGLE_LOGIN=true 로 켬) */
 /** Supabase에서 구글 로그인이 켜져 있는지 */
 async function googleEnabled() {
   const { url, key } = requireSupabaseEnv();
@@ -24,6 +25,7 @@ async function googleEnabled() {
 }
 
 export async function signInWithGoogle() {
+  if (process.env.ENABLE_GOOGLE_LOGIN !== "true") redirect("/login?error=google-off");
   if (!(await googleEnabled())) redirect("/login?error=google-off");
   const supabase = await createClient();
   const { allowedDomain } = authConfig();
@@ -39,17 +41,18 @@ export async function signInWithGoogle() {
   redirect(data.url);
 }
 
-/** 교사: 이메일로 로그인 링크 받기 (TEACHER_EMAILS 에 있는 주소만) */
-export async function sendTeacherLink(_: FormState, formData: FormData): Promise<FormState> {
+/** 교사: 이메일 + 비밀번호 (계정은 터미널에서 npm run teacher:create 로 만듦) */
+export async function teacherLogin(_: FormState, formData: FormData): Promise<FormState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!isTeacherEmail(email)) return { ok: false, message: "교사로 등록된 이메일이 아니에요." };
+  const password = String(formData.get("password") ?? "");
+  const fail = { ok: false, message: "이메일이나 비밀번호가 맞지 않아요." };
+  if (!isTeacherEmail(email) || !password) return fail;
+
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${await requestOrigin()}/auth/callback` },
-  });
-  if (error) return { ok: false, message: `메일을 보내지 못했어요. 잠시 뒤 다시 해 주세요. (${error.message})` };
-  return { ok: true, message: "메일함에서 로그인 링크를 눌러 주세요. 이 브라우저에서 열어야 해요." };
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.user) return fail;
+  await ensureProfile(data.user);
+  redirect("/teacher");
 }
 
 /** 학생: 반 코드 + 번호 + PIN */
