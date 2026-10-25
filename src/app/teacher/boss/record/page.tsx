@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ClientOnly } from "@/components/ui/ClientOnly";
 import { Loading } from "@/components/ui/Loading";
@@ -5,6 +6,7 @@ import { requireTeacher } from "@/lib/auth/viewer";
 import { BossRecorder } from "./BossRecorder";
 
 async function Gate() {
+  await connection(); // 로그인은 요청마다 새로 확인
   await requireTeacher();
   return (
     <ClientOnly fallback={<Loading />}>

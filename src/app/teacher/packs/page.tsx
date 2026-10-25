@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { TRACK_LABELS, type Track } from "@/config/game";
@@ -8,6 +9,7 @@ import { requireTeacher } from "@/lib/auth/viewer";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 async function Packs() {
+  await connection(); // 로그인은 요청마다 새로 확인
   const t = await requireTeacher();
   const { data: packs } = await createAdminClient()
     .from("packs")

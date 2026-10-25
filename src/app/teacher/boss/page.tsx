@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { TRACK_LABELS } from "@/config/game";
 import { Loading } from "@/components/ui/Loading";
@@ -8,6 +9,7 @@ import { listBosses } from "@/lib/games/boss";
 import { deleteBoss, toggleBoss } from "./actions";
 
 async function Bosses() {
+  await connection(); // 로그인은 요청마다 새로 확인
   const t = await requireTeacher();
   const bosses = await listBosses(t.userId, t.schoolId, true);
 
