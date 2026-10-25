@@ -217,10 +217,7 @@ export function BossGame({ bosses }: { bosses: BossSummary[] }) {
         </p>
       </div>
       <RetroWindow title="보스전 결과">
-        <div className="flex gap-2">
-          <StatCard label="내 시간" value={`${(r.durationMs / 1000).toFixed(1)}초`} />
-          <StatCard label="보스 시간" value={`${(r.bossDurationMs / 1000).toFixed(1)}초`} />
-        </div>
+        {r.completed && <BossCompare me={r.durationMs} boss={r.bossDurationMs} win={r.win} />}
         <div className="mt-2 flex gap-2">
           <StatCard label="타수" value={r.cpm} unit="타/분" />
           <StatCard label="정확도" value={`${r.accuracy}%`} />
@@ -251,6 +248,47 @@ export function BossGame({ bosses }: { bosses: BossSummary[] }) {
         <PixelLink href="/games" variant="ghost">
           게임 목록
         </PixelLink>
+      </div>
+    </div>
+  );
+}
+
+/** 나 vs 보스: 시간을 크게 나란히, 차이는 가운데에 더 크게. 막대는 짧을수록 빨라요 */
+function BossCompare({ me, boss, win }: { me: number; boss: number; win: boolean }) {
+  const gap = Math.abs(me - boss) / 1000;
+  const longest = Math.max(me, boss, 1);
+  const rows = [
+    { who: "나", ms: me, color: win ? "bg-lime-400" : "bg-sky-500" },
+    { who: "보스", ms: boss, color: "bg-pink-400" },
+  ];
+  return (
+    <div className="win-bevel-pressed bg-paper px-4 py-4">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center text-center">
+        <div>
+          <p className="font-pixel text-body font-bold text-navy-900">나</p>
+          <p className="font-title text-[44px] leading-tight text-navy-900">{(me / 1000).toFixed(1)}초</p>
+        </div>
+        <p className="px-4 font-title text-title text-navy-700">VS</p>
+        <div>
+          <p className="font-pixel text-body font-bold text-navy-900">보스</p>
+          <p className="font-title text-[44px] leading-tight text-navy-900">{(boss / 1000).toFixed(1)}초</p>
+        </div>
+      </div>
+      <p
+        className={`mx-auto mt-3 w-fit border-2 border-navy-900 px-4 py-1 text-center font-title text-[32px] leading-tight text-navy-900 ${win ? "bg-lime-400" : "bg-yellow-400"}`}
+      >
+        {win ? `${gap.toFixed(1)}초 빨랐다!` : `${gap.toFixed(1)}초만 더 빠르면 승리!`}
+      </p>
+      <div className="mt-4 flex flex-col gap-2" aria-hidden>
+        {rows.map((row) => (
+          <div key={row.who} className="flex items-center gap-2 font-pixel text-small text-navy-900">
+            <span className="w-8 shrink-0 font-bold">{row.who}</span>
+            <div className="h-5 flex-1 border-2 border-navy-900 bg-cream">
+              <div className={`h-full ${row.color}`} style={{ width: `${(row.ms / longest) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+        <p className="text-right font-pixel text-small text-text-muted">막대가 짧을수록 빨라요</p>
       </div>
     </div>
   );
