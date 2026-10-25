@@ -1,0 +1,214 @@
+{
+  "_comment": "코드 트랙 지문 설명. 키는 레벨, 배열 순서는 code.json 의 items 순서와 같아요. lines 는 줄마다 짧은 풀이, blank 는 빈칸 채우기에서 가릴 부분(그 줄에서 처음 나오는 곳).",
+  "1": [
+    {
+      "concept": "print 출력",
+      "explain": "print()는 괄호 안의 내용을 화면에 보여 줘요. 따옴표가 있으면 글자 그대로, 없으면 계산한 결과를 보여 줘요.",
+      "lines": ["따옴표 안의 글자를 그대로 출력", "두 번째 줄도 글자 그대로", "따옴표가 없으니 1 + 2를 계산한 3을 출력"],
+      "output": "Hello, World!\nNice to meet you\n3",
+      "choices": ["Hello, World!\nNice to meet you\n1 + 2", "\"Hello, World!\"\n\"Nice to meet you\"\n3", "Hello, World! Nice to meet you 3"],
+      "blank": { "line": 2, "text": "1 + 2" }
+    },
+    {
+      "concept": "계산과 글자 이어 붙이기",
+      "explain": "숫자끼리 *는 곱하기예요. 글자끼리 +를 하면 두 글자를 이어 붙여요.",
+      "lines": ["글자 Python 출력", "*는 곱하기 → 12", "글자 + 글자는 이어 붙이기 → ab"],
+      "output": "Python\n12\nab",
+      "choices": ["Python\n3 * 4\na + b", "Python\n12\na b", "Python\n34\nab"],
+      "blank": { "line": 1, "text": "*" }
+    },
+    {
+      "concept": "print 출력",
+      "explain": "띄어쓰기도 글자라서 그대로 출력돼요. 따옴표 없는 식은 계산해서 보여 줘요.",
+      "lines": ["띄어쓰기까지 그대로 출력", "-는 빼기 → 3", "마지막 인사 출력"],
+      "output": "tadak tadak\n3\nbye",
+      "choices": ["tadak tadak\n10 - 7\nbye", "tadak\ntadak\n3\nbye", "tadak tadak\n17\nbye"],
+      "blank": { "line": 1, "text": "10 - 7" }
+    }
+  ],
+  "2": [
+    {
+      "concept": "변수와 입력",
+      "explain": "input()은 키보드로 입력한 글자를 받아요. 받은 값을 변수에 저장해 두었다가 나중에 꺼내 쓸 수 있어요.",
+      "lines": ["입력한 글자를 받아 변수 name에 저장", "변수 age에 숫자 14 저장", "쉼표로 여러 값을 출력하면 사이에 띄어쓰기가 들어가요"],
+      "question": "name: 다음에 Kim을 입력했어요. 마지막 줄에 출력되는 것은?",
+      "output": "Kim 14",
+      "choices": ["name age", "Kim,14", "name 14"],
+      "blank": { "line": 0, "text": "input" }
+    },
+    {
+      "concept": "변수와 연산",
+      "explain": "변수에 숫자를 넣고 계산할 수 있어요. %는 나눈 나머지를 구해요.",
+      "lines": ["a에 10 저장", "b에 3 저장", "더하기 → 13", "10을 3으로 나눈 나머지 → 1"],
+      "output": "13\n1",
+      "choices": ["13\n3", "13\n3.33", "10 + 3\n10 % 3"],
+      "blank": { "line": 3, "text": "%" }
+    },
+    {
+      "concept": "변수와 연산",
+      "explain": "계산한 결과도 변수에 저장할 수 있어요. 직사각형의 넓이를 구하는 코드예요.",
+      "lines": ["가로 4", "세로 5", "가로 × 세로를 area에 저장", "area에 든 값을 출력"],
+      "output": "20",
+      "choices": ["9", "area", "width * height"],
+      "blank": { "line": 2, "text": "width * height" }
+    }
+  ],
+  "3": [
+    {
+      "concept": "조건문 if-else",
+      "explain": "if 뒤의 조건이 참이면 들여쓴 줄을 실행하고, 거짓이면 else 아래를 실행해요.",
+      "lines": ["점수 85 저장", "85는 80 이상인가? → 참", "조건이 참이라 실행", "조건이 거짓일 때만 가는 곳", "이번에는 실행 안 됨"],
+      "output": "great",
+      "choices": ["good", "great\ngood", "85"],
+      "blank": { "line": 1, "text": ">=" }
+    },
+    {
+      "concept": "조건문과 나머지",
+      "explain": "2로 나눈 나머지가 0이면 짝수, 아니면 홀수예요. int()는 입력한 글자를 숫자로 바꿔요.",
+      "lines": ["입력한 글자를 숫자로 바꿔 x에 저장", "2로 나눈 나머지가 0이면 (짝수)", "짝수일 때 출력", "그렇지 않으면", "홀수일 때 출력"],
+      "question": "7을 입력하면 무엇이 출력될까요?",
+      "output": "odd",
+      "choices": ["even", "7", "1"],
+      "blank": { "line": 1, "text": "== 0" }
+    },
+    {
+      "concept": "조건문 elif",
+      "explain": "elif는 '그렇지 않고 만약'이에요. 위의 조건이 거짓일 때만 다음 조건을 검사해요.",
+      "lines": ["기온 30 저장", "28보다 큰가? → 참", "그래서 hot 출력", "위 조건이 거짓일 때만 검사", "5보다 작을 때 출력"],
+      "output": "hot",
+      "choices": ["cold", "hot\ncold", "아무것도 출력되지 않아요"],
+      "blank": { "line": 3, "text": "elif" }
+    }
+  ],
+  "4": [
+    {
+      "concept": "for 반복문",
+      "explain": "range(5)는 0, 1, 2, 3, 4를 차례로 만들어요. for는 그 값을 하나씩 i에 넣으며 들여쓴 줄을 반복해요.",
+      "lines": ["0부터 4까지 i에 하나씩", "들여쓴 줄을 5번 반복", "들여쓰기가 없으니 반복이 끝난 뒤 한 번만"],
+      "output": "0\n1\n2\n3\n4\ndone",
+      "choices": ["1\n2\n3\n4\n5\ndone", "0\n1\n2\n3\n4\n5\ndone", "0 1 2 3 4\ndone"],
+      "blank": { "line": 0, "text": "range" }
+    },
+    {
+      "concept": "반복하며 더하기",
+      "explain": "합계를 0에서 시작해서 리스트의 수를 하나씩 더해요. total += n 은 total = total + n 과 같아요.",
+      "lines": ["합계를 0으로 시작", "리스트의 수를 하나씩 n에", "합계에 n 더하기", "다 더한 합계 출력"],
+      "output": "10",
+      "choices": ["4", "1234", "0"],
+      "blank": { "line": 2, "text": "+=" }
+    },
+    {
+      "concept": "while 반복문",
+      "explain": "while은 조건이 참인 동안 계속 반복해요. 값을 줄이지 않으면 영원히 끝나지 않으니 조심해요!",
+      "lines": ["3부터 시작", "count가 0보다 클 동안 반복", "지금 숫자 출력", "1씩 줄이기", "반복이 끝나면 출력"],
+      "output": "3\n2\n1\nstart!",
+      "choices": ["3\n2\n1\n0\nstart!", "1\n2\n3\nstart!", "start!"],
+      "blank": { "line": 3, "text": "-= 1" }
+    }
+  ],
+  "5": [
+    {
+      "concept": "함수 def",
+      "explain": "def로 함수를 만들어 두면 이름으로 불러 쓸 수 있어요. return은 결과를 돌려줘요.",
+      "lines": ["a, b를 받는 add 함수 만들기", "a + b를 돌려줌", "add(2, 3)의 결과를 출력"],
+      "output": "5",
+      "choices": ["23", "add(2, 3)", "a + b"],
+      "blank": { "line": 1, "text": "return" }
+    },
+    {
+      "concept": "리스트와 반복",
+      "explain": "리스트는 여러 값을 한 변수에 담아요. append()는 맨 뒤에 추가하고, upper()는 대문자로 바꿔요.",
+      "lines": ["과일 2개가 든 리스트", "melon을 맨 뒤에 추가", "과일을 하나씩 f에", "대문자로 바꿔 출력"],
+      "output": "APPLE\nKIWI\nMELON",
+      "choices": ["apple\nkiwi\nmelon", "APPLE\nKIWI", "MELON\nAPPLE\nKIWI"],
+      "blank": { "line": 1, "text": "append" }
+    },
+    {
+      "concept": "참과 거짓을 돌려주는 함수",
+      "explain": "비교한 결과는 True(참) 또는 False(거짓)예요. 함수가 그 값을 그대로 돌려줄 수 있어요.",
+      "lines": ["짝수인지 알려 주는 함수", "나머지가 0이면 True, 아니면 False", "4는 짝수"],
+      "output": "True",
+      "choices": ["False", "0", "4"],
+      "blank": { "line": 1, "text": "% 2 == 0" }
+    }
+  ],
+  "6": [
+    {
+      "concept": "리스트 평균 구하기",
+      "explain": "리스트의 값을 모두 더한 뒤 개수로 나누면 평균이에요. len()은 리스트의 개수를 알려 줘요.",
+      "lines": ["점수 4개", "합계 0부터", "점수를 하나씩 꺼내", "합계에 더하기", "합계 ÷ 개수 = 평균", "평균 출력"],
+      "output": "average: 83.25",
+      "choices": ["average: 333", "average: 83", "average: 4"],
+      "blank": { "line": 4, "text": "len" }
+    },
+    {
+      "concept": "리스트 추가·삭제·enumerate",
+      "explain": "append()는 추가, remove()는 삭제예요. enumerate()는 번호(0부터)와 값을 함께 꺼내요.",
+      "lines": ["과일 2개", "cherry를 맨 뒤에 추가", "banana를 지움", "번호와 과일을 함께 꺼내", "번호와 과일 출력", "남은 개수 출력"],
+      "output": "0 apple\n1 cherry\n2",
+      "choices": ["1 apple\n2 cherry\n2", "0 apple\n1 banana\n2 cherry\n3", "0 apple\n1 cherry\n3"],
+      "blank": { "line": 3, "text": "enumerate" }
+    },
+    {
+      "concept": "정렬과 인덱스",
+      "explain": "sort()는 작은 것부터 정렬해요. [0]은 첫 번째, [-1]은 마지막 값이에요. [ ... for ... if ... ]로 조건에 맞는 값만 골라 새 리스트를 만들 수 있어요.",
+      "lines": ["숫자 4개", "작은 것부터 정렬", "정렬된 리스트 출력", "첫 번째와 마지막 값", "4보다 큰 수만 골라 새 리스트", "골라낸 리스트 출력"],
+      "output": "[1, 3, 6, 8]\n1 8\n[6, 8]",
+      "choices": ["[3, 8, 1, 6]\n3 6\n[8, 6]", "[1, 3, 6, 8]\n1 6\n[6, 8]", "[8, 6, 3, 1]\n8 1\n[8, 6]"],
+      "blank": { "line": 1, "text": "sort" }
+    }
+  ],
+  "7": [
+    {
+      "concept": "딕셔너리",
+      "explain": "딕셔너리는 '키: 값' 짝으로 저장해요. for로 돌리면 키가 하나씩 나오고, [키]로 값을 꺼내요.",
+      "lines": ["이름과 나이를 키: 값으로 저장", "새 키 score를 추가", "키를 하나씩 꺼내", "키와 그 값을 출력"],
+      "output": "name Kim\nage 14\nscore 92",
+      "choices": ["Kim\n14\n92", "name\nage\nscore", "name Kim\nage 14"],
+      "blank": { "line": 1, "text": "[\"score\"]" }
+    },
+    {
+      "concept": "문자열 반복과 in",
+      "explain": "문자열도 for로 한 글자씩 꺼낼 수 있어요. in은 '안에 들어 있는지'를 확인해요.",
+      "lines": ["단어 저장", "모음 개수 0부터", "한 글자씩 ch에", "ch가 모음 중 하나라면", "개수 1 늘리기", "대문자 단어와 모음 개수 출력"],
+      "output": "PYTHON 1",
+      "choices": ["PYTHON 2", "python 1", "PYTHON 6"],
+      "blank": { "line": 3, "text": "in" }
+    },
+    {
+      "concept": "split과 join",
+      "explain": "split()은 글자를 잘라 리스트로, join()은 리스트를 이어 붙여 글자로 만들어요.",
+      "lines": ["쉼표로 이어진 글자", "쉼표에서 잘라 리스트로", "리스트의 개수 출력", "-로 이어 붙여 출력"],
+      "output": "3\nred-green-blue",
+      "choices": ["1\nred,green,blue", "3\nred green blue", "14\nred-green-blue"],
+      "blank": { "line": 1, "text": "split" }
+    }
+  ],
+  "8": [
+    {
+      "concept": "숫자 맞히기 게임",
+      "explain": "while True는 끝없이 반복하고, break를 만나면 멈춰요. 입력한 수가 정답보다 작으면 up, 크면 down을 알려 줘요.",
+      "lines": ["정답 7", "시도 횟수 0", "끝없이 반복 (break로 멈춤)", "숫자 입력받기", "시도 1 늘리기", "정답보다 작으면", "더 크게 → up", "정답보다 크면", "더 작게 → down", "같으면", "정답과 시도 횟수 출력", "반복 멈추기"],
+      "question": "5, 9, 7을 차례로 입력했어요. 마지막에 출력되는 것은?",
+      "output": "correct! 3",
+      "choices": ["correct! 7", "up", "correct! 1"],
+      "blank": { "line": 11, "text": "break" }
+    },
+    {
+      "concept": "등급을 돌려주는 함수",
+      "explain": "if-elif-else로 점수 구간을 나누고, 함수가 등급을 돌려줘요. 위에서부터 차례로 검사해요.",
+      "lines": ["점수를 받아 등급을 돌려주는 함수", "90 이상이면", "A를 돌려줌", "80 이상이면 (90 미만)", "B를 돌려줌", "나머지는", "C를 돌려줌", "점수 3개를 하나씩", "점수와 등급 출력"],
+      "output": "95 A\n83 B\n61 C",
+      "choices": ["95 A\n83 A\n61 C", "A\nB\nC", "95 B\n83 B\n61 C"],
+      "blank": { "line": 3, "text": "elif" }
+    },
+    {
+      "concept": "단어 세기",
+      "explain": "딕셔너리에 단어별 개수를 모아요. 처음 나온 단어는 1로, 이미 있던 단어는 1을 더해요.",
+      "lines": ["문장 저장", "단어별 개수를 담을 빈 딕셔너리", "띄어쓰기로 잘라 단어를 하나씩", "이미 나온 단어라면", "개수 1 더하기", "처음 나온 단어라면", "1로 시작", "결과 출력"],
+      "output": "{'the': 2, 'cat': 1, 'and': 1, 'dog': 1}",
+      "choices": ["{'the': 1, 'cat': 1, 'and': 1, 'dog': 1}", "{'the': 2, 'cat': 1, 'and': 1, 'the': 2, 'dog': 1}", "5"],
+      "blank": { "line": 3, "text": "in counts" }
+    }
+  ]
+}

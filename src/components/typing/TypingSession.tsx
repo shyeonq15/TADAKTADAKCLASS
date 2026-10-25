@@ -16,7 +16,7 @@ import {
   type SessionStats,
 } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
-import { TypingArea } from "./TypingArea";
+import { TypingArea, type Mask } from "./TypingArea";
 
 export type SessionResult = {
   stats: SessionStats;
@@ -31,6 +31,8 @@ type Props = {
   track: Track;
   /** 제한 시간(초). 배치 테스트처럼 시간이 다 되면 끝 */
   timeLimitSec?: number;
+  /** 빈칸 채우기에서 가릴 곳 */
+  mask?: Mask;
   onFinish: (result: SessionResult) => void;
 };
 
@@ -40,7 +42,7 @@ const fmtTime = (ms: number) => {
 };
 
 /** 실시간 타수·정확도·진행률 + TypingArea. 한 판이 끝나면 onFinish를 한 번 부릅니다. */
-export function TypingSession({ lines, track, timeLimitSec, onFinish }: Props) {
+export function TypingSession({ lines, track, timeLimitSec, mask, onFinish }: Props) {
   const code = track === "code";
   const [session, setSession] = useState<SessionState>(() => createSession(lines, { autoIndent: code }));
   const [now, setNow] = useState(() => Date.now());
@@ -98,6 +100,7 @@ export function TypingSession({ lines, track, timeLimitSec, onFinish }: Props) {
       <TypingArea
         session={session}
         code={code}
+        mask={mask}
         onInput={(value, composing) => {
           const r = applyInput(ref.current, value, composing, Date.now());
           if (r.blocked) setBlockedAt(Date.now());

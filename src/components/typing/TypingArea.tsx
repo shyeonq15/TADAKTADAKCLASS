@@ -17,9 +17,13 @@ const CHAR_CLASS: Record<CharState, string> = {
 /** 남은 줄은 몇 줄까지 미리 보여줄지 */
 const LOOKAHEAD = 3;
 
+/** 빈칸 채우기: 이 줄의 이 칸들은 칠 때까지 "_"로 가림 */
+export type Mask = { line: number; start: number; length: number };
+
 type Props = {
   session: SessionState;
   code: boolean;
+  mask?: Mask;
   onInput: (value: string, composing: boolean) => void;
   onKey: () => void;
   onBlocked: () => void;
@@ -33,11 +37,14 @@ function Line({
   states,
   code,
   number,
+  hide,
 }: {
   text: string;
   states: CharState[];
   code: boolean;
   number?: number;
+  /** 가릴 칸 [시작, 끝) */
+  hide?: [number, number];
 }) {
   const indent = code ? (text.match(/^ */)?.[0].length ?? 0) : 0;
   return (
@@ -47,11 +54,12 @@ function Line({
         {[...text].map((ch, i) => {
           const state = states[i];
           const spaceError = ch === " " && state === "error";
+          const hidden = hide && i >= hide[0] && i < hide[1] && (state === "pending" || state === "current" || state === "composing");
           // 들여쓰기 칸: 4칸마다 연한 점선 가이드
           const guide = i < indent && i % 4 === 0 ? "border-l-2 border-dotted border-sky-300" : "";
           return (
             <span key={i} className={`${CHAR_CLASS[state]} ${guide} ${spaceError ? "bg-[var(--typing-space-error)]" : ""}`}>
-              {spaceError ? "·" : ch}
+              {hidden ? "_" : spaceError ? "·" : ch}
             </span>
           );
         })}
@@ -60,7 +68,9 @@ function Line({
   );
 }
 
-export function TypingArea({ session, code, onInput, onKey, onBlocked, disabled }: Props) {
+export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, disabled }: Props) {
+  const hideFor = (i: number): [number, number] | undefined =>
+    mask && mask.line === i ? [mask.start, mask.start + mask.length] : undefined;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
 
@@ -135,7 +145,7 @@ export function TypingArea({ session, code, onInput, onKey, onBlocked, disabled 
           if (i === lineIndex) {
             return (
               <div key={i} className="my-1">
-                <Line text={text} states={lineStates(text, typed, composing)} code={code} number={i + 1} />
+                <Line text={text} states={lineStates(text, typed, composing)} code={code} number={i + 1} hide={hideFor(i)} />
                 {/* 내가 친 글자 */}
                 <div className="flex border-b-2 border-dashed border-sky-300">
                   {code && <span className="w-10 shrink-0" />}
@@ -148,7 +158,7 @@ export function TypingArea({ session, code, onInput, onKey, onBlocked, disabled 
               </div>
             );
           }
-          return <Line key={i} text={text} states={[...text].map(() => "pending")} code={code} number={i + 1} />;
+          return <Line key={i} text={text} states={[...text].map(() => "pending")} code={code} number={i + 1} hide={hideFor(i)} />;
         })}
       </div>
     </div>

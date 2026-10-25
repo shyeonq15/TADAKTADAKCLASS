@@ -68,11 +68,18 @@ export function TrackMap() {
                   <TierHelp />
                 </HelpButton>
               </div>
-              {weak.length > 0 && (
-                <PixelLink href={`/practice/weak/${track}`} size="sm" variant="reward">
-                  약한 키 연습 · {weak.map((w) => w.key).join(" ")}
-                </PixelLink>
-              )}
+              <div className="flex gap-2">
+                {track === "code" && (
+                  <PixelLink href="/practice/blank" size="sm" variant="primary">
+                    🧩 빈칸 채우기
+                  </PixelLink>
+                )}
+                {weak.length > 0 && (
+                  <PixelLink href={`/practice/weak/${track}`} size="sm" variant="reward">
+                    약한 키 연습 · {weak.map((w) => w.key).join(" ")}
+                  </PixelLink>
+                )}
+              </div>
             </div>
 
             {/* 길 */}

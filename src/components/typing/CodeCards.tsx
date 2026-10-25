@@ -1,0 +1,137 @@
+"use client";
+
+import { useState } from "react";
+import type { CodeNote } from "@/data/codeNotes";
+import { PixelButton } from "@/components/ui/PixelButton";
+import { RetroWindow } from "@/components/ui/RetroWindow";
+import type { Mask } from "./TypingArea";
+
+/** 치기 전: 이 코드가 하는 일 + 줄마다 풀이 */
+export function CodeExplainCard({
+  lines,
+  note,
+  mask,
+  onStart,
+}: {
+  lines: string[];
+  note: CodeNote;
+  mask?: Mask;
+  onStart: () => void;
+}) {
+  return (
+    <RetroWindow title={mask ? "빈칸 채우기 - 코드 설명" : "코드 설명 카드"} className="mx-auto w-full max-w-4xl">
+      <div className="flex flex-col gap-4">
+        <p className="flex items-center gap-3 font-pixel text-body">
+          <span className="bg-ink px-2 py-1 font-title text-small text-paper">개념</span>
+          <strong className="text-heading">{note.concept}</strong>
+        </p>
+        <p className="font-pixel text-body leading-7">{note.explain}</p>
+        <table className="w-full border-3 border-navy-900 bg-surface">
+          <tbody>
+            {lines.map((line, i) => {
+              const hidden =
+                mask && mask.line === i
+                  ? line.slice(0, mask.start) + "_".repeat(mask.length) + line.slice(mask.start + mask.length)
+                  : line;
+              return (
+                <tr key={i} className="border-b border-sky-200 align-top">
+                  <td className="w-8 select-none px-2 py-1 text-right font-typing text-small text-text-muted">{i + 1}</td>
+                  <td className="whitespace-pre px-2 py-1 font-typing text-body text-navy-900">{hidden}</td>
+                  <td className="px-2 py-1 font-pixel text-small text-navy-700">{note.lines[i] ? `← ${note.lines[i]}` : ""}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {mask && (
+          <p className="font-pixel text-small text-navy-900">
+            💡 <strong>____</strong> 부분은 가려져 있어요. 풀이를 보고 무엇이 들어갈지 생각하며 쳐 보세요. 틀리면 빨간색으로 알려 줘요.
+          </p>
+        )}
+        <div className="flex justify-center">
+          <PixelButton variant="success" autoFocus onClick={onStart}>
+            ▶ 이해했어요, 타자 시작 (Enter)
+          </PixelButton>
+        </div>
+      </div>
+    </RetroWindow>
+  );
+}
+
+/** 치고 나서: 실행하면 무엇이 나올까? (4지선다) */
+export function CodeQuizCard({
+  lines,
+  note,
+  choices,
+  onDone,
+}: {
+  lines: string[];
+  note: CodeNote;
+  /** 섞인 보기 4개 (정답 포함) */
+  choices: string[];
+  onDone: (correct: boolean) => void;
+}) {
+  const [picked, setPicked] = useState<number | null>(null);
+  const answered = picked !== null;
+  const correct = answered && choices[picked] === note.output;
+
+  return (
+    <RetroWindow title="결과 맞히기" className="mx-auto w-full max-w-3xl">
+      <div className="flex flex-col gap-4">
+        <pre className="border-3 border-navy-900 bg-surface px-4 py-3 font-typing text-body text-navy-900">{lines.join("\n")}</pre>
+        <p className="font-pixel text-heading">Q. {note.question ?? "이 코드를 실행하면 무엇이 출력될까요?"}</p>
+        <div className="grid gap-2 md:grid-cols-2">
+          {choices.map((c, i) => {
+            const isAnswer = c === note.output;
+            const style = !answered
+              ? "win-bevel"
+              : isAnswer
+                ? "border-3 border-navy-900 bg-lime-400"
+                : i === picked
+                  ? "border-3 border-red-500 bg-[var(--typing-space-error)]"
+                  : "border-3 border-win-shadow bg-paper opacity-60";
+            return (
+              <button
+                key={i}
+                type="button"
+                disabled={answered}
+                autoFocus={i === 0}
+                onClick={() => setPicked(i)}
+                className={`flex items-start gap-3 px-3 py-2 text-left ${style}`}
+              >
+                <span className="font-title text-body">{i + 1}</span>
+                <pre className="whitespace-pre-wrap font-typing text-body text-navy-900">{c}</pre>
+              </button>
+            );
+          })}
+        </div>
+        {answered && (
+          <div className="flex flex-col gap-3">
+            <p className={`font-pixel text-heading ${correct ? "text-lime-800" : "text-red-500"}`}>
+              {correct ? "> 정답! 코드를 읽는 눈이 생겼다!" : "> 아쉬워요! 다음엔 맞힐 수 있어요."}
+            </p>
+            <div>
+              <p className="font-pixel text-small text-text-muted">실제 출력</p>
+              <pre className="bg-ink px-4 py-3 font-typing text-body text-lime-400">{note.output}</pre>
+            </div>
+            <div className="flex justify-center">
+              <PixelButton variant="success" autoFocus onClick={() => onDone(correct)}>
+                계속하기 ▶
+              </PixelButton>
+            </div>
+          </div>
+        )}
+      </div>
+    </RetroWindow>
+  );
+}
+
+/** 보기 섞기 (정답 + 오답 3개) */
+export function quizChoices(note: CodeNote) {
+  const all = [note.output, ...note.choices];
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  return all;
+}

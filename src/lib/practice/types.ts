@@ -1,6 +1,7 @@
 // 연습 기록·진행 상황 타입. 서버와 화면이 같이 씁니다.
 
 import type { Tier, Track } from "@/config/game";
+import type { CodeNote } from "@/data/codeNotes";
 import type { PracticeMode } from "@/data/packs";
 import type { IntegrityFlag } from "@/lib/typing/integrity";
 
@@ -12,7 +13,7 @@ export type Attempt = {
   track: Track;
   level: number;
   /** 게임이면 게임 이름 (rain …) */
-  mode: PracticeMode | "weak" | "placement" | "rain";
+  mode: PracticeMode | "weak" | "placement" | "rain" | "blank";
   cpm: number;
   accuracy: number;
   keystrokes: number;
@@ -83,10 +84,17 @@ export type RoundRequest =
   | { kind: "weak"; track: Track }
   | { kind: "mission"; track: Track; level: number; weak?: boolean; packId?: string }
   | { kind: "pack"; track: Track; packId: string }
+  /** 코드 빈칸 채우기 */
+  | { kind: "blank"; track: Track; level: number }
   | { kind: "placement"; track: Track };
 
-/** 서버가 내준 지문 + 서명된 표 */
-export type IssuedRound = { lines: string[]; token: string };
+/** 서버가 내준 지문 + 서명된 표 (+ 코드면 설명 카드, 빈칸이면 가릴 곳) */
+export type IssuedRound = {
+  lines: string[];
+  token: string;
+  note?: CodeNote;
+  mask?: { line: number; start: number; length: number };
+};
 
 /** 한 판이 끝나고 서버로 보내는 내용. 타수·정확도는 서버가 다시 계산합니다. */
 export type RoundSubmission = {

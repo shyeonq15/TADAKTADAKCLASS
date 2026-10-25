@@ -40,6 +40,12 @@ function packIntoLines(items: readonly string[], width: number, lineCount: numbe
 /** 문장이 화면 폭보다 길면 띄어쓰기에서 줄을 나눔 */
 const wrapLines = (track: Track, texts: readonly string[]) => splitPassage(texts.join("\n"), track).rounds.flat();
 
+/** 코드 지문 하나 고르기 (설명 카드를 붙이려고 몇 번째인지도 알려 줌) */
+export function pickCode(level: Level) {
+  const index = Math.floor(Math.random() * level.items.length);
+  return { index, lines: level.items[index].split("\n").map((l) => l.trimEnd()) };
+}
+
 export function buildRound(track: Track, level: Level): string[] {
   switch (level.mode) {
     case "keys":

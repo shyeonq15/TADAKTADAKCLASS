@@ -11,7 +11,10 @@ import { useSetPracticeData, type SaveResult } from "@/lib/practice/store";
 import { safeCall } from "@/lib/practice/call";
 import { toSubmission } from "@/lib/practice/submission";
 import type { RoundRequest } from "@/lib/practice/types";
+import type { CodeNote } from "@/data/codeNotes";
+import { CodeExplainCard, CodeQuizCard, quizChoices } from "./CodeCards";
 import { ResultPanel } from "./ResultPanel";
+import type { Mask } from "./TypingArea";
 import { TypingSession, type SessionResult } from "./TypingSession";
 
 type Props = {
@@ -29,8 +32,10 @@ type Props = {
 type Phase =
   | { name: "ready" }
   | { name: "loading" }
-  | { name: "typing"; lines: string[]; token: string }
+  | { name: "explain"; lines: string[]; token: string; note: CodeNote; mask?: Mask }
+  | { name: "typing"; lines: string[]; token: string; note?: CodeNote; mask?: Mask }
   | { name: "saving" }
+  | { name: "quiz"; save: SaveResult; lines: string[]; note: CodeNote; choices: string[] }
   | { name: "result"; save: SaveResult }
   | { name: "error"; message: string };
 
@@ -44,7 +49,9 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   const fetchRound = async () => {
     const res = await safeCall(() => startRound(request));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
-    setPhase({ name: "typing", lines: res.lines, token: res.token });
+    // 코드면 설명 카드부터
+    if (res.note) setPhase({ name: "explain", lines: res.lines, token: res.token, note: res.note, mask: res.mask });
+    else setPhase({ name: "typing", lines: res.lines, token: res.token });
   };
 
   const start = () => {
@@ -60,13 +67,19 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFinish = async (lines: string[], token: string, r: SessionResult) => {
+  const finishSave = (save: SaveResult) => {
+    if (onSaved) onSaved(save);
+    else setPhase({ name: "result", save });
+  };
+
+  const handleFinish = async (lines: string[], token: string, r: SessionResult, note?: CodeNote) => {
     setPhase({ name: "saving" });
     const res = await safeCall(() => submitRound(toSubmission(token, lines, r)));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     setData(res.data);
-    if (onSaved) onSaved(res.save);
-    else setPhase({ name: "result", save: res.save });
+    // 코드면 결과 맞히기 퀴즈를 거쳐서
+    if (note) setPhase({ name: "quiz", save: res.save, lines, note, choices: quizChoices(note) });
+    else finishSave(res.save);
   };
 
   const windowTitle = `${TRACK_LABELS[track]} - ${title}`;
@@ -103,6 +116,15 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
     );
   }
 
+  if (phase.name === "explain") {
+    const { lines, token, note, mask } = phase;
+    return <CodeExplainCard lines={lines} note={note} mask={mask} onStart={() => setPhase({ name: "typing", lines, token, note, mask })} />;
+  }
+
+  if (phase.name === "quiz") {
+    return <CodeQuizCard lines={phase.lines} note={phase.note} choices={phase.choices} onDone={() => finishSave(phase.save)} />;
+  }
+
   if (phase.name === "typing") {
     return (
       <RetroWindow title={windowTitle} className="mx-auto w-full max-w-4xl">
@@ -110,7 +132,8 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           key={phase.token}
           lines={phase.lines}
           track={track}
-          onFinish={(r) => handleFinish(phase.lines, phase.token, r)}
+          mask={phase.mask}
+          onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}
         />
       </RetroWindow>
     );

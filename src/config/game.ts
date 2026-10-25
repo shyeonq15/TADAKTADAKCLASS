@@ -65,6 +65,8 @@ export const TIER_RULES = {
 
 /** 선생님 연습팩 기록의 레벨 값 (성장 점수 기준값을 선생님 연습끼리 비교) */
 export const PACK_LEVEL = -100;
+/** 코드 빈칸 채우기 기록의 레벨 값 */
+export const BLANK_LEVEL = -200;
 
 /* ── 연습 레벨 ── */
 export const LEVEL_CLEAR = {
