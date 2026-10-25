@@ -9,6 +9,8 @@ import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
+import { GrowthHelp } from "@/components/help/HelpContent";
+import { HelpButton } from "@/components/ui/HelpButton";
 import { missionRounds, missionTitle, todayTrack, type MissionRound } from "@/lib/practice/mission";
 import { finishMission } from "@/app/(student)/actions";
 import { safeCall } from "@/lib/practice/call";
@@ -151,7 +153,10 @@ export function MissionRun() {
             </tr>
           </tbody>
         </table>
-        <p className="mt-2 font-pixel text-small text-text-muted">
+        <p className="mt-2 flex items-center gap-2 font-pixel text-small text-text-muted">
+          <HelpButton title="성장 점수란?">
+            <GrowthHelp />
+          </HelpButton>
           빠르기가 아니라 &ldquo;어제의 나보다 얼마나 나아졌는지&rdquo;로 점수를 매겨요. 이 점수가 모여 우리 반 점수가 돼요.
         </p>
       </RetroWindow>

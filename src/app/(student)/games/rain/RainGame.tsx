@@ -8,6 +8,8 @@ import { BUNNY, COIN } from "@/components/pixel/sprites";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { Loading } from "@/components/ui/Loading";
 import { MissionLabel } from "@/components/ui/MissionLabel";
+import { HelpButton } from "@/components/ui/HelpButton";
+import { RainHelp } from "@/components/help/HelpContent";
 import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { StatCard } from "@/components/ui/StatCard";
@@ -310,7 +312,12 @@ export function RainGame() {
               </PixelButton>
             ))}
           </div>
-          <p className="font-pixel text-small text-sky-100">내가 연 레벨까지의 단어가 떨어져요.</p>
+          <p className="flex items-center gap-2 font-pixel text-small text-sky-100">
+            내가 연 레벨까지의 단어가 떨어져요.
+            <HelpButton title="단어 비 규칙">
+              <RainHelp />
+            </HelpButton>
+          </p>
         </div>
       </RetroWindow>
     );

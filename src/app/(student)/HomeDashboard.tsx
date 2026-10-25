@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GROWTH, TRACK_LABELS, TRACKS } from "@/config/game";
+import { GROWTH, TIER_LABELS, TRACK_LABELS, TRACKS } from "@/config/game";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
@@ -15,7 +15,17 @@ import {
   usePracticeData,
   weakKeys,
 } from "@/lib/practice/store";
-import { allTiers, isCodeMaster, profileTier } from "@/lib/scoring/tier";
+import { allTiers, isCodeMaster, profileTier, tierProgress } from "@/lib/scoring/tier";
+import { CoinHelp, GrowthHelp, TierHelp } from "@/components/help/HelpContent";
+import { HelpButton } from "@/components/ui/HelpButton";
+
+const GROWTH_PARTS = [
+  ["participation", "미션", GROWTH.participation.points],
+  ["speed", "속도", GROWTH.speed.max],
+  ["accuracy", "정확도", GROWTH.accuracy.max],
+  ["streak", "연속", GROWTH.streak.max],
+  ["firstClear", "첫 클리어", GROWTH.levelFirstClear.points],
+] as const;
 
 export function HomeDashboard() {
   const data = usePracticeData();
@@ -67,7 +77,12 @@ export function HomeDashboard() {
 
         <RetroWindow title="오늘의 성장 점수">
           <div className="flex items-baseline justify-between">
-            <span className="font-pixel text-body">오늘 모은 성장 점수</span>
+            <span className="flex items-center gap-2 font-pixel text-body">
+              오늘 모은 성장 점수
+              <HelpButton title="성장 점수란?">
+                <GrowthHelp />
+              </HelpButton>
+            </span>
             <span className="font-title text-stat">
               {growth.total}
               <span className="font-pixel text-small"> / {GROWTH.dailyCap}점</span>
@@ -76,8 +91,19 @@ export function HomeDashboard() {
           <div className="mt-2">
             <PixelProgressBar value={growth.total / GROWTH.dailyCap} label="오늘의 성장 점수" />
           </div>
-          <p className="mt-2 font-pixel text-small text-text-muted">
-            연속 연습 {streak}일째 · 어제의 나보다 나아지면 점수가 올라요
+          <ul className="mt-3 grid grid-cols-5 gap-1 text-center font-pixel text-small">
+            {GROWTH_PARTS.map(([k, label, max]) => (
+              <li key={k} className="win-bevel-pressed bg-paper px-1 py-1">
+                <span className="block text-text-muted">{label}</span>
+                <strong className="font-title text-body">{growth[k]}</strong>
+                <span className="text-text-muted">/{max}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 font-pixel text-small text-navy-900">
+            {missionDone
+              ? `연속 연습 ${streak}일째! 내일도 오면 연속 점수가 올라요.`
+              : `💡 오늘의 미션을 끝내면 +${GROWTH.participation.points}점! · 연속 연습 ${streak}일째`}
           </p>
         </RetroWindow>
       </div>
@@ -86,16 +112,32 @@ export function HomeDashboard() {
         <RetroWindow title="내 티어">
           <div className="mb-3 flex items-center gap-2 font-pixel text-body">
             대표 티어 <TierBadge tier={profileTier(tiers)} codeMaster={isCodeMaster(tiers)} />
+            <span className="ml-auto">
+              <HelpButton title="티어란?">
+                <TierHelp />
+              </HelpButton>
+            </span>
           </div>
-          <ul className="grid grid-cols-2 gap-2">
-            {TRACKS.map((t) => (
-              <li key={t} className="win-bevel-pressed flex items-center justify-between bg-paper px-2 py-1">
-                <span className="font-pixel text-small">{TRACK_LABELS[t]}</span>
-                <TierBadge tier={tiers[t]} />
-              </li>
-            ))}
+          <ul className="flex flex-col gap-1">
+            {TRACKS.map((t) => {
+              const tp = tierProgress(attempts, t);
+              return (
+                <li key={t} className="win-bevel-pressed flex items-center gap-2 bg-paper px-2 py-1 font-pixel text-small">
+                  <span className="w-8">{TRACK_LABELS[t]}</span>
+                  <TierBadge tier={tiers[t]} />
+                  {tp.next ? (
+                    <span className="ml-auto text-text-muted" title={`정확도 95% 이상, ${tp.needCpm}타 넘는 기록 ${tp.need}번`}>
+                      → {TIER_LABELS[tp.next]} {tp.needCpm}타{" "}
+                      <span className="text-lime-800">{"●".repeat(tp.have)}</span>
+                      {"○".repeat(tp.need - tp.have)}
+                    </span>
+                  ) : (
+                    <span className="ml-auto text-lime-800">최고 티어!</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
-          <p className="mt-2 font-pixel text-small text-text-muted">정확도 95% 이상 기록이 3번 기준을 넘으면 올라가요.</p>
         </RetroWindow>
 
         <RetroWindow title="약한 키 TOP 5">
@@ -118,9 +160,14 @@ export function HomeDashboard() {
         </RetroWindow>
 
         <RetroWindow title="내 지갑">
-          <p className="font-pixel text-body">
+          <p className="flex items-center gap-1 font-pixel text-body">
             코인 <strong className="font-title text-heading">{progress.coins}</strong> · 반 지갑 기여{" "}
             <strong className="font-title text-heading">{progress.classCoins}</strong>
+            <span className="ml-auto">
+              <HelpButton title="코인은 어떻게 모아요?">
+                <CoinHelp />
+              </HelpButton>
+            </span>
           </p>
           <ul className="mt-2 max-h-32 overflow-y-auto font-sans text-small">
             {[...progress.coinLog]

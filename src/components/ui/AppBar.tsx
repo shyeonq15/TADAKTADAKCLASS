@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/practice", label: "연습 트랙" },
   { href: "/mission", label: "오늘의 미션" },
   { href: "/games", label: "게임" },
+  { href: "/help", label: "도움말" },
 ] as const;
 
 /** 윈도우 작업 표시줄 모양의 상단 메뉴 */

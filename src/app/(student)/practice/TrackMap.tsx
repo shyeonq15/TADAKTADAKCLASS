@@ -8,6 +8,8 @@ import { BUNNY } from "@/components/pixel/sprites";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
+import { HelpButton } from "@/components/ui/HelpButton";
+import { LevelHelp, TierHelp } from "@/components/help/HelpContent";
 import { usePracticeData, weakKeys } from "@/lib/practice/store";
 import { allTiers, isCodeMaster } from "@/lib/scoring/tier";
 
@@ -39,6 +41,9 @@ export function TrackMap() {
               <div className="flex items-center gap-3">
                 <h2 className="font-title text-heading">{TRACK_LABELS[track]}</h2>
                 <TierBadge tier={tiers[track]} codeMaster={track === "code" && isCodeMaster(tiers)} />
+                <HelpButton title="티어란?">
+                  <TierHelp />
+                </HelpButton>
               </div>
               {weak.length > 0 && (
                 <PixelLink href={`/practice/weak/${track}`} size="sm" variant="reward">
@@ -96,7 +101,10 @@ export function TrackMap() {
         );
       })}
 
-      <p className="text-center font-pixel text-small text-navy-900">
+      <p className="flex items-center justify-center gap-2 font-pixel text-small text-navy-900">
+        <HelpButton title="레벨은 어떻게 열려요?">
+          <LevelHelp />
+        </HelpButton>
         레벨 통과 조건: 정확도 {LEVEL_CLEAR.minAccuracy}% 이상 + 레벨마다 정해진 타수. 통과하면 다음 레벨이 열려요.
       </p>
     </div>

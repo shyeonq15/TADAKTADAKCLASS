@@ -28,3 +28,15 @@ export function profileTier(tiers: Record<Track, Tier>): Tier {
 }
 
 export const isCodeMaster = (tiers: Record<Track, Tier>) => tiers.code === "diamond";
+
+/** 다음 티어까지: 기준 타수와, 기준을 넘은 기록이 몇 번 있는지 */
+export function tierProgress(attempts: readonly TierAttempt[], track: Track) {
+  const current = trackTier(attempts, track);
+  const next = TIERS[TIERS.indexOf(current) + 1] as Tier | undefined;
+  if (!next) return { current, next: null, needCpm: 0, have: 0, need: 0 };
+  const needCpm = TIER_MIN_CPM[track][next];
+  const have = attempts.filter(
+    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.accuracy >= TIER_RULES.minAccuracy && a.cpm >= needCpm,
+  ).length;
+  return { current, next, needCpm, have: Math.min(have, TIER_RULES.recordsToPromote), need: TIER_RULES.recordsToPromote };
+}
