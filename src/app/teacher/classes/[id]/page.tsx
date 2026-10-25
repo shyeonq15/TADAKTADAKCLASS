@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { Loading } from "@/components/ui/Loading";
 import { RetroWindow } from "@/components/ui/RetroWindow";
@@ -21,6 +22,7 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
     .maybeSingle();
   if (!cls) notFound();
 
+  await connection(); // 오늘 날짜는 요청마다 새로 계산
   const today = dayKeyKST();
   const [{ data: roster }, { data: done }] = await Promise.all([
     admin
