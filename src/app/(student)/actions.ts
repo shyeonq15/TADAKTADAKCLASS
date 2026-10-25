@@ -1,8 +1,9 @@
 "use server";
 
-import type { SoloGame, Track } from "@/config/game";
+import type { RaceDifficulty, SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
 import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/lib/games/boss";
+import { createMatch, getMatch, joinMatch, leaveMatch, startMatch, submitRace } from "@/lib/games/race";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
@@ -45,6 +46,38 @@ export async function startGame(game: SoloGame, track: Track) {
 export async function submitGame(sub: GameSubmission) {
   const w = await who();
   return w ? saveGame(w, sub) : NOT_LOGGED_IN;
+}
+
+/* ───── 친구 대결 ───── */
+
+export async function raceCreate(track: Track, difficulty: RaceDifficulty) {
+  const w = await who();
+  return w ? createMatch(w, track, difficulty) : NOT_LOGGED_IN;
+}
+
+export async function raceJoin(matchId: string) {
+  const w = await who();
+  return w ? joinMatch(w, matchId) : NOT_LOGGED_IN;
+}
+
+export async function raceLeave(matchId: string) {
+  const w = await who();
+  return w ? leaveMatch(w, matchId) : NOT_LOGGED_IN;
+}
+
+export async function raceStart(matchId: string) {
+  const w = await who();
+  return w ? startMatch(w, matchId) : NOT_LOGGED_IN;
+}
+
+export async function raceInfo(matchId: string) {
+  const w = await who();
+  return w ? getMatch(w, matchId) : NOT_LOGGED_IN;
+}
+
+export async function raceSubmit(sub: BossSubmission) {
+  const w = await who();
+  return w ? submitRace(w, sub) : NOT_LOGGED_IN;
 }
 
 /* ───── 보스전 ───── */

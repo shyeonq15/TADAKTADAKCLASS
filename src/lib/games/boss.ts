@@ -46,8 +46,8 @@ export type BossSubmission = {
   keyTimes: number[];
 };
 
-/** 끝난 판 다시 채점: 타수·정확도·다 쳤는지·시간 (연습과 같은 규칙) */
-function score(sub: BossSubmission, elapsed: number, track: Track) {
+/** 끝난 판 다시 채점: 타수·정확도·다 쳤는지·시간 (연습과 같은 규칙). 친구 대결도 같이 씀 */
+export function scoreRun(sub: BossSubmission, elapsed: number, track: Track) {
   let durationMs = Math.max(1000, Math.round(sub.durationMs));
   if (durationMs > elapsed + 3000) durationMs = elapsed;
   const typed = sub.lines.map((l, i) => String(sub.typedLines[i] ?? "").slice(0, l.length));
@@ -85,7 +85,7 @@ export async function saveBossRecording(
   const t = readToken<BossTicket>(sub.token);
   if (!t || t.u !== teacher.userId || t.g !== "boss-rec") return { error: "기록 표가 올바르지 않아요. 다시 해 주세요." };
   if (t.h !== hashLines(sub.lines)) return { error: "지문이 바뀌었어요. 다시 해 주세요." };
-  const r = score(sub, Date.now() - t.s, t.track);
+  const r = scoreRun(sub, Date.now() - t.s, t.track);
   if (!r.completed) return { error: "끝까지 다 쳐야 보스 기록이 돼요." };
 
   // 고스트 기록: 시간 순서대로, 너무 많으면 줄여서 저장
@@ -198,7 +198,7 @@ export async function saveBossChallenge(
     .gt("created_at", new Date(t.s).toISOString());
   if ((count ?? 0) > 0) return { error: "이미 저장한 판이에요." };
 
-  const r = score(sub, Date.now() - t.s, t.track);
+  const r = scoreRun(sub, Date.now() - t.s, t.track);
   const suspicious = r.flags.length > 0;
   const win = !suspicious && r.completed && r.accuracy >= BOSS.minAccuracy && r.durationMs < boss.duration_ms;
 

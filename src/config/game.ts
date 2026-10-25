@@ -185,7 +185,29 @@ export const BOSS = {
   minAccuracy: 90,
 } as const;
 
+/** 친구 대결 (실시간 레이스) */
+export const RACE = {
+  level: -4,
+  maxPlayers: 4,
+  /** 시작 버튼을 누르고 실제로 시작하기까지 (카운트다운) */
+  countdownMs: 3500,
+  /** 진행률을 친구들에게 알리는 간격 */
+  progressEveryMs: 200,
+  /** 다 쳐야 등수, 정확도 이 값 이상 */
+  minAccuracy: 80,
+  /** 난이도 → 트랙별 글 난이도(연습팩 레벨) */
+  difficulty: {
+    easy: { korean: 4, english: 4, symbol: 3, code: 2 },
+    normal: { korean: 5, english: 5, symbol: 5, code: 4 },
+    hard: { korean: 6, english: 6, symbol: 7, code: 6 },
+  },
+  emojis: ["👍", "😮", "🔥", "👏", "😆", "💪"],
+} as const;
+export type RaceDifficulty = keyof typeof RACE.difficulty;
+
 export const GAME_COINS = {
+  /** 친구 대결 1등 */
+  raceWin: 10,
   /** 보스 처음 이겼을 때 (개인 + 반 지갑) */
   bossWin: 20,
   bossClass: 5,
