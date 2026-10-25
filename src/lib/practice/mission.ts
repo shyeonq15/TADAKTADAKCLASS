@@ -1,8 +1,9 @@
-// 오늘의 미션 구성 (PRD P3). 교사 지정 미션은 교사 화면에서 지정하면 여기서 우선 적용합니다.
+// 오늘의 미션 구성 (PRD P3). 선생님이 지정한 미션이 있으면 그게 먼저예요.
 
-import { MISSION, TRACKS, type Track } from "@/config/game";
+import { GROWTH, MISSION, TRACKS, type Track } from "@/config/game";
 import { getLevel } from "@/data/packs";
-import type { Progress, RoundRequest, TeacherPack } from "./types";
+import { median } from "@/lib/scoring/growth";
+import type { PracticeData, RoundRequest, TeacherPack } from "./types";
 
 export type MissionRound = { request: RoundRequest; title: string };
 
@@ -15,9 +16,25 @@ export function todayTrack(now = Date.now()): Track {
 /** 선생님이 오늘의 미션으로 지정한 연습팩 (있으면 그게 오늘 미션) */
 export const teacherMission = (packs: readonly TeacherPack[]) => packs.find((p) => p.missionToday) ?? null;
 
+/**
+ * 미션 레벨 자동 조절: 처음엔 배치 테스트로 열린 가장 높은 레벨,
+ * 그 레벨에서 최근 3판이 모두 많이 어려웠으면(정확도 85% 미만 또는 목표 타수의 60% 미만) 한 단계 아래로.
+ * 늘 "조금 어려운" 정도를 유지하려는 것.
+ */
+export function missionLevel(data: PracticeData, track: Track) {
+  const top = data.progress.unlocked[track];
+  const goal = getLevel(track, top)?.goalCpm ?? 0;
+  const recent = data.attempts
+    .filter((a) => a.track === track && a.level === top && (a.kind === "practice" || a.kind === "mission") && !a.suspicious)
+    .slice(-3);
+  const struggling =
+    recent.length >= 3 && recent.every((a) => a.accuracy < GROWTH.minAccuracyForSpeed || a.cpm < goal * 0.6);
+  return struggling && top > 1 ? top - 1 : top;
+}
+
 /** 미션 3판: 선생님 미션이 있으면 그 연습팩 3판, 없으면 내 레벨 2판 + (약한 키가 있으면) 약한 키 맞춤 1판 */
-export function missionRounds(progress: Progress, hasWeakKeys: boolean, packs: readonly TeacherPack[] = [], now = Date.now()): MissionRound[] {
-  const tm = teacherMission(packs);
+export function missionRounds(data: PracticeData, hasWeakKeys: boolean, now = Date.now()): MissionRound[] {
+  const tm = teacherMission(data.packs);
   if (tm) {
     return Array.from({ length: MISSION.rounds }, () => ({
       request: { kind: "mission", track: tm.track, level: 0, packId: tm.id },
@@ -25,7 +42,7 @@ export function missionRounds(progress: Progress, hasWeakKeys: boolean, packs: r
     }));
   }
   const track = todayTrack(now);
-  const level = getLevel(track, progress.unlocked[track])!;
+  const level = getLevel(track, missionLevel(data, track))!;
   return Array.from({ length: MISSION.rounds }, (_, i) =>
     i === MISSION.rounds - 1 && hasWeakKeys
       ? { request: { kind: "mission", track, level: level.level, weak: true }, title: "약한 키 맞춤" }
@@ -41,3 +58,14 @@ const MISSION_TITLES: Record<Track, string> = {
 };
 
 export const missionTitle = (track: Track) => MISSION_TITLES[track];
+
+/** 처음의 나(배치 테스트)와 최근 5판 가운데 값 비교 */
+export function sinceStart(data: PracticeData, track: Track) {
+  const start = data.progress.placement?.[track];
+  const recent = data.attempts
+    .filter((a) => a.track === track && (a.kind === "practice" || a.kind === "mission") && a.level > 0 && !a.suspicious)
+    .slice(-5);
+  if (!start || recent.length === 0) return null;
+  const now = Math.round(median(recent.map((a) => a.cpm)));
+  return { start, now, pct: Math.round(((now - start) / start) * 100) };
+}

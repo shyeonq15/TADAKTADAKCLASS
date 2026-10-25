@@ -6,9 +6,9 @@ export type TierAttempt = { track: Track; cpm: number; accuracy: number; suspici
 
 /** 정확도 95% 이상 기록 중 기준을 넘은 것이 3번 이상인 가장 높은 티어 */
 export function trackTier(attempts: readonly TierAttempt[], track: Track): Tier {
-  // 게임 기록은 티어에 넣지 않음 (게임 타수는 기다리는 시간이 섞여 있음)
+  // 게임(기다리는 시간이 섞임)과 배치 테스트(측정용)는 티어에 넣지 않음
   const valid = attempts.filter(
-    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.accuracy >= TIER_RULES.minAccuracy,
+    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.kind !== "placement" && a.accuracy >= TIER_RULES.minAccuracy,
   );
   let best: Tier = "bronze";
   for (const tier of TIERS) {
@@ -36,7 +36,7 @@ export function tierProgress(attempts: readonly TierAttempt[], track: Track) {
   if (!next) return { current, next: null, needCpm: 0, have: 0, need: 0 };
   const needCpm = TIER_MIN_CPM[track][next];
   const have = attempts.filter(
-    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.accuracy >= TIER_RULES.minAccuracy && a.cpm >= needCpm,
+    (a) => a.track === track && !a.suspicious && a.kind !== "game" && a.kind !== "placement" && a.accuracy >= TIER_RULES.minAccuracy && a.cpm >= needCpm,
   ).length;
   return { current, next, needCpm, have: Math.min(have, TIER_RULES.recordsToPromote), need: TIER_RULES.recordsToPromote };
 }

@@ -7,7 +7,7 @@ import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
-import { missionTitle, teacherMission, todayTrack } from "@/lib/practice/mission";
+import { missionTitle, sinceStart, teacherMission, todayTrack } from "@/lib/practice/mission";
 import {
   dayKey,
   streakDays,
@@ -107,6 +107,34 @@ export function HomeDashboard() {
               : `💡 오늘의 미션을 끝내면 +${GROWTH.participation.points}점! · 연속 연습 ${streak}일째`}
           </p>
         </RetroWindow>
+
+        {progress.placement && (
+          <RetroWindow title="처음의 나와 비교">
+            <ul className="flex flex-col gap-1 font-pixel text-body">
+              {TRACKS.map((t) => {
+                const s = sinceStart(data, t);
+                return (
+                  <li key={t} className="flex items-center gap-3">
+                    <span className="w-10 font-bold">{TRACK_LABELS[t]}</span>
+                    {s ? (
+                      <>
+                        <span className="text-text-muted">처음 {s.start}타</span>→<span>지금 {s.now}타</span>
+                        <span className={`ml-auto font-bold ${s.pct > 0 ? "text-lime-800" : s.pct < 0 ? "text-red-500" : ""}`}>
+                          {s.pct > 0 ? `▲ ${s.pct}%` : s.pct < 0 ? `▼ ${-s.pct}%` : "그대로"}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-small text-text-muted">처음 {progress.placement![t]}타 · 이 트랙을 연습하면 비교해 줄게요</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-2 font-pixel text-small text-text-muted">
+              &ldquo;처음&rdquo;은 배치 테스트, &ldquo;지금&rdquo;은 최근 5판의 가운데 값이에요. 레벨이 올라가면 글이 어려워져서 잠깐 내려갈 수도 있어요.
+            </p>
+          </RetroWindow>
+        )}
       </div>
 
       <div className="flex flex-col gap-6">

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { TRACK_LABELS, TRACKS, type Track } from "@/config/game";
 import { Loading } from "@/components/ui/Loading";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { dayKeyKST } from "@/lib/practice/day";
@@ -33,6 +34,21 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
     admin.from("mission_completions").select("student_id").eq("class_id", id).eq("day", today),
   ]);
   const doneSet = new Set((done ?? []).map((d) => d.student_id));
+
+  // 배치 테스트 결과 (트랙별 타수)
+  const ids = (roster ?? []).map((r) => r.student_id);
+  const { data: tp } = ids.length
+    ? await admin.from("track_progress").select("student_id, track, placement_cpm").in("student_id", ids)
+    : { data: [] };
+  const placement = new Map<string, Partial<Record<Track, number>>>();
+  for (const r of tp ?? []) {
+    if (r.placement_cpm === null) continue;
+    placement.set(r.student_id, { ...placement.get(r.student_id), [r.track]: r.placement_cpm });
+  }
+  const avg = (t: Track) => {
+    const v = [...placement.values()].map((p) => p[t]).filter((n): n is number => n !== undefined);
+    return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null;
+  };
   const students = (roster ?? []).map((r) => ({
     number: r.number,
     studentId: r.student_id,
@@ -83,6 +99,7 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
                 <th className="py-2">학번</th>
                 <th className="py-2">비밀번호</th>
                 <th className="py-2">오늘 미션</th>
+                <th className="py-2 text-right">배치 (한·영·기·코)</th>
                 <th />
               </tr>
             </thead>
@@ -95,6 +112,9 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
                   <td className="py-2 font-typing">{`${cls.grade}${String(cls.class_no).padStart(2, "0")}${String(s.number).padStart(2, "0")}`}</td>
                   <td className="py-2">{s.secret_set ? "정함" : <span className="text-red-500">아직</span>}</td>
                   <td className="py-2">{doneSet.has(s.studentId) ? "✅ 완료" : "—"}</td>
+                  <td className="py-2 text-right text-small">
+                    {placement.has(s.studentId) ? TRACKS.map((t) => placement.get(s.studentId)?.[t] ?? "-").join(" · ") : <span className="text-text-muted">아직</span>}
+                  </td>
                   <td className="py-2 text-right">
                     {s.login_method === "pin" && s.secret_set && <ResetSecretButton classId={id} studentId={s.studentId} />}
                   </td>
@@ -105,6 +125,20 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
         ) : (
           <p>아직 학생이 없어요. 아래에서 명단을 등록해 주세요.</p>
         )}
+      </RetroWindow>
+
+      <RetroWindow title="배치 테스트 반 평균 (타/분)">
+        <div className="flex gap-2">
+          {TRACKS.map((t) => (
+            <div key={t} className="win-bevel-pressed flex-1 bg-paper px-3 py-2">
+              <p className="text-small text-text-muted">{TRACK_LABELS[t]}</p>
+              <p className="font-title text-stat">{avg(t) ?? "-"}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 text-small text-text-muted">
+          {placement.size}명이 배치 테스트를 했어요. 2주 뒤 티어 기준을 조정할 때 참고해요.
+        </p>
       </RetroWindow>
 
       <RetroWindow title="학생 명단 등록">

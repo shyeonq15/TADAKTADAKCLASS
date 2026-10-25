@@ -2,6 +2,7 @@
 
 import type { Track } from "@/config/game";
 import { PACKS, type Level } from "@/data/packs";
+import PLACEMENT_TEXT from "@/data/placement.json";
 import { toKeys } from "./hangul";
 
 /** 한 줄 최대 글자 수. 한글은 글자 폭이 넓어서 더 짧게 */
@@ -57,10 +58,7 @@ export function buildWeakKeyRound(track: Track, weakKeys: readonly string[]): st
   return packIntoLines(picked.length >= 4 ? picked : all, LINE_WIDTH[track], LINES_PER_ROUND);
 }
 
-/** 배치 테스트용: 트랙의 모든 레벨에서 고루 섞은 지문 (30초 안에 다 못 칠 만큼) */
+/** 배치 테스트용 고정 지문 (다시 재도 같은 조건이 되도록 무작위로 바꾸지 않음) */
 export function buildPlacementRound(track: Track): string[] {
-  const levels = PACKS[track].levels;
-  if (track === "code") return levels.map((l) => l.items[0]).join("\n").split("\n").map((l) => l.trimEnd());
-  const items = levels.flatMap((l) => (l.mode === "sentences" ? l.items : l.items.slice(0, 8)));
-  return packIntoLines(items, LINE_WIDTH[track], 10);
+  return [...(PLACEMENT_TEXT as unknown as Record<Track, string[]>)[track]];
 }

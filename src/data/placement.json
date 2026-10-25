@@ -1,0 +1,53 @@
+{
+  "_comment": "배치 테스트 고정 지문. 학기 초·중간·말에 같은 지문으로 다시 재야 성장을 공정하게 비교할 수 있어서 무작위로 바꾸지 않아요. 쉬운 줄 → 어려운 줄 순서이고, 30초 안에 다 치기 어렵게 넉넉히 넣었어요.",
+  "korean": [
+    "아이 나라 머리 하나 오리",
+    "바다 가방 사자 지도 개미",
+    "컴퓨터 키보드 친구 우유 구름",
+    "학교 교실 선생님 정보 수업",
+    "오늘도 손가락을 깨우고 수업을 시작해요.",
+    "천천히 정확하게 치면 속도는 저절로 따라와요.",
+    "컴퓨터는 사람이 시킨 일을 순서대로 처리해요.",
+    "데이터를 모으고 정리하면 새로운 사실을 발견해요.",
+    "알고리즘은 문제를 해결하는 방법을 차례대로 적은 것이에요.",
+    "작은 연습이 모여서 큰 실력이 돼요."
+  ],
+  "english": [
+    "asdf jkl fall salad glad",
+    "type write power quiet tower",
+    "box mix cabin zebra number",
+    "computer keyboard program python",
+    "Practice a little every day.",
+    "Type slowly and keep your eyes on the screen.",
+    "A computer follows instructions one step at a time.",
+    "Every bug is a chance to learn something new.",
+    "Python is a friendly language for beginners.",
+    "Good code is easy to read."
+  ],
+  "symbol": [
+    "() [] {} (a) [1] {x}",
+    "'a' \"hi\" a: b x; 'ok'",
+    "a = 1 b + c x - y 3 * 4",
+    "x == y n != 0 a += 1",
+    "my_name #comment 100% a & b",
+    "print('hi') nums = [1, 2, 3]",
+    "d = {'a': 1} if (a > b):",
+    "x = (1 + 2) * 3 len(nums) >= 3",
+    "s[0] == '#' total += n",
+    "ok = not done name = \"tadak\""
+  ],
+  "code": [
+    "print(\"Hello, World!\")",
+    "name = input(\"name: \")",
+    "age = 14",
+    "print(name, age)",
+    "score = 85",
+    "if score >= 80:",
+    "    print(\"great\")",
+    "for i in range(5):",
+    "    print(i)",
+    "def add(a, b):",
+    "    return a + b",
+    "print(add(2, 3))"
+  ]
+}

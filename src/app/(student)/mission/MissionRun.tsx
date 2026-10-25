@@ -41,7 +41,7 @@ export function MissionRun() {
   if (phase.name === "intro") {
     const begin = () => {
       const hasWeak = weakKeys(data.attempts, track, 3).length > 0;
-      setPhase({ name: "round", rounds: missionRounds(data.progress, hasWeak, data.packs), index: 0, saves: [] });
+      setPhase({ name: "round", rounds: missionRounds(data, hasWeak), index: 0, saves: [] });
     };
     return (
       <RetroWindow title="오늘의 미션.exe" className="mx-auto w-full max-w-xl">
