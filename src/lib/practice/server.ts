@@ -251,8 +251,12 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
 export async function addCoins(userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   const admin = createAdminClient();
-  const { data } = await admin.from("wallets").select("coins").eq("student_id", userId).maybeSingle();
-  await admin.from("wallets").upsert({ student_id: userId, coins: (data?.coins ?? 0) + amount });
+  // 한 줄로 더하기 (상점에서 동시에 빼도 안 꼬이게). 함수가 아직 없으면 예전 방식으로
+  const { error } = await admin.rpc("add_wallet_coins", { p_student: userId, p_amount: amount });
+  if (error) {
+    const { data } = await admin.from("wallets").select("coins").eq("student_id", userId).maybeSingle();
+    await admin.from("wallets").upsert({ student_id: userId, coins: (data?.coins ?? 0) + amount });
+  }
   await admin.from("coin_transactions").insert({ student_id: userId, amount, reason });
 }
 

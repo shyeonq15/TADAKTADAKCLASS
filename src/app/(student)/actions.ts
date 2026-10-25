@@ -5,6 +5,8 @@ import { getViewer } from "@/lib/auth/viewer";
 import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/lib/games/boss";
 import { createMatch, getMatch, joinMatch, leaveMatch, startMatch, submitRace } from "@/lib/games/race";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
+import type { MinimiSlot } from "@/config/shop";
+import { buyItem, equipItem } from "@/lib/shop/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 
@@ -92,4 +94,16 @@ export async function submitBoss(sub: BossSubmission) {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
   return saveBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, sub);
+}
+
+/* ───── 상점 (미니미) ───── */
+
+export async function shopBuy(itemId: string) {
+  const w = await who();
+  return w ? buyItem(w, itemId) : NOT_LOGGED_IN;
+}
+
+export async function shopEquip(slot: MinimiSlot, itemId: string | null) {
+  const w = await who();
+  return w ? equipItem(w, slot, itemId) : NOT_LOGGED_IN;
 }

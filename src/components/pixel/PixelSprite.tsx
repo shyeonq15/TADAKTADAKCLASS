@@ -14,13 +14,10 @@ type Props = {
   style?: CSSProperties;
 };
 
-/**
- * 문자열 격자로 픽셀 그림을 SVG로 그립니다.
- * 같은 색이 가로로 이어지면 사각형 하나로 합쳐 그립니다.
- */
-export function PixelSprite({ sprite, scale = 4, className, style }: Props) {
-  const { rows, palette } = sprite;
-  const width = Math.max(...rows.map((r) => r.length));
+/** 같은 색이 가로로 이어지면 사각형 하나로 합쳐서 돌려줍니다. palette 로 색을 바꿔 그릴 수 있어요. */
+export function spriteRects(sprite: Sprite, recolor?: Readonly<Record<string, string>>) {
+  const { rows } = sprite;
+  const palette = { ...sprite.palette, ...recolor };
   const rects: { x: number; y: number; w: number; fill: string }[] = [];
 
   rows.forEach((row, y) => {
@@ -38,6 +35,14 @@ export function PixelSprite({ sprite, scale = 4, className, style }: Props) {
       x += w;
     }
   });
+  return rects;
+}
+
+/** 문자열 격자로 픽셀 그림을 SVG로 그립니다. */
+export function PixelSprite({ sprite, scale = 4, className, style }: Props) {
+  const { rows } = sprite;
+  const width = Math.max(...rows.map((r) => r.length));
+  const rects = spriteRects(sprite);
 
   return (
     <svg

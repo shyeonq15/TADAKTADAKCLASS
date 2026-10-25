@@ -205,10 +205,15 @@ export function HomeDashboard() {
               .map((c, i) => (
                 <li key={i} className="flex justify-between border-b border-win-shadow py-0.5">
                   <span>{c.reason}</span>
-                  <span className="text-lime-800">+{c.amount}</span>
+                  <span className={c.amount < 0 ? "text-navy-700" : "text-lime-800"}>
+                    {c.amount < 0 ? c.amount : `+${c.amount}`}
+                  </span>
                 </li>
               ))}
           </ul>
+          <PixelLink href="/shop" variant="reward" size="sm" className="mt-3">
+            상점에서 미니미 꾸미기
+          </PixelLink>
         </RetroWindow>
       </div>
 
