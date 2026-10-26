@@ -5,6 +5,9 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { newJoinCode, pinEmail } from "@/lib/auth/pin";
 import { ensureSchoolYear, getViewer } from "@/lib/auth/viewer";
+import { COINS, GAME_COINS } from "@/config/game";
+import { dayKeyKST } from "@/lib/practice/day";
+import { addCoins, refreshGrowth } from "@/lib/practice/server";
 
 export type ActionState = { ok: boolean; message: string } | null;
 
@@ -123,5 +126,61 @@ export async function toggleSecretSetup(formData: FormData) {
   if (!(await ownClass(classId, t.schoolId))) return;
   const open = formData.get("open") === "true";
   await createAdminClient().from("classes").update({ allow_secret_setup: open }).eq("id", classId);
+  revalidatePath(`/teacher/classes/${classId}`);
+}
+
+/* ───── 의심 기록 확인 ───── */
+
+/** 인정: 점수·기준값에 넣고 기본 코인 지급 / 무효: 계속 빼 둠 */
+export async function reviewAttempt(formData: FormData) {
+  const t = await teacherOrNull();
+  if (!t) return;
+  const classId = String(formData.get("classId"));
+  const attemptId = String(formData.get("attemptId"));
+  const decision = formData.get("decision") === "approved" ? "approved" : "rejected";
+  if (!(await ownClass(classId, t.schoolId))) return;
+  const admin = createAdminClient();
+  const { data: a } = await admin
+    .from("attempts")
+    .select("id, student_id, kind, created_at, review_status")
+    .eq("id", attemptId)
+    .eq("class_id", classId)
+    .maybeSingle();
+  if (!a || a.review_status !== "pending") return;
+
+  if (decision === "approved") {
+    await admin.from("attempts").update({ suspicious: false, review_status: "approved" }).eq("id", a.id);
+    await addCoins(a.student_id, a.kind === "game" ? GAME_COINS.play : COINS.practiceRound, "선생님 확인 완료");
+    // 오늘 기록이면 오늘 성장 점수도 다시 계산
+    if (dayKeyKST(new Date(a.created_at)) === dayKeyKST()) await refreshGrowth({ userId: a.student_id, classId });
+  } else {
+    await admin.from("attempts").update({ review_status: "rejected" }).eq("id", a.id);
+  }
+  revalidatePath(`/teacher/classes/${classId}`);
+}
+
+/* ───── 반 미니룸 관리 ───── */
+
+export async function closeRoomProposal(formData: FormData) {
+  const t = await teacherOrNull();
+  if (!t) return;
+  const classId = String(formData.get("classId"));
+  if (!(await ownClass(classId, t.schoolId))) return;
+  await createAdminClient()
+    .from("room_proposals")
+    .update({ status: "closed", decided_at: new Date().toISOString() })
+    .eq("id", String(formData.get("proposalId")))
+    .eq("class_id", classId)
+    .eq("status", "open");
+  revalidatePath(`/teacher/classes/${classId}`);
+}
+
+/** 놓인 가구·벽지·바닥 빼기 (코인은 돌려주지 않아요) */
+export async function removeRoomItem(formData: FormData) {
+  const t = await teacherOrNull();
+  if (!t) return;
+  const classId = String(formData.get("classId"));
+  if (!(await ownClass(classId, t.schoolId))) return;
+  await createAdminClient().from("room_items").delete().eq("class_id", classId).eq("item_id", String(formData.get("itemId")));
   revalidatePath(`/teacher/classes/${classId}`);
 }

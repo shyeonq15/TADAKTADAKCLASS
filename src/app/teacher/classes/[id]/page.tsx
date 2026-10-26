@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { TRACK_LABELS, TRACKS, type Track } from "@/config/game";
 import { Loading } from "@/components/ui/Loading";
+import { PendingRecords, RoomAdmin } from "./ClassExtras";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { dayKeyKST } from "@/lib/practice/day";
 import { requireTeacher } from "@/lib/auth/viewer";
@@ -126,6 +127,13 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
           <p>아직 학생이 없어요. 아래에서 명단을 등록해 주세요.</p>
         )}
       </RetroWindow>
+
+      <PendingRecords
+        classId={id}
+        names={new Map(students.map((s) => [s.studentId, `${s.number}번 ${s.real_name ?? s.nickname ?? ""}`]))}
+      />
+
+      <RoomAdmin classId={id} teacherId={t.userId} />
 
       <RetroWindow title="배치 테스트 반 평균 (타/분)">
         <div className="flex gap-2">
