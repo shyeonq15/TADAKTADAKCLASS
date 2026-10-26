@@ -79,26 +79,27 @@ const KINDS = [
 ] as const;
 const kindOf = (title: string) => KINDS.find((k) => title.startsWith(k.prefix)) ?? { icon: "📘", label: "개념", tag: "bg-sky-300" };
 
-/** 실행 결과: "▶ 실행"을 누르면 한 글자씩 나와요 */
-function RunOutput({ output }: { output: string }) {
-  const [shown, setShown] = useState<number | null>(null);
+/** 실행 결과: Enter(또는 "▶ 실행")를 누르면 한 글자씩 나와요 */
+function RunOutput({ output, running, onRun }: { output: string; running: boolean; onRun: () => void }) {
+  const [count, setCount] = useState(0);
+  const shown = running ? count : null;
   useEffect(() => {
-    if (shown === null || shown >= output.length) return;
-    const id = window.setTimeout(() => setShown((n) => Math.min(output.length, (n ?? 0) + 2)), 30);
+    if (!running || count >= output.length) return;
+    const id = window.setTimeout(() => setCount((n) => Math.min(output.length, n + 2)), 30);
     return () => window.clearTimeout(id);
-  }, [shown, output.length]);
+  }, [running, count, output.length]);
   return (
     <div>
       <p className="flex items-center justify-between font-pixel text-small text-text-muted">
         실행 결과
         {shown === null && (
-          <button type="button" onClick={() => setShown(0)} className="win-bevel px-2 font-bold text-navy-900 active:win-bevel-pressed">
+          <button type="button" onClick={onRun} className="win-bevel px-2 font-bold text-navy-900 active:win-bevel-pressed">
             ▶ 실행
           </button>
         )}
       </p>
       <pre className="h-full min-h-16 bg-ink px-4 py-3 font-typing text-body text-lime-400">
-        {shown === null ? <span className="text-text-muted">▶ 실행을 눌러 봐요</span> : output.slice(0, shown)}
+        {shown === null ? <span className="text-text-muted">Enter를 누르면 실행돼요</span> : output.slice(0, shown)}
         {shown !== null && shown < output.length && <span className="blink">▌</span>}
       </pre>
     </div>
@@ -106,7 +107,7 @@ function RunOutput({ output }: { output: string }) {
 }
 
 /** 한 장: 토끼 선생님 말풍선이 하나씩 나오고, 그다음 예시 코드 */
-function Slide({ slide, revealed }: { slide: LessonSlide; revealed: number }) {
+function Slide({ slide, revealed, ran, onRun }: { slide: LessonSlide; revealed: number; ran: boolean; onRun: () => void }) {
   const kind = kindOf(slide.title);
   const steps = slide.body.length;
   return (
@@ -151,7 +152,7 @@ function Slide({ slide, revealed }: { slide: LessonSlide; revealed: number }) {
               <ColoredCode code={slide.code} />
             </pre>
           </div>
-          {slide.output !== undefined && <RunOutput output={slide.output} />}
+          {slide.output !== undefined && <RunOutput output={slide.output} running={ran} onRun={onRun} />}
         </div>
       )}
     </>
@@ -172,16 +173,20 @@ export function LessonSlides({
 }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(1);
+  // 예시 코드 실행했는지 (말풍선이 다 나온 뒤 Enter 한 번 더 = 실행)
+  const [ran, setRan] = useState(false);
   // 맞힌 확인 문제 (장 번호). 문제가 있는 장은 맞혀야 다음으로 넘어가요
   const [solved, setSolved] = useState<number[]>([]);
   const slide = slides[i];
   const last = i === slides.length - 1;
   const allShown = revealed >= slide.body.length;
   const blocked = !!slide.check && !solved.includes(i);
+  const needsRun = allShown && !!slide.code && slide.output !== undefined && !ran;
 
   const go = (to: number) => {
     setI(to);
     setRevealed(1);
+    setRan(false);
   };
 
   return (
@@ -196,7 +201,7 @@ export function LessonSlides({
           </div>
         </div>
 
-        <Slide key={i} slide={slide} revealed={revealed} />
+        <Slide key={i} slide={slide} revealed={revealed} ran={ran} onRun={() => setRan(true)} />
 
         {slide.check && allShown && (
           <Check key={i} check={slide.check} solvedBefore={solved.includes(i)} onSolved={() => setSolved((v) => [...v, i])} />
@@ -214,6 +219,10 @@ export function LessonSlides({
           {!allShown ? (
             <PixelButton variant="primary" autoFocus key={`more-${i}`} onClick={() => setRevealed((r) => r + 1)}>
               계속 ▼ (Enter)
+            </PixelButton>
+          ) : needsRun ? (
+            <PixelButton variant="success" autoFocus key={`run-${i}`} onClick={() => setRan(true)}>
+              ▶ 실행 (Enter)
             </PixelButton>
           ) : blocked ? (
             <PixelButton variant="primary" disabled>
