@@ -264,8 +264,12 @@ export async function addCoins(userId: string, amount: number, reason: string) {
 async function addClassCoins(classId: string, userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   const admin = createAdminClient();
-  const { data } = await admin.from("classes").select("coins").eq("id", classId).single();
-  await admin.from("classes").update({ coins: (data?.coins ?? 0) + amount }).eq("id", classId);
+  // 반 친구들이 동시에 보태도 안 꼬이게 한 줄로. 함수가 아직 없으면 예전 방식으로
+  const { error } = await admin.rpc("add_class_coins", { p_class: classId, p_amount: amount });
+  if (error) {
+    const { data } = await admin.from("classes").select("coins").eq("id", classId).single();
+    await admin.from("classes").update({ coins: (data?.coins ?? 0) + amount }).eq("id", classId);
+  }
   await admin.from("coin_transactions").insert({ class_id: classId, student_id: userId, amount, reason });
 }
 

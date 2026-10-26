@@ -1,0 +1,213 @@
+import type { Sprite } from "./PixelSprite";
+
+// 반 미니룸 가구 그림 (임시 픽셀 그래픽). K = 외곽선
+
+const K = "#22243a";
+const WOOD = "#b0703c";
+const WOOD_DARK = "#7a4a25";
+
+export const ROOM_ART: Record<string, Sprite> = {
+  window: {
+    rows: [
+      "FFFFFFFFFFFFFFFFFFFF",
+      "FSSSSSSSSFSSSSSSSSSF",
+      "FSSWWSSSSFSSSSSSSSSF",
+      "FSWWWWSSSFSSSSSWWSSF",
+      "FSSSSSSSSFSSSSWWWWSF",
+      "FSSSSSSSSFSSSSSSSSSF",
+      "FFFFFFFFFFFFFFFFFFFF",
+      "FSSSSSSSSFSSSSSSSSSF",
+      "FSSSSSSSSFSSSSSSSSSF",
+      "FGGGSSSSSFSSSSSSGGGF",
+      "FGGGGGGSSFSSGGGGGGGF",
+      "FGGGGGGGGFGGGGGGGGGF",
+      "FFFFFFFFFFFFFFFFFFFF",
+      "BBBBBBBBBBBBBBBBBBBB",
+    ],
+    palette: { F: "#ffffff", S: "#8fd3ff", W: "#ffffff", G: "#6cc24a", B: WOOD },
+  },
+  clock: {
+    rows: [
+      "..RRRRRR..",
+      ".RWWWWWWR.",
+      "RWWWKWWWWR",
+      "RWWWKWWWWR",
+      "RWWWKKKWWR",
+      "RWWWWWWWWR",
+      "RWWWWWWWWR",
+      ".RWWWWWWR.",
+      "..RRRRRR..",
+    ],
+    palette: { R: "#e8443a", W: "#ffffff", K },
+  },
+  poster: {
+    rows: [
+      "KKKKKKKKKKKKKK",
+      "KNNNNNNNNNNNNK",
+      "KNYYYYYNNNNNNK",
+      "KNNNNNNNNNNNNK",
+      "KNNGGGGGGNNNNK",
+      "KNNNNNNNNNNNNK",
+      "KNNGGGNGGGGNNK",
+      "KNNNNNNNNNNNNK",
+      "KNNNNGGGGNNNNK",
+      "KNNNNNNNNNNNNK",
+      "KNYYYYYYYNNNNK",
+      "KNNNNNNNNNNNNK",
+      "KKKKKKKKKKKKKK",
+    ],
+    palette: { K, N: "#1d2b53", G: "#7ee787", Y: "#ffd84d" },
+  },
+  bookshelf: {
+    rows: [
+      "KKKKKKKKKKKKKKKKKK",
+      "KBBBBBBBBBBBBBBBBK",
+      "KBDRRUUYDGGRUUYDBK",
+      "KBDRRUUYDGGRUUYDBK",
+      "KBDRRUUYDGGRUUYDBK",
+      "KBBBBBBBBBBBBBBBBK",
+      "KBDGGYRRUDUYYRGGBK",
+      "KBDGGYRRUDUYYRGGBK",
+      "KBDGGYRRUDUYYRGGBK",
+      "KBBBBBBBBBBBBBBBBK",
+      "KBDUUGGDRRYYGUUDBK",
+      "KBDUUGGDRRYYGUUDBK",
+      "KBDUUGGDRRYYGUUDBK",
+      "KBBBBBBBBBBBBBBBBK",
+      "KBBBBBBBBBBBBBBBBK",
+      "KKKKKKKKKKKKKKKKKK",
+    ],
+    palette: { K, B: WOOD, D: WOOD_DARK, R: "#e8443a", U: "#3b6fe0", Y: "#ffd84d", G: "#6cc24a" },
+  },
+  plant: {
+    rows: [
+      "....GG....",
+      "..G.GG.G..",
+      ".GGGLGGGG.",
+      "GGLGGGGLGG",
+      ".GGGGLGGG.",
+      "..GGGGGG..",
+      "....GG....",
+      ".KKKKKKKK.",
+      "..KOOOOK..",
+      "..KOOOOK..",
+      "...KOOK...",
+      "...KKKK...",
+    ],
+    palette: { G: "#3fa34d", L: "#8be07a", K, O: "#d9733b" },
+  },
+  sofa: {
+    rows: [
+      "...KKKKKKKKKKKKKKKKKKKKKK...",
+      "..KPPPPPPPPPPPPPPPPPPPPPPK..",
+      "..KPPPPPPPPPPPPPPPPPPPPPPK..",
+      "..KPPPPPPPPPPPPPPPPPPPPPPK..",
+      "KKKPPPPPPPPPPPPPPPPPPPPPPKKK",
+      "KDDKKKKKKKKKKKKKKKKKKKKKKDDK",
+      "KDDPPPPPPPPPPPPPPPPPPPPPPDDK",
+      "KDDPPPPPPPPPPPPPPPPPPPPPPDDK",
+      "KDDDDDDDDDDDDDDDDDDDDDDDDDDK",
+      "KKKKKKKKKKKKKKKKKKKKKKKKKKKK",
+      ".KK....................KK...",
+    ],
+    palette: { K, P: "#ff9cc8", D: "#e46ea5" },
+  },
+  computer: {
+    rows: [
+      "......KKKKKKKKKKKK......",
+      "......KSSSSSSSSSSK......",
+      "......KSGGGSSSSSSK......",
+      "......KSSSGGGGSSSK......",
+      "......KSGGSSSSSSSK......",
+      "......KSSSSSSSSSSK......",
+      "......KKKKKKKKKKKK......",
+      "..........KKKK..........",
+      "........KKKKKKKK........",
+      "KKKKKKKKKKKKKKKKKKKKKKKK",
+      "KBBBBBBBBBBBBBBBBBBBBBBK",
+      "KKKKKKKKKKKKKKKKKKKKKKKK",
+      ".KBK................KBK.",
+      ".KBK................KBK.",
+      ".KBK................KBK.",
+      ".KKK................KKK.",
+    ],
+    palette: { K, S: "#1d2b53", G: "#7ee787", B: WOOD },
+  },
+  trophy: {
+    rows: [
+      "KKKKKKKKKK",
+      "KYYYYYYYYK",
+      "KYWYYYYYYK",
+      ".KYYYYYYK.",
+      "..KYYYYK..",
+      "...KYYK...",
+      "....KK....",
+      "....YY....",
+      "...KYYK...",
+      "..KKKKKK..",
+      "..KBBBBK..",
+      "..KKKKKK..",
+    ],
+    palette: { K, Y: "#ffc93c", W: "#fff6d6", B: WOOD_DARK },
+  },
+  lamp: {
+    rows: [
+      "..KKKK..",
+      ".KYYYYK.",
+      "KYYYYYYK",
+      "KKKKKKKK",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "...KK...",
+      "..KKKK..",
+      ".KKKKKK.",
+    ],
+    palette: { K, Y: "#fff1a8" },
+  },
+  rug: {
+    rows: [
+      "....RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....",
+      "..RRWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWRR..",
+      ".RRWRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWRR.",
+      "RRWRRYRRRRYRRRRYRRRRYRRRRYRRRRYRRRRYRWRR",
+      ".RRWRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWRR.",
+      "..RRWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWRR..",
+      "....RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....",
+    ],
+    palette: { R: "#7b5cd6", W: "#c9b8ff", Y: "#ffd84d" },
+  },
+};
+
+/** 벽지·바닥: CSS 무늬 (4px 격자) */
+export const ROOM_SURFACES: Record<string, { background: string; backgroundSize?: string }> = {
+  "wall-cream": {
+    background: "repeating-conic-gradient(#fff6d6 0 25%, #fdeec0 0 50%)",
+    backgroundSize: "32px 32px",
+  },
+  "wall-sky": {
+    background: "repeating-linear-gradient(90deg, #ddf2ff 0 16px, #bfe6ff 16px 32px)",
+  },
+  "wall-pink": {
+    background: "repeating-conic-gradient(#ffe3f0 0 25%, #ffd0e6 0 50%)",
+    backgroundSize: "24px 24px",
+  },
+  "wall-night": {
+    background: "radial-gradient(#ffd84d 0 2px, transparent 2px) 0 0 / 36px 36px, radial-gradient(#ffffff 0 1px, transparent 2px) 18px 18px / 36px 36px, #1d2b53",
+  },
+  "floor-wood": {
+    background: "repeating-linear-gradient(0deg, #c98a52 0 14px, #b0703c 14px 16px)",
+  },
+  "floor-grass": {
+    background: "repeating-conic-gradient(#8fd96b 0 25%, #7cc95a 0 50%)",
+    backgroundSize: "24px 24px",
+  },
+  "floor-tile": {
+    background: "repeating-conic-gradient(#ffffff 0 25%, #d5d5de 0 50%)",
+    backgroundSize: "32px 32px",
+  },
+};

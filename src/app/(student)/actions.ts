@@ -6,6 +6,7 @@ import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/li
 import { createMatch, getMatch, joinMatch, leaveMatch, startMatch, submitRace } from "@/lib/games/race";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
+import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
@@ -106,4 +107,16 @@ export async function shopBuy(itemId: string) {
 export async function shopEquip(slot: MinimiSlot, itemId: string | null) {
   const w = await who();
   return w ? equipItem(w, slot, itemId) : NOT_LOGGED_IN;
+}
+
+/* ───── 반 미니룸 (투표) ───── */
+
+export async function roomPropose(itemId: string) {
+  const w = await who();
+  return w ? proposeRoomItem(w, itemId) : NOT_LOGGED_IN;
+}
+
+export async function roomVote(proposalId: string) {
+  const w = await who();
+  return w ? voteRoomItem(w, proposalId) : NOT_LOGGED_IN;
 }
