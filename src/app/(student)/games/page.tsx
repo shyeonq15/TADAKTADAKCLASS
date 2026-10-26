@@ -7,6 +7,7 @@ const GAMES = [
   { href: "/games/runner", icon: "🐰", title: "토끼 달리기", desc: "장애물 단어를 쳐서 점프! 멀리 달려요", ready: true },
   { href: "/games/boss", icon: "👾", title: "보스전", desc: "선생님 기록(고스트)과 레이스해요", ready: true },
   { href: "/games/race", icon: "🏁", title: "친구 대결", desc: "반 친구와 실시간 레이스 (최대 4명)", ready: true },
+  { href: "/hall", icon: "🏆", title: "명예의 전당", desc: "우리 학년 부문별 최고 기록 TOP 10", ready: true },
 ] as const;
 
 export default function GamesPage() {

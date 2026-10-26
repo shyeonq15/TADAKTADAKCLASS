@@ -33,6 +33,16 @@ export const GROWTH = {
   classBattlePeriodDays: 14,
 } as const;
 
+/* ── 명예의 전당 (같은 학년, 닉네임만) ── */
+export const HALL = {
+  /** 부문마다 몇 명까지 */
+  size: 10,
+  /** 최고 타수 부문은 이 정확도(%) 이상인 기록만 */
+  minAccuracy: 90,
+  /** 기호 정확도 부문은 이만큼 이상 친 기록만 (짧은 글로 100% 받는 것 막기) */
+  minKeystrokes: 60,
+} as const;
+
 /* ── 반 대결 (2주 단위, 월요일 시작) ── */
 export const CLASS_BATTLE = {
   /** 첫 집계가 시작되는 월요일 (YYYY-MM-DD, 한국 시간). 여기서부터 14일씩 끊어요 */

@@ -47,9 +47,14 @@ async function HomeRoom() {
       {battle && (
         <div className="mt-4 border-t-2 border-win-shadow pt-3">
           <BattleBoard data={battle} compact />
-          <PixelLink href="/battle" variant="ghost" size="sm" className="mt-2">
-            반 대결 자세히 보기
-          </PixelLink>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <PixelLink href="/battle" variant="ghost" size="sm">
+              반 대결 자세히 보기
+            </PixelLink>
+            <PixelLink href="/hall" variant="ghost" size="sm">
+              🏆 명예의 전당
+            </PixelLink>
+          </div>
         </div>
       )}
     </RetroWindow>

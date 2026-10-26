@@ -49,9 +49,9 @@ function ranked<T extends { score: number }>(rows: T[]): (T & { rank: number })[
   return sorted.map((r) => ({ ...r, rank: sorted.findIndex((x) => x.score === r.score) + 1 }));
 }
 
-type ClassRow = { id: string; class_no: number };
+export type ClassRow = { id: string; class_no: number };
 
-async function classesOf(schoolYearId: string, grade: number): Promise<ClassRow[]> {
+export async function classesOf(schoolYearId: string, grade: number): Promise<ClassRow[]> {
   const { data } = await createAdminClient()
     .from("classes")
     .select("id, class_no")
