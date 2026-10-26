@@ -72,6 +72,12 @@ function LoginStep({ studentNo, label, onBack }: { studentNo: string; label: str
   const [picks, setPicks] = useState<number[]>([]);
   const [state, action, pending] = useActionState(pictureLogin, null);
   const [shownError, setShownError] = useState<string | undefined>();
+  // 비밀번호가 틀렸다는 답이 오면 고른 그림을 바로 비워서 처음부터 다시 누르게 해요
+  const [answered, setAnswered] = useState(state);
+  if (state !== answered) {
+    setAnswered(state);
+    if (state?.message) setPicks([]);
+  }
 
   const choose = (next: number[]) => {
     setShownError(undefined);
