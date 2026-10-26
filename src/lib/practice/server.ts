@@ -423,7 +423,8 @@ export async function saveRound(
     const clear = await admin.from("level_clears").insert({ student_id: who.userId, track, level });
     firstClear = !clear.error;
     const next = level + 1;
-    if (firstClear && next <= STAGE_COUNT && next > before.progress.unlocked[track]) {
+    // 다음 단계는 통과할 때마다 열어요 (예전 기록 때문에 "처음 통과"가 아니어도 막히지 않게). 코인·성장 점수는 처음 통과만
+    if (next <= STAGE_COUNT && next > before.progress.unlocked[track]) {
       await admin.from("track_progress").upsert({ student_id: who.userId, track, unlocked_level: next });
       unlockedLevel = next;
     }
