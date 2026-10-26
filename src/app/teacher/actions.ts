@@ -8,6 +8,7 @@ import { ensureSchoolYear, getViewer } from "@/lib/auth/viewer";
 import { COINS, GAME_COINS } from "@/config/game";
 import { dayKeyKST } from "@/lib/practice/day";
 import { addCoins, refreshGrowth } from "@/lib/practice/server";
+import { moveStudentCore, promoteClassCore } from "@/lib/teacher/roster";
 
 export type ActionState = { ok: boolean; message: string } | null;
 
@@ -183,4 +184,28 @@ export async function removeRoomItem(formData: FormData) {
   if (!(await ownClass(classId, t.schoolId))) return;
   await createAdminClient().from("room_items").delete().eq("class_id", classId).eq("item_id", String(formData.get("itemId")));
   revalidatePath(`/teacher/classes/${classId}`);
+}
+
+/* ───── 반 옮기기 · 진급 ───── */
+
+export async function promoteClass(_: ActionState, formData: FormData): Promise<ActionState> {
+  const t = await teacherOrNull();
+  if (!t) return { ok: false, message: "교사만 할 수 있어요." };
+  const fromId = String(formData.get("classId"));
+  const toId = String(formData.get("targetId"));
+  const res = await promoteClassCore(t.schoolId, fromId, toId);
+  revalidatePath(`/teacher/classes/${fromId}`);
+  revalidatePath(`/teacher/classes/${toId}`);
+  return res;
+}
+
+export async function moveStudent(_: ActionState, formData: FormData): Promise<ActionState> {
+  const t = await teacherOrNull();
+  if (!t) return { ok: false, message: "교사만 할 수 있어요." };
+  const fromId = String(formData.get("classId"));
+  const toId = String(formData.get("targetId"));
+  const res = await moveStudentCore(t.schoolId, fromId, toId, String(formData.get("studentId")), Number(formData.get("number")));
+  revalidatePath(`/teacher/classes/${fromId}`);
+  revalidatePath(`/teacher/classes/${toId}`);
+  return res;
 }

@@ -10,10 +10,16 @@ import { loadBattle } from "@/lib/battle/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CreateClassForm } from "./CreateClassForm";
 
-async function Classes() {
+async function Classes({ searchParams }: { searchParams: PageProps<"/teacher">["searchParams"] }) {
   await connection(); // 로그인·날짜는 요청마다 새로 확인
   const t = await requireTeacher();
-  const year = schoolYearOf();
+  const current = schoolYearOf();
+  // 지난 학년도 반도 볼 수 있게 (?year=2026)
+  const { data: years } = await createAdminClient().from("school_years").select("year").eq("school_id", t.schoolId).order("year", { ascending: false });
+  const yearList = [...new Set([current, ...(years ?? []).map((y) => y.year)])].sort((a, b) => b - a);
+  const asked = Number((await searchParams).year);
+  const year = yearList.includes(asked) ? asked : current;
+  const isCurrent = year === current;
   const { data: classes } = await createAdminClient()
     .from("classes")
     .select("id, school_year_id, grade, class_no, join_code, coins, enrollments(count), school_years!inner(year, school_id)")
@@ -24,10 +30,29 @@ async function Classes() {
 
   // 학년마다 반 대결 순위판
   const grades = [...new Map((classes ?? []).map((c) => [c.grade, c.school_year_id])).entries()];
-  const battles = await Promise.all(grades.map(([grade, schoolYearId]) => loadBattle({ schoolYearId, grade })));
+  const battles = isCurrent ? await Promise.all(grades.map(([grade, schoolYearId]) => loadBattle({ schoolYearId, grade }))) : [];
 
   return (
     <div className="flex flex-col gap-6">
+      {yearList.length > 1 && (
+        <nav aria-label="학년도" className="flex flex-wrap items-center gap-1">
+          {yearList.map((y) => (
+            <Link
+              key={y}
+              href={y === current ? "/teacher" : `/teacher?year=${y}`}
+              aria-current={y === year ? "page" : undefined}
+              className={`flex h-9 items-center px-4 ${y === year ? "win-bevel-pressed bg-paper font-bold" : "win-bevel"}`}
+            >
+              {y}학년도{y === current ? " (지금)" : ""}
+            </Link>
+          ))}
+        </nav>
+      )}
+      {!isCurrent && (
+        <p className="border-2 border-navy-900 bg-paper px-3 py-2">
+          지난 학년도 반이에요. 반 관리에서 학생들을 {current}학년도 반으로 <strong>진급</strong>시킬 수 있어요. 기록은 학생에게 그대로 남아요.
+        </p>
+      )}
       <RetroWindow title={`${year}학년도 반 목록`}>
         {classes && classes.length > 0 ? (
           <table className="w-full text-body">
@@ -69,9 +94,11 @@ async function Classes() {
         </RetroWindow>
       ))}
 
-      <RetroWindow title="새 반 만들기">
-        <CreateClassForm />
-      </RetroWindow>
+      {isCurrent && (
+        <RetroWindow title={`새 반 만들기 (${current}학년도)`}>
+          <CreateClassForm />
+        </RetroWindow>
+      )}
 
       <p className="text-small text-paper">
         {t.realName ?? t.email} 선생님으로 로그인했어요.
@@ -80,10 +107,10 @@ async function Classes() {
   );
 }
 
-export default function TeacherHome() {
+export default function TeacherHome({ searchParams }: PageProps<"/teacher">) {
   return (
     <Suspense fallback={<Loading />}>
-      <Classes />
+      <Classes searchParams={searchParams} />
     </Suspense>
   );
 }

@@ -10,6 +10,7 @@ import { requireTeacher } from "@/lib/auth/viewer";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { toggleSecretSetup } from "../../actions";
 import { AddStudentsForm, ResetSecretButton } from "./RosterForms";
+import { MoveStudentForm, PromoteClassForm, type TargetClass } from "./MoveForms";
 
 async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id]">["params"] }) {
   const { id } = await params;
@@ -50,6 +51,19 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
     const v = [...placement.values()].map((p) => p[t]).filter((n): n is number => n !== undefined);
     return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null;
   };
+  // 옮길 수 있는 반: 같은 학년도 다른 반 + 다음 학년도 반 (진급)
+  const year = (cls.school_years as unknown as { year: number }).year;
+  const { data: others } = await admin
+    .from("classes")
+    .select("id, grade, class_no, school_years!inner(year, school_id)")
+    .eq("school_years.school_id", t.schoolId)
+    .gte("school_years.year", year)
+    .neq("id", id);
+  const targets: TargetClass[] = (others ?? [])
+    .map((c) => ({ c, y: (c.school_years as unknown as { year: number }).year }))
+    .sort((a, b) => b.y - a.y || a.c.grade - b.c.grade || a.c.class_no - b.c.class_no)
+    .map(({ c, y }) => ({ id: c.id, label: `${y}학년도 ${c.grade}학년 ${c.class_no}반`, year: y }));
+
   const students = (roster ?? []).map((r) => ({
     number: r.number,
     studentId: r.student_id,
@@ -149,6 +163,19 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
         <p className="mt-2 text-small text-text-muted">
           {placement.size}명이 배치 테스트를 했어요. 2주 뒤 티어 기준을 조정할 때 참고해요.
         </p>
+      </RetroWindow>
+
+      <RetroWindow title="반 옮기기 · 진급">
+        <div className="flex flex-col gap-4">
+          <PromoteClassForm classId={id} year={year} targets={targets} />
+          <div className="border-t-2 border-win-shadow pt-3">
+            <MoveStudentForm
+              classId={id}
+              students={students.map((s) => ({ id: s.studentId, label: `${s.number}번 ${s.real_name ?? s.nickname ?? ""}` }))}
+              targets={[{ id: cls.id, label: `${year}학년도 ${cls.grade}학년 ${cls.class_no}반 (이 반, 번호만 바꾸기)`, year }, ...targets]}
+            />
+          </div>
+        </div>
       </RetroWindow>
 
       <RetroWindow title="학생 명단 등록">
