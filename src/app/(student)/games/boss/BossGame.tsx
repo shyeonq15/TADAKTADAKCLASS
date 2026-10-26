@@ -12,6 +12,7 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { StatCard } from "@/components/ui/StatCard";
 import { RaceLanes } from "@/components/typing/RaceLanes";
+import type { MinimiLook } from "@/config/shop";
 import { TypingSession } from "@/components/typing/TypingSession";
 import type { BossResult, BossSummary } from "@/lib/games/boss";
 import { safeCall } from "@/lib/practice/call";
@@ -67,7 +68,17 @@ function Countdown({ onDone }: { onDone: () => void }) {
 }
 
 /** 레이스: 위에 나와 고스트 레인, 아래 타자 칸 */
-function Race({ c, start, onFinish }: { c: Challenge; start: number; onFinish: (r: BossResult | { error: string }) => void }) {
+function Race({
+  c,
+  start,
+  myLook,
+  onFinish,
+}: {
+  c: Challenge;
+  start: number;
+  myLook?: MinimiLook;
+  onFinish: (r: BossResult | { error: string }) => void;
+}) {
   const setData = useSetPracticeData();
   const [now, setNow] = useState(start);
   const total = c.lines.reduce((n, l) => n + l.length, 0);
@@ -87,7 +98,7 @@ function Race({ c, start, onFinish }: { c: Challenge; start: number; onFinish: (
         <RaceLanes
           lanes={[
             { id: "boss", name: "👾 선생님", progress: ghost, ghost: true, badge: ghost >= 1 ? "도착!" : undefined },
-            { id: "me", name: "나", progress: stats.progress, me: true },
+            { id: "me", name: "나", progress: stats.progress, me: true, look: myLook },
           ]}
         />
       )}
@@ -101,7 +112,7 @@ function Race({ c, start, onFinish }: { c: Challenge; start: number; onFinish: (
   );
 }
 
-export function BossGame({ bosses }: { bosses: BossSummary[] }) {
+export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: MinimiLook }) {
   const [phase, setPhase] = useState<Phase>({ name: "list" });
 
   const challenge = async (b: BossSummary) => {
@@ -186,6 +197,7 @@ export function BossGame({ bosses }: { bosses: BossSummary[] }) {
       <RetroWindow title={`보스전 - ${c.title} (${TRACK_LABELS[c.track]})`} className="mx-auto w-full max-w-4xl">
         <Race
           c={c}
+          myLook={myLook}
           start={phase.start}
           onFinish={(r) => setPhase("error" in r ? { name: "error", message: r.error } : { name: "result", c, r })}
         />

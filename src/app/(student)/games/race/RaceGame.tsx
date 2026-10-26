@@ -9,6 +9,7 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { RaceLanes, type Lane } from "@/components/typing/RaceLanes";
+import { Minimi } from "@/components/pixel/Minimi";
 import { TypingSession } from "@/components/typing/TypingSession";
 import type { RaceInfo, RaceResult } from "@/lib/games/race";
 import { useLobby, useRoom, type Me } from "@/lib/games/realtime";
@@ -327,6 +328,7 @@ export function RaceGame({ me }: { me: Me }) {
                   id: p.userId,
                   name: p.nickname,
                   progress: p.progress,
+                  look: info.players.find((pl) => pl.studentId === p.userId)?.look,
                   bubble: p.bubbleAt && now - p.bubbleAt < 1500 ? p.bubble : undefined,
                   badge: p.left ? "나감" : undefined,
                 }));
@@ -336,6 +338,7 @@ export function RaceGame({ me }: { me: Me }) {
                 name: me.nickname,
                 progress: stats.progress,
                 me: true,
+                look: info.players.find((pl) => pl.studentId === me.userId)?.look,
                 bubble: mine?.bubbleAt && now - mine.bubbleAt < 1500 ? mine.bubble : undefined,
               });
               return <RaceLanes lanes={lanes} />;
@@ -380,7 +383,12 @@ export function RaceGame({ me }: { me: Me }) {
             {ranked.map((p) => (
               <tr key={p.studentId} className={`border-b border-win-shadow ${p.studentId === me.userId ? "font-bold" : ""}`}>
                 <td className="w-12 py-1 font-title text-heading">{p.rank ? `${p.rank}등` : "-"}</td>
-                <td className="py-1">{p.nickname}</td>
+                <td className="py-1">
+                  <span className="flex items-center gap-2">
+                    <Minimi look={p.look} scale={2} />
+                    {p.nickname}
+                  </span>
+                </td>
                 <td className="py-1 text-right">{p.finishedMs === null ? "치는 중..." : fmt(p.finishedMs)}</td>
                 <td className="py-1 text-right">{p.cpm ? `${p.cpm}타` : ""}</td>
               </tr>

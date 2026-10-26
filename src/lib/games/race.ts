@@ -11,10 +11,20 @@ import { buildRound, pickCode } from "@/lib/typing/passage";
 import { addCoins, hashLines, loadUncached, makeToken, readToken, refreshGrowth, type Who } from "@/lib/practice/server";
 import type { PracticeData } from "@/lib/practice/types";
 import { scoreRun, type BossSubmission } from "./boss";
+import type { MinimiLook } from "@/config/shop";
+import { loadLooks } from "@/lib/shop/server";
 
 type RaceTicket = { u: string; g: "race"; m: string; h: string; s: number; track: Track };
 
-export type RacePlayer = { studentId: string; nickname: string; rank: number | null; finishedMs: number | null; cpm: number | null };
+export type RacePlayer = {
+  studentId: string;
+  nickname: string;
+  rank: number | null;
+  finishedMs: number | null;
+  cpm: number | null;
+  /** 상점에서 꾸민 미니미 */
+  look?: MinimiLook;
+};
 
 export type RaceInfo = {
   id: string;
@@ -99,6 +109,8 @@ export async function getMatch(who: Who, matchId: string): Promise<RaceInfo | { 
     finishedMs: r.finished_ms,
     cpm: r.cpm,
   }));
+  const looks = await loadLooks(players.map((p) => p.studentId));
+  for (const p of players) p.look = looks[p.studentId] ?? {};
   const info: RaceInfo = {
     id: m.id,
     hostId: m.host_id,

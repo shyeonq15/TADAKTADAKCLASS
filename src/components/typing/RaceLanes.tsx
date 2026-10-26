@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { Minimi } from "@/components/pixel/Minimi";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { BUNNY } from "@/components/pixel/sprites";
+import type { MinimiLook } from "@/config/shop";
 
 // DESIGN.md 7장 "대결 레이스": 가로 트랙 여러 줄, 각 줄에 미니미가 진행률만큼 이동.
 // 보스전(나 vs 선생님 고스트)과 친구 대결(최대 4명)이 같이 써요.
@@ -18,6 +20,8 @@ export type Lane = {
   badge?: ReactNode;
   /** 머리 위 말풍선 (이모티콘) */
   bubble?: string;
+  /** 상점에서 꾸민 미니미 (없으면 기본 토끼) */
+  look?: MinimiLook | null;
 };
 
 export function RaceLanes({ lanes }: { lanes: Lane[] }) {
@@ -41,7 +45,11 @@ export function RaceLanes({ lanes }: { lanes: Lane[] }) {
                 {l.bubble && (
                   <span className="absolute -top-7 left-4 border-2 border-navy-900 bg-paper px-1 text-body leading-none">{l.bubble}</span>
                 )}
-                <PixelSprite sprite={BUNNY} scale={2} className={l.ghost ? "opacity-40" : ""} />
+                {l.look ? (
+                  <Minimi look={l.look} scale={2} className={l.ghost ? "opacity-40" : ""} />
+                ) : (
+                  <PixelSprite sprite={BUNNY} scale={2} className={l.ghost ? "opacity-40" : ""} />
+                )}
               </div>
             </div>
             <span className="w-14 shrink-0 text-right font-pixel text-small text-navy-900">
