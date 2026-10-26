@@ -6,10 +6,8 @@ import { DesktopBackground } from "@/components/ui/DesktopBackground";
 import { Loading } from "@/components/ui/Loading";
 import { requireStudent } from "@/lib/auth/viewer";
 import { loadPracticeData } from "@/lib/practice/server";
-import { loadRoom } from "@/lib/room/server";
 import { loadMyBattle } from "@/lib/battle/server";
 import { BattleBoard } from "@/components/battle/BattleBoard";
-import { ClassRoom } from "@/components/room/ClassRoom";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { HomeDashboard } from "./HomeDashboard";
@@ -22,53 +20,34 @@ async function PlacementGate({ children }: { children: React.ReactNode }) {
   return children;
 }
 
-/** 첫 화면 맨 위: 우리 반 미니룸 (반 친구 미니미 + 반 지갑으로 산 가구) */
-async function HomeRoom() {
+/** 첫 화면 맨 위: 반 대결 순위 요약 (미니룸은 위쪽 메뉴의 "우리 반" 탭에서) */
+async function HomeBattle() {
   const v = await requireStudent();
-  const who = { userId: v.userId, classId: v.enrollment?.classId ?? null };
-  const [room, battle] = await Promise.all([loadRoom(who), loadMyBattle(who.userId, v.enrollment)]);
-  if (!room) return null;
-  const done = room.members.filter((m) => m.doneToday).length;
+  const battle = await loadMyBattle(v.userId, v.enrollment);
+  if (!battle) return null;
   return (
-    <RetroWindow title="우리반_미니룸.exe" className="mb-6">
-      <ClassRoom wall={room.wall} floor={room.floor} furniture={room.furniture} members={room.members} meId={room.meId} />
-      <div className="mt-3 flex flex-wrap items-center gap-3 font-pixel text-body text-navy-900">
-        <span>
-          오늘 미션 완료 <strong className="font-title text-heading">{done}</strong> / {room.members.length}명 ✨
-        </span>
-        <span>
-          반 지갑 <strong className="font-title text-heading">{room.classCoins}</strong>코인
-        </span>
-        {room.proposals.length > 0 && <span className="font-bold text-navy-700">투표 중인 가구 {room.proposals.length}개!</span>}
-        <PixelLink href="/room" variant="reward" size="sm" className="ml-auto">
-          미니룸 꾸미기 투표
+    <RetroWindow title="반대결_순위판.exe" className="mb-6">
+      <BattleBoard data={battle} compact />
+      <div className="mt-2 flex flex-wrap gap-2">
+        <PixelLink href="/battle" variant="ghost" size="sm">
+          반 대결 자세히 보기
+        </PixelLink>
+        <PixelLink href="/hall" variant="ghost" size="sm">
+          🏆 명예의 전당
         </PixelLink>
       </div>
-      {battle && (
-        <div className="mt-4 border-t-2 border-win-shadow pt-3">
-          <BattleBoard data={battle} compact />
-          <div className="mt-2 flex flex-wrap gap-2">
-            <PixelLink href="/battle" variant="ghost" size="sm">
-              반 대결 자세히 보기
-            </PixelLink>
-            <PixelLink href="/hall" variant="ghost" size="sm">
-              🏆 명예의 전당
-            </PixelLink>
-          </div>
-        </div>
-      )}
     </RetroWindow>
   );
 }
 
-// 학생 첫 화면: 맨 위는 반 미니룸, 아래는 내 연습 현황
+// 학생 첫 화면: 맨 위는 반 대결 요약, 아래는 내 연습 현황
 export default function Home() {
   return (
     <DesktopBackground>
       <main className="mx-auto w-full max-w-5xl px-4 py-8">
         <Suspense fallback={<Loading />}>
           <PlacementGate>
-            <HomeRoom />
+            <HomeBattle />
             <ClientOnly fallback={<Loading />}>
               <HomeDashboard />
             </ClientOnly>
