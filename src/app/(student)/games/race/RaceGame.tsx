@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { GAME_COINS, RACE, TRACK_LABELS, TRACKS, type RaceDifficulty, type Track } from "@/config/game";
-import { raceCreate, raceInfo, raceJoin, raceLeave, raceStart, raceSubmit } from "@/app/(student)/actions";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { GAME_COINS, RACE, RACE_MODE_LABELS, TRACK_LABELS, TRACKS, type RaceDifficulty, type RaceMode, type Track } from "@/config/game";
+import { raceCreate, raceInfo, raceJoin, raceLeave, raceQueue, raceQueueLeave, raceStart, raceSubmit } from "@/app/(student)/actions";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
@@ -21,16 +21,19 @@ const DIFFICULTY_LABELS: Record<RaceDifficulty, string> = { easy: "쉬움 (낱�
 
 type Phase =
   | { name: "lobby" }
+  | { name: "queue"; track: Track; waitedSec: number; range: number | null }
   | { name: "room"; matchId: string; host: boolean }
   | { name: "countdown"; matchId: string; info: RaceInfo; until: number }
   | { name: "racing"; matchId: string; info: RaceInfo }
-  | { name: "result"; matchId: string; mine: RaceResult | null }
+  | { name: "result"; matchId: string; info: RaceInfo; mine: RaceResult | null }
   | { name: "error"; message: string };
 
 const fmt = (ms: number | null) => (ms === null ? "-" : `${(ms / 1000).toFixed(1)}초`);
+const pct = (n: number | null) => (n === null ? "-" : `${n > 0 ? "+" : ""}${n}%`);
+const dots = (wins: number) => "★".repeat(wins) + "☆".repeat(Math.max(0, RACE.winsNeeded - wins));
 
 /** 숫자가 줄어드는 카운트다운 */
-function Countdown({ until, onDone }: { until: number; onDone: () => void }) {
+function Countdown({ until, round, onDone }: { until: number; round: number; onDone: () => void }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     if (now >= until) {
@@ -43,43 +46,55 @@ function Countdown({ until, onDone }: { until: number; onDone: () => void }) {
   const n = Math.ceil((until - now) / 1000);
   return (
     <div className="flex flex-col items-center gap-4 bg-navy-900 px-6 py-16">
-      <MissionLabel keyword="MISSION">친구들과 같은 글로 레이스!</MissionLabel>
+      <MissionLabel keyword="MISSION">{`${round}판! 친구들과 같은 글로 레이스!`}</MissionLabel>
       <p className="font-title text-[96px] leading-none text-yellow-400">{n > 0 ? n : "GO!"}</p>
     </div>
   );
 }
 
-export function RaceGame({ me }: { me: Me }) {
+/** 카운트다운까지 기다릴 시간 (내 시계가 조금 틀려도 너무 짧거나 길지 않게) */
+const untilOf = (startAt: number) => Date.now() + Math.min(Math.max(startAt - Date.now(), 1000), RACE.countdownMs + RACE.queue.pollMs + 1000);
+
+export function RaceGame({ me, rating }: { me: Me; rating: number }) {
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "lobby" });
   const [track, setTrack] = useState<Track>("korean");
   const [difficulty, setDifficulty] = useState<RaceDifficulty>("normal");
+  const [mode, setMode] = useState<RaceMode>("classic");
   const [invited, setInvited] = useState<string[]>([]);
   const [results, setResults] = useState<RaceInfo | null>(null);
-  const matchId = phase.name === "lobby" || phase.name === "error" ? null : phase.matchId;
+  const [dropped, setDropped] = useState(false);
+  const matchId = "matchId" in phase ? phase.matchId : null;
+  // 같은 시리즈의 판들은 같은 실시간 채널을 써요 (방에서는 첫 판 id = 시리즈 id)
+  const seriesId = "info" in phase ? phase.info.seriesId : phase.name === "room" ? phase.matchId : null;
   // 레이스 중 이모티콘 말풍선을 1.5초 뒤 지우려고 쓰는 시계
   const [now, setNow] = useState(0);
-  const racing = phase.name === "racing";
+  const ticking = phase.name === "racing" || phase.name === "result";
   useEffect(() => {
-    if (!racing) return;
+    if (!ticking) return;
     const id = window.setInterval(() => setNow(Date.now()), 250);
     return () => window.clearInterval(id);
-  }, [racing]);
+  }, [ticking]);
 
-  const lobby = useLobby(me, phase.name !== "lobby");
+  const lobby = useLobby(me, phase.name !== "lobby" && phase.name !== "queue");
 
-  // 시작 신호를 받으면: 서버에서 지문·표를 받아 카운트다운
+  /** 판 정보를 받아 카운트다운으로 */
+  const goCountdown = useCallback(async (id: string) => {
+    const info = await safeCall(() => raceInfo(id));
+    if ("error" in info || !info.lines || !info.startAt) return false;
+    setResults(null);
+    setPhase({ name: "countdown", matchId: id, info, until: untilOf(info.startAt) });
+    return true;
+  }, []);
+
+  // 방장의 시작 신호
   const onStart = useCallback(
-    async (startAt: number) => {
-      if (!matchId) return;
-      const info = await safeCall(() => raceInfo(matchId));
-      if ("error" in info || !info.lines) return;
-      const wait = Math.min(Math.max(startAt - Date.now(), 1000), RACE.countdownMs + 1000);
-      setPhase((p) => (p.name === "room" ? { name: "countdown", matchId, info, until: Date.now() + wait } : p));
+    async () => {
+      if (phase.name === "room") await goCountdown(phase.matchId);
     },
-    [matchId],
+    [phase, goCountdown],
   );
-  const room = useRoom(matchId, me, onStart);
+  const room = useRoom(seriesId, me, onStart);
 
   // 대기방: 시작 신호를 놓쳤을 때를 위해 2초마다 서버 확인
   useEffect(() => {
@@ -88,29 +103,61 @@ export function RaceGame({ me }: { me: Me }) {
       const info = await safeCall(() => raceInfo(phase.matchId));
       if ("error" in info) return;
       if (info.status === "void") setPhase({ name: "error", message: "방장이 방을 나가서 대결이 취소됐어요." });
-      else if (info.status === "playing" && info.startAt) void onStart(info.startAt);
+      else if (info.status === "playing" && info.startAt) void goCountdown(phase.matchId);
     }, 2000);
     return () => window.clearInterval(id);
-  }, [phase, onStart]);
+  }, [phase, goCountdown]);
 
-  // 결과: 친구들이 다 칠 때까지 1.5초마다 순위 새로 받기
+  // 자동 매치: 2초마다 짝을 찾아요
+  const queueTrack = phase.name === "queue" ? phase.track : null;
   useEffect(() => {
-    if (phase.name !== "result") return;
+    if (!queueTrack) return;
     let stop = false;
     const tick = async () => {
-      const info = await safeCall(() => raceInfo(phase.matchId));
-      if (!stop && !("error" in info)) setResults(info);
+      const res = await safeCall(() => raceQueue(queueTrack));
+      if (stop) return;
+      if ("error" in res) return setPhase({ name: "error", message: res.error ?? "" });
+      if ("matchId" in res) {
+        stop = true;
+        if (!(await goCountdown(res.matchId))) setPhase({ name: "error", message: "짝은 찾았는데 대결을 열지 못했어요. 다시 해 주세요." });
+        return;
+      }
+      setPhase((p) => (p.name === "queue" ? { ...p, waitedSec: res.waitedSec, range: res.range } : p));
     };
     void tick();
-    const id = window.setInterval(tick, 1500);
+    const id = window.setInterval(tick, RACE.queue.pollMs);
     return () => {
       stop = true;
       window.clearInterval(id);
     };
-  }, [phase]);
+  }, [queueTrack, goCountdown]);
+
+  // 결과: 친구들이 다 칠 때까지 순위를 새로 받고, 다음 판이 열리면 넘어가요
+  const resultId = phase.name === "result" ? phase.matchId : null;
+  const moving = useRef(false);
+  useEffect(() => {
+    if (!resultId) return;
+    let stop = false;
+    moving.current = false;
+    const tick = async () => {
+      const info = await safeCall(() => raceInfo(resultId));
+      if (stop || "error" in info) return;
+      setResults(info);
+      if (info.next && !moving.current && Date.now() >= info.next.startAt - RACE.countdownMs - 300) {
+        moving.current = true;
+        if (!(await goCountdown(info.next.matchId))) setDropped(true);
+      }
+    };
+    void tick();
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      stop = true;
+      window.clearInterval(id);
+    };
+  }, [resultId, goCountdown]);
 
   const create = async () => {
-    const res = await safeCall(() => raceCreate(track, difficulty));
+    const res = await safeCall(() => raceCreate(track, difficulty, mode));
     if ("error" in res) return setPhase({ name: "error", message: res.error ?? "" });
     setInvited([]);
     setPhase({ name: "room", matchId: res.matchId, host: true });
@@ -127,7 +174,15 @@ export function RaceGame({ me }: { me: Me }) {
 
   const leave = async () => {
     if (matchId && phase.name === "room") await safeCall(() => raceLeave(matchId));
+    // 시리즈 중간에 나가면 다음 판에서 빠져요 (친구들이 기다리지 않게)
+    if (phase.name === "result" && results?.next) await safeCall(() => raceLeave(results.next!.matchId));
     setResults(null);
+    setDropped(false);
+    setPhase({ name: "lobby" });
+  };
+
+  const cancelQueue = async () => {
+    await safeCall(() => raceQueueLeave());
     setPhase({ name: "lobby" });
   };
 
@@ -136,7 +191,7 @@ export function RaceGame({ me }: { me: Me }) {
     const res = await safeCall(() => raceStart(phase.matchId));
     if ("error" in res) return setPhase({ name: "error", message: res.error ?? "" });
     room.sendStart(res.startAt);
-    void onStart(res.startAt);
+    void goCountdown(phase.matchId);
   };
 
   const inviteModal =
@@ -158,29 +213,54 @@ export function RaceGame({ me }: { me: Me }) {
       </div>
     ) : null;
 
+  const trackPicker = (
+    <div className="flex flex-wrap gap-1">
+      {TRACKS.map((t) => (
+        <button key={t} type="button" onClick={() => setTrack(t)} className={`win-bevel h-10 px-3 ${track === t ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
+          {TRACK_LABELS[t]}
+        </button>
+      ))}
+    </div>
+  );
+
   /* ───────── 로비 ───────── */
   if (phase.name === "lobby") {
     return (
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
         {inviteModal}
         <div className="text-center">
           <p className="title-lime text-hero">친구 대결</p>
-          <p className="font-pixel text-body text-navy-900">우리 반 친구와 같은 글로 레이스! 이모티콘으로 응원해요 (채팅은 없어요)</p>
+          <p className="font-pixel text-body text-navy-900">
+            우리 반 친구와 같은 글로 레이스! {RACE.maxRounds}판 {RACE.winsNeeded}선승 · 이모티콘으로 응원해요 (채팅은 없어요)
+          </p>
+          <p className="mt-1 font-pixel text-body text-navy-900">
+            내 대결 레이팅 <strong className="font-title text-heading">{rating}</strong>
+          </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="font-pixel text-body">{trackPicker}</div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <RetroWindow title="자동 매치">
+            <div className="flex flex-col gap-3 font-pixel text-body">
+              <p>레이팅이 비슷한 우리 반 친구와 1:1로 붙여 줘요. 오래 기다리면 범위를 넓혀요.</p>
+              <PixelButton variant="reward" onClick={() => setPhase({ name: "queue", track, waitedSec: 0, range: RACE.queue.base })}>
+                🔍 {TRACK_LABELS[track]} 대결 찾기
+              </PixelButton>
+              <p className="text-small text-text-muted">클래식 · 보통 난이도. 이기면 레이팅이 올라요.</p>
+            </div>
+          </RetroWindow>
           <RetroWindow title="방 만들기">
             <div className="flex flex-col gap-3 font-pixel text-body">
               <div className="flex flex-wrap gap-1">
-                {TRACKS.map((t) => (
-                  <button key={t} type="button" onClick={() => setTrack(t)} className={`win-bevel h-10 px-3 ${track === t ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
-                    {TRACK_LABELS[t]}
+                {(Object.keys(DIFFICULTY_LABELS) as RaceDifficulty[]).map((d) => (
+                  <button key={d} type="button" onClick={() => setDifficulty(d)} className={`win-bevel h-9 px-2 text-small ${difficulty === d ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
+                    {DIFFICULTY_LABELS[d]}
                   </button>
                 ))}
               </div>
               <div className="flex flex-wrap gap-1">
-                {(Object.keys(DIFFICULTY_LABELS) as RaceDifficulty[]).map((d) => (
-                  <button key={d} type="button" onClick={() => setDifficulty(d)} className={`win-bevel h-10 px-3 text-small ${difficulty === d ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
-                    {DIFFICULTY_LABELS[d]}
+                {(Object.keys(RACE_MODE_LABELS) as RaceMode[]).map((md) => (
+                  <button key={md} type="button" onClick={() => setMode(md)} className={`win-bevel h-9 px-2 text-small ${mode === md ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
+                    {RACE_MODE_LABELS[md]}
                   </button>
                 ))}
               </div>
@@ -188,11 +268,14 @@ export function RaceGame({ me }: { me: Me }) {
                 ▶ 방 만들기
               </PixelButton>
               <p className="text-small text-text-muted">
-                방을 만들면 접속한 친구에게 신청을 보낼 수 있어요 (최대 {RACE.maxPlayers}명). 1등은 코인 {GAME_COINS.raceWin}개!
+                {mode === "growth"
+                  ? "성장 모드는 내 최근 기록보다 가장 많이 잘 친 사람이 이겨요. 레이팅에는 안 들어가요."
+                  : `먼저 끝까지 친 사람이 이겨요. 최대 ${RACE.maxPlayers}명.`}{" "}
+                우승은 코인 {GAME_COINS.raceWin}개!
               </p>
             </div>
           </RetroWindow>
-          <RetroWindow title={`지금 접속한 우리 반 친구 (${lobby.online.length})`}>
+          <RetroWindow title={`접속한 우리 반 친구 (${lobby.online.length})`}>
             {!lobby.connected ? (
               <p className="font-pixel text-body">연결하는 중...</p>
             ) : lobby.online.length ? (
@@ -221,6 +304,24 @@ export function RaceGame({ me }: { me: Me }) {
         <PixelButton size="sm" variant="success" className="mt-4" autoFocus onClick={() => setPhase({ name: "lobby" })}>
           로비로
         </PixelButton>
+      </RetroWindow>
+    );
+  }
+
+  /* ───────── 자동 매치 기다리기 ───────── */
+  if (phase.name === "queue") {
+    return (
+      <RetroWindow title="자동 매치" className="mx-auto w-full max-w-md">
+        <div className="flex flex-col items-center gap-3 py-6 font-pixel text-body text-navy-900">
+          <p className="font-title text-heading">🔍 {TRACK_LABELS[phase.track]} 상대를 찾는 중…</p>
+          <p>
+            {phase.waitedSec}초 · {phase.range === null ? "누구와도 붙어요" : `레이팅 ${rating} ± ${phase.range}`}
+          </p>
+          <p className="text-small text-text-muted">같은 반 친구가 같은 트랙으로 대결 찾기를 누르면 바로 시작해요.</p>
+          <PixelButton variant="ghost" size="sm" onClick={cancelQueue}>
+            그만 찾기
+          </PixelButton>
+        </div>
       </RetroWindow>
     );
   }
@@ -289,7 +390,7 @@ export function RaceGame({ me }: { me: Me }) {
     const { info, until, matchId: id } = phase;
     return (
       <RetroWindow title={`친구 대결 - ${TRACK_LABELS[info.track]}`} className="mx-auto w-full max-w-4xl">
-        <Countdown until={until} onDone={() => setPhase({ name: "racing", matchId: id, info })} />
+        <Countdown until={until} round={info.round} onDone={() => setPhase({ name: "racing", matchId: id, info })} />
       </RetroWindow>
     );
   }
@@ -299,10 +400,14 @@ export function RaceGame({ me }: { me: Me }) {
     const { info, matchId: id } = phase;
     const lines = info.lines!;
     const total = lines.reduce((n, l) => n + l.length, 0);
+    const winsOf = (sid: string) => info.players.find((pl) => pl.studentId === sid)?.wins ?? 0;
     return (
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
-        <div className="flex items-center justify-end gap-1">
-          <span className="mr-2 font-pixel text-small text-navy-900">응원하기</span>
+        <div className="flex items-center gap-1">
+          <span className="font-pixel text-body font-bold text-navy-900">
+            {info.round}판 · {RACE.winsNeeded}승 먼저! {info.mode === "growth" ? "· 성장 모드" : ""}
+          </span>
+          <span className="ml-auto mr-2 font-pixel text-small text-navy-900">응원하기</span>
           {RACE.emojis.map((e) => (
             <button
               key={e}
@@ -323,10 +428,10 @@ export function RaceGame({ me }: { me: Me }) {
             track={info.track}
             header={(stats) => {
               const lanes: Lane[] = Object.values(room.peers)
-                .filter((p) => p.userId !== me.userId)
+                .filter((p) => p.userId !== me.userId && info.players.some((pl) => pl.studentId === p.userId))
                 .map((p) => ({
                   id: p.userId,
-                  name: p.nickname,
+                  name: `${p.nickname} ${"★".repeat(winsOf(p.userId))}`,
                   progress: p.progress,
                   look: info.players.find((pl) => pl.studentId === p.userId)?.look,
                   bubble: p.bubbleAt && now - p.bubbleAt < 1500 ? p.bubble : undefined,
@@ -335,7 +440,7 @@ export function RaceGame({ me }: { me: Me }) {
               const mine = room.peers[me.userId];
               lanes.unshift({
                 id: me.userId,
-                name: me.nickname,
+                name: `${me.nickname} ${"★".repeat(winsOf(me.userId))}`,
                 progress: stats.progress,
                 me: true,
                 look: info.players.find((pl) => pl.studentId === me.userId)?.look,
@@ -349,7 +454,7 @@ export function RaceGame({ me }: { me: Me }) {
               const res = await safeCall(() => raceSubmit(toSubmission(info.token!, lines, r)));
               if ("error" in res) return setPhase({ name: "error", message: res.error ?? "" });
               setData(res.data);
-              setPhase({ name: "result", matchId: id, mine: res.result });
+              setPhase({ name: "result", matchId: id, info, mine: res.result });
             }}
           />
         </RetroWindow>
@@ -358,26 +463,47 @@ export function RaceGame({ me }: { me: Me }) {
   }
 
   /* ───────── 결과 ───────── */
+  const view = results ?? phase.info;
   const mine = phase.mine;
-  const players = results?.players ?? [];
-  const ranked = [...players].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || (a.finishedMs ?? 1e9) - (b.finishedMs ?? 1e9));
+  const meRow = view.players.find((p) => p.studentId === me.userId);
+  const myRank = meRow?.rank ?? mine?.rank ?? null;
+  const allIn = view.players.every((p) => p.finishedMs !== null);
+  const growth = view.mode === "growth";
+  const ranked = [...view.players].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99) || (a.finishedMs ?? 1e9) - (b.finishedMs ?? 1e9));
+  const standings = [...view.players].sort((a, b) => b.wins - a.wins);
+  const champion = view.seriesDone ? standings[0] : null;
+  const iWon = champion?.studentId === me.userId && champion.wins > 0;
+  const nextIn = view.next ? Math.max(0, Math.ceil((view.next.startAt - RACE.countdownMs - now) / 1000)) : null;
+
   const message = [
-    mine?.rank === 1 ? "1등으로 결승선을 통과했다!" : mine?.rank ? `${mine.rank}등으로 들어왔다!` : "끝까지 쳤다! 다음엔 더!",
+    view.seriesDone
+      ? iWon
+        ? "시리즈 우승했다!"
+        : `${champion?.nickname ?? "친구"}의 우승! 다음엔 더!`
+      : myRank === 1
+        ? `${view.round}판을 이겼다!`
+        : myRank
+          ? `${view.round}판 ${myRank}등으로 들어왔다!`
+          : allIn || !growth
+            ? "끝까지 쳤다! 다음엔 더!"
+            : "다 쳤다! 친구들을 기다리는 중…",
     mine && mine.coins > 0 ? `코인 ${mine.coins}개를 획득했다!` : "",
+    view.seriesDone && iWon ? `우승 코인 ${GAME_COINS.raceWin}개도 받았다!` : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <p className="title-lime text-center text-hero">{mine?.rank === 1 ? "WIN!" : "FINISH!"}</p>
-      {!mine?.rank && mine && (
+      <p className="title-lime text-center text-hero">{view.seriesDone ? (iWon ? "CHAMPION!" : "GAME SET!") : `ROUND ${view.round}`}</p>
+      {mine && !mine.rank && !growth && (
         <p className="text-center font-pixel text-body text-navy-900">
           {!mine.completed ? "끝까지 다 쳐야 순위에 들어가요." : `정확도 ${RACE.minAccuracy}% 이상이어야 순위에 들어가요.`}
         </p>
       )}
       <DialogBox key={message} text={message} />
-      <RetroWindow title="순위">
+
+      <RetroWindow title={`${view.round}판 순위${growth ? " (성장 모드)" : ""}`}>
         <table className="w-full font-pixel text-body">
           <tbody>
             {ranked.map((p) => (
@@ -391,15 +517,51 @@ export function RaceGame({ me }: { me: Me }) {
                 </td>
                 <td className="py-1 text-right">{p.finishedMs === null ? "치는 중..." : fmt(p.finishedMs)}</td>
                 <td className="py-1 text-right">{p.cpm ? `${p.cpm}타` : ""}</td>
+                {growth && <td className="py-1 text-right">{pct(p.growthPct)}</td>}
               </tr>
             ))}
           </tbody>
         </table>
-        <p className="mt-2 font-pixel text-small text-text-muted">순위는 서버가 결과를 받은 순서로 정해요. 끝까지 정확하게 친 사람만 순위에 들어가요.</p>
+        <p className="mt-2 font-pixel text-small text-text-muted">
+          {growth
+            ? "성장 모드: 내 최근 5번 기록의 중앙값보다 몇 % 잘 쳤는지로 순위를 정해요. 다 친 뒤에 순위가 나와요."
+            : "순위는 서버가 결과를 받은 순서로 정해요. 끝까지 정확하게 친 사람만 순위에 들어가요."}
+        </p>
       </RetroWindow>
+
+      <RetroWindow title={`시리즈 (${RACE.maxRounds}판 ${RACE.winsNeeded}선승)`}>
+        <ul className="flex flex-col gap-1 font-pixel text-body">
+          {standings.map((p) => (
+            <li key={p.studentId} className={`flex items-center gap-2 ${p.studentId === me.userId ? "font-bold" : ""}`}>
+              <span className="flex-1">{p.nickname}</span>
+              <span className="text-yellow-600" aria-label={`${p.wins}승`}>
+                {dots(p.wins)}
+              </span>
+              {view.seriesDone && p.ratingDelta !== null && (
+                <span className="w-28 text-right text-small">
+                  레이팅 {p.rating} ({p.ratingDelta >= 0 ? "+" : ""}
+                  {p.ratingDelta})
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 font-pixel text-small text-navy-900">
+          {view.seriesDone
+            ? "시리즈가 끝났어요!"
+            : dropped
+              ? "이번 판을 끝내지 못해서 이번 시리즈는 여기까지예요."
+              : nextIn !== null
+                ? `다음 판이 ${nextIn}초 뒤에 시작돼요!`
+                : allIn
+                  ? "다음 판을 준비하는 중…"
+                  : `친구들이 치는 중… (최대 ${RACE.roundMaxMs / 1000}초)`}
+        </p>
+      </RetroWindow>
+
       <div className="flex justify-center gap-3">
-        <PixelButton variant="success" autoFocus onClick={leave}>
-          로비로
+        <PixelButton variant={view.seriesDone || dropped ? "success" : "ghost"} autoFocus={view.seriesDone} onClick={leave}>
+          {view.seriesDone || dropped ? "로비로" : "그만하고 로비로"}
         </PixelButton>
         <PixelLink href="/games" variant="ghost">
           게임 목록

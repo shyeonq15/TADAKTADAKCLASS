@@ -228,11 +228,24 @@ export const RACE = {
     hard: { korean: 6, english: 6, symbol: 7, code: 6 },
   },
   emojis: ["👍", "😮", "🔥", "👏", "😆", "💪"],
+  /** 3판 2선승: 먼저 이만큼 이기면 우승 */
+  winsNeeded: 2,
+  maxRounds: 3,
+  /** 한 판 제한 시간. 지나면 안 친 사람은 빼고 판을 정리해요 */
+  roundMaxMs: 120000,
+  /** 판 결과를 보여 주는 시간 (그다음 카운트다운) */
+  resultPauseMs: 5000,
+  /** 대결 레이팅 (Elo). 성장 모드는 반영하지 않아요 */
+  rating: { start: 1000, k: 32 },
+  /** 자동 매치: 처음엔 레이팅 ±base, 1초마다 +perSecond 씩 넓히고, anyAfterSec 초가 지나면 누구와도 */
+  queue: { base: 150, perSecond: 25, anyAfterSec: 20, pollMs: 2000, staleMs: 7000 },
 } as const;
 export type RaceDifficulty = keyof typeof RACE.difficulty;
+export type RaceMode = "classic" | "growth";
+export const RACE_MODE_LABELS: Record<RaceMode, string> = { classic: "클래식 (먼저 끝내기)", growth: "성장 모드 (내 평균 대비)" };
 
 export const GAME_COINS = {
-  /** 친구 대결 1등 */
+  /** 친구 대결 시리즈(3판 2선승) 우승 */
   raceWin: 10,
   /** 보스 처음 이겼을 때 (개인 + 반 지갑) */
   bossWin: 20,

@@ -9,6 +9,7 @@ import {
   GROWTH,
   MISSION,
   PLACEMENT,
+  RACE,
   STAGE_ACCURACY,
   STAGE_PLAN,
   STEPS_PER_TIER,
@@ -235,6 +236,31 @@ export function RoomHelp() {
   );
 }
 
+export function RaceHelp() {
+  return (
+    <>
+      <p>우리 반 친구와 같은 글로 레이스해요. 한 번 붙으면 {RACE.maxRounds}판 중 {RACE.winsNeeded}판을 먼저 이긴 사람이 우승!</p>
+      <Box>
+        <ul className="list-disc pl-5">
+          <li>
+            <strong>클래식</strong>: 끝까지 먼저 친 사람이 그 판을 이겨요. 정확도 {RACE.minAccuracy}% 이상이어야 순위에 들어가요.
+          </li>
+          <li>
+            <strong>성장 모드</strong>: 내 최근 5번 기록보다 가장 많이 잘 친 사람이 이겨요. 빠른 친구와도 공평하게 겨룰 수 있어요.
+          </li>
+          <li>
+            <strong>자동 매치</strong>: 레이팅이 비슷한 친구와 1:1로 붙여 줘요. 클래식에서 이기면 레이팅이 오르고, 강한 친구를 이기면 더 많이
+            올라요.
+          </li>
+        </ul>
+      </Box>
+      <p>
+        판마다 참여 코인 {GAME_COINS.play}개, 시리즈 우승은 {GAME_COINS.raceWin}개 더! 채팅은 없고 이모티콘으로만 응원해요.
+      </p>
+    </>
+  );
+}
+
 export function BattleHelp() {
   return (
     <>
@@ -258,6 +284,7 @@ export const HELP_SECTIONS = [
   { id: "level", title: "단계와 배치 테스트", Body: LevelHelp },
   { id: "coin", title: "코인", Body: CoinHelp },
   { id: "rain", title: "단어 비", Body: RainHelp },
+  { id: "race", title: "친구 대결", Body: RaceHelp },
   { id: "shop", title: "상점", Body: ShopHelp },
   { id: "room", title: "반 미니룸", Body: RoomHelp },
   { id: "battle", title: "반 대결", Body: BattleHelp },

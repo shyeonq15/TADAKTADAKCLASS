@@ -1,9 +1,9 @@
 "use server";
 
-import type { RaceDifficulty, SoloGame, Track } from "@/config/game";
+import type { RaceDifficulty, RaceMode, SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
 import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/lib/games/boss";
-import { createMatch, getMatch, joinMatch, leaveMatch, startMatch, submitRace } from "@/lib/games/race";
+import { createMatch, getMatch, joinMatch, leaveMatch, leaveQueue, queueMatch, startMatch, submitRace } from "@/lib/games/race";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
 import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
@@ -53,9 +53,20 @@ export async function submitGame(sub: GameSubmission) {
 
 /* ───── 친구 대결 ───── */
 
-export async function raceCreate(track: Track, difficulty: RaceDifficulty) {
+export async function raceCreate(track: Track, difficulty: RaceDifficulty, mode: RaceMode = "classic") {
   const w = await who();
-  return w ? createMatch(w, track, difficulty) : NOT_LOGGED_IN;
+  return w ? createMatch(w, track, difficulty, mode) : NOT_LOGGED_IN;
+}
+
+/** 자동 매치: 화면이 2초마다 불러요 */
+export async function raceQueue(track: Track) {
+  const w = await who();
+  return w ? queueMatch(w, track) : NOT_LOGGED_IN;
+}
+
+export async function raceQueueLeave() {
+  const w = await who();
+  return w ? leaveQueue(w) : NOT_LOGGED_IN;
 }
 
 export async function raceJoin(matchId: string) {

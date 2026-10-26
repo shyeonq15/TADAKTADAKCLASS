@@ -7,6 +7,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { requireStudent } from "@/lib/auth/viewer";
 import { loadPracticeData } from "@/lib/practice/server";
 import { allTiers, profileTier } from "@/lib/scoring/tier";
+import { myRating } from "@/lib/games/race";
 import { RaceGame } from "./RaceGame";
 
 async function Content() {
@@ -19,7 +20,7 @@ async function Content() {
       </RetroWindow>
     );
   }
-  const data = await loadPracticeData(v.userId);
+  const [data, rating] = await Promise.all([loadPracticeData(v.userId), myRating(v.userId)]);
   const me = {
     userId: v.userId,
     nickname: v.nickname ?? "친구",
@@ -28,7 +29,7 @@ async function Content() {
   };
   return (
     <ClientOnly fallback={<Loading />}>
-      <RaceGame me={me} />
+      <RaceGame me={me} rating={rating} />
     </ClientOnly>
   );
 }
