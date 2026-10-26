@@ -2,7 +2,7 @@
 
 import { PLACEMENT, STAGE_ACCURACY, STAGE_PLAN, STEPS_PER_TIER, TIER_LABELS, TIERS, type Tier, type Track } from "@/config/game";
 import { getLevel, type Level, type PracticeMode } from "@/data/packs";
-import { getTrackStage } from "@/lib/packs";
+import { getTrackStage, getTrackTier } from "@/lib/packs";
 
 export type Stage = {
   /** 1~30 */
@@ -44,7 +44,13 @@ export function getStage(track: Track, n: number): Stage | undefined {
   // 트랙 연습팩이 있으면(한글) 그 단계의 교과서 지문으로 연습해요. 한 판 만드는 방식·목표는 그대로
   const pack = getTrackStage(track, tier, step);
   const level: Level = pack?.passages.length
-    ? { ...base, mode: TIER_MODE[tier], items: pack.passages.map((p) => p.text) }
+    ? {
+        ...base,
+        mode: TIER_MODE[tier],
+        // 단계 이름: 브론즈는 자리 이름("기본 자리 (가운데 줄)"), 그 위는 글 종류("문장")
+        title: pack.title ?? getTrackTier(track, tier)?.contentType ?? base.title,
+        items: pack.passages.map((p) => p.text),
+      }
     : base;
   return { stage: n, tier, step, level, goalCpm: plan[1], minAccuracy: STAGE_ACCURACY[tier] };
 }

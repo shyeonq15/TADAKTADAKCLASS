@@ -3,7 +3,7 @@
 
 import type { Tier, Track } from "@/config/game";
 import korean from "@/data/packs/korean-track.json";
-import type { TrackPack, TrackStage } from "@/data/packs/types";
+import type { TrackPack, TrackStage, TrackTier } from "@/data/packs/types";
 
 const TRACK_PACKS: Partial<Record<Track, TrackPack>> = {
   korean: korean as unknown as TrackPack,
@@ -13,6 +13,10 @@ export function getTrack(track: Track): TrackPack | null {
   return TRACK_PACKS[track] ?? null;
 }
 
+export function getTrackTier(track: Track, tierId: Tier): TrackTier | null {
+  return getTrack(track)?.tiers.find((t) => t.id === tierId) ?? null;
+}
+
 export function getTrackStage(track: Track, tierId: Tier, stage: number): TrackStage | null {
-  return getTrack(track)?.tiers.find((t) => t.id === tierId)?.stages.find((s) => s.stage === stage) ?? null;
+  return getTrackTier(track, tierId)?.stages.find((s) => s.stage === stage) ?? null;
 }
