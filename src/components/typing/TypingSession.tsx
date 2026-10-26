@@ -29,6 +29,8 @@ export type SessionResult = {
 type Props = {
   lines: readonly string[];
   track: Track;
+  /** 코드처럼 보여 주기 (줄 번호·들여쓰기 자동 채움). 없으면 코드 트랙만 */
+  code?: boolean;
   /** 제한 시간(초). 배치 테스트처럼 시간이 다 되면 끝 */
   timeLimitSec?: number;
   /** 빈칸 채우기에서 가릴 곳 */
@@ -48,8 +50,8 @@ const fmtTime = (ms: number) => {
 };
 
 /** 실시간 타수·정확도·진행률 + TypingArea. 한 판이 끝나면 onFinish를 한 번 부릅니다. */
-export function TypingSession({ lines, track, timeLimitSec, mask, codeHint, header, onProgress, onFinish }: Props) {
-  const code = track === "code";
+export function TypingSession({ lines, track, code: codeProp, timeLimitSec, mask, codeHint, header, onProgress, onFinish }: Props) {
+  const code = codeProp ?? track === "code";
   const [session, setSession] = useState<SessionState>(() => createSession(lines, { autoIndent: code }));
   const [now, setNow] = useState(() => Date.now());
   const [blockedAt, setBlockedAt] = useState(0);

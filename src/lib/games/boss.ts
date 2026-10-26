@@ -5,10 +5,11 @@ import "server-only";
 
 import { BOSS, GAME_COINS, INTEGRITY, TRACKS, type Track } from "@/config/game";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { correctKeystrokes } from "@/lib/typing/engine";
+import { entersOf, linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildRound, pickCode } from "@/lib/typing/passage";
-import { getStage, stageName } from "@/lib/practice/stages";
+import { stageName } from "@/lib/practice/stages";
+import { getStageWithPassages } from "@/lib/practice/packStage";
 import {
   addCoins,
   hashLines,
@@ -51,7 +52,9 @@ export function scoreRun(sub: BossSubmission, elapsed: number, track: Track) {
   let durationMs = Math.max(1000, Math.round(sub.durationMs));
   if (durationMs > elapsed + 3000) durationMs = elapsed;
   const typed = sub.lines.map((l, i) => String(sub.typedLines[i] ?? "").slice(0, l.length));
-  const keystrokes = sub.lines.reduce((n, l, i) => n + correctKeystrokes(l, typed[i]), 0);
+  // 코드 트랙은 화면처럼 들여쓰기 빼고 Enter 1타 (연습팩 규칙)
+  const code = track === "code";
+  const keystrokes = linesKeystrokes(sub.lines, typed, code, entersOf(sub.lines.length, sub.typedLines.length));
   const cpm = Math.round(keystrokes / (durationMs / 60000));
   const typedChars = typed.reduce((n, t) => n + t.length, 0);
   const correct = typed.reduce((n, t, i) => n + [...t].filter((ch, j) => ch === sub.lines[i][j]).length, 0);
@@ -70,7 +73,7 @@ export function scoreRun(sub: BossSubmission, elapsed: number, track: Track) {
 
 export function issueBossRecording(teacherId: string, track: Track, stage: number, title: string) {
   if (!TRACKS.includes(track)) return { error: "트랙을 찾을 수 없어요." };
-  const st = getStage(track, stage);
+  const st = getStageWithPassages(track, stage);
   if (!st) return { error: "단계를 찾을 수 없어요." };
   const lines = st.level.mode === "code" ? pickCode(st.level).lines : buildRound(track, st.level);
   const name = title.trim().slice(0, 30) || `${stageName(stage)} 보스`;

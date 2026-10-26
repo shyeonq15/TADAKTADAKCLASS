@@ -98,6 +98,8 @@ export type IssuedRound = {
   token: string;
   note?: CodeNote;
   mask?: { line: number; start: number; length: number };
+  /** 코드처럼 보여 줄지 (줄 번호·들여쓰기 자동 채움). 없으면 코드 트랙만 */
+  code?: boolean;
 };
 
 /** 한 판이 끝나고 서버로 보내는 내용. 타수·정확도는 서버가 다시 계산합니다. */

@@ -5,6 +5,7 @@ import { PACKS, type Level } from "@/data/packs";
 import PLACEMENT_TEXT from "@/data/placement.json";
 import { splitPassage } from "@/lib/passages/split";
 import { toKeys } from "./hangul";
+import { pickRound } from "./round";
 
 /** 한 줄 최대 글자 수. 한글은 글자 폭이 넓어서 더 짧게 */
 const LINE_WIDTH: Record<Track, number> = { korean: 22, english: 36, symbol: 32, code: 48 };
@@ -84,4 +85,30 @@ export function buildWeakKeyRound(track: Track, weakKeys: readonly string[]): st
 export function buildPlacementRound(track: Track): string[] {
   const text = (PLACEMENT_TEXT as unknown as Record<Track, string[]>)[track];
   return track === "code" ? [...text] : wrapLines(track, text);
+}
+
+/**
+ * 연습팩 한 판 (기호·코드 트랙): 단계 지문에서 count 개를 겹치지 않게 뽑아요.
+ *  · 코드: 줄바꿈·들여쓰기 그대로, 지문 사이에 빈 줄 하나
+ *  · 기호 조각(낱말): 공백으로 이어 붙여 줄을 채움
+ *  · 그 밖(한 줄 식): 지문 하나 = 한 줄 (식을 중간에서 자르지 않음)
+ */
+export function buildPackRound(track: Track, level: Level, count: number): string[] {
+  const picked = pickRound(level.items, count);
+  if (level.mode === "code") {
+    return picked.flatMap((text, i) => [...(i > 0 ? [""] : []), ...text.split("\n").map((l) => l.trimEnd())]);
+  }
+  if (level.mode === "words") {
+    const lines: string[] = [];
+    let line = "";
+    for (const word of picked) {
+      if (line && line.length + 1 + word.length > LINE_WIDTH[track]) {
+        lines.push(line);
+        line = word;
+      } else line = line ? `${line} ${word}` : word;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  return picked;
 }

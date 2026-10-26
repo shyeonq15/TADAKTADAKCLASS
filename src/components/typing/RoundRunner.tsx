@@ -33,7 +33,7 @@ type Phase =
   | { name: "ready" }
   | { name: "loading" }
   | { name: "explain"; lines: string[]; token: string; note: CodeNote; mask?: Mask }
-  | { name: "typing"; lines: string[]; token: string; note?: CodeNote; mask?: Mask }
+  | { name: "typing"; lines: string[]; token: string; note?: CodeNote; mask?: Mask; code?: boolean }
   | { name: "saving" }
   | { name: "quiz"; save: SaveResult; lines: string[]; note: CodeNote; choices: string[] }
   | { name: "result"; save: SaveResult }
@@ -51,7 +51,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     // 코드면 설명 카드부터
     if (res.note) setPhase({ name: "explain", lines: res.lines, token: res.token, note: res.note, mask: res.mask });
-    else setPhase({ name: "typing", lines: res.lines, token: res.token });
+    else setPhase({ name: "typing", lines: res.lines, token: res.token, code: res.code });
   };
 
   const start = () => {
@@ -132,6 +132,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           key={phase.token}
           lines={phase.lines}
           track={track}
+          code={phase.code}
           mask={phase.mask}
           codeHint={phase.note ? (i) => <CodeHint note={phase.note!} lineIndex={i} mask={phase.mask} /> : undefined}
           onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}

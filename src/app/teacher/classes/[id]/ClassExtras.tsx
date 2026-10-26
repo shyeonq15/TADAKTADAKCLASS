@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { ClassRoom } from "@/components/room/ClassRoom";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { GAME_LABELS, TEACHER_VIEW, TRACK_LABELS, type SoloGame, type Track } from "@/config/game";
@@ -156,6 +157,7 @@ export async function RoomAdmin({ classId, teacherId }: { classId: string; teach
 
 /** 최근 n일 동안의 기록 (페이지는 요청마다 새로 그려요) */
 async function recentMissedKeys(classId: string, days: number) {
+  await connection(); // 지금 시각 기준이라 요청마다 새로
   const since = new Date(Date.now() - days * 86400000).toISOString();
   return createAdminClient()
     .from("attempts")

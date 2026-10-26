@@ -24,6 +24,12 @@ export type TrackPassage = {
   /** 지문 타수 ÷ 그 단계 목표 타수 × 60 */
   estSeconds: number;
   source: PassageSource | string;
+  /** 줄 수 (기호·코드) */
+  lines?: number;
+  /** 실제로 실행한 결과 (코드 트랙, 기호 마스터·레전드) */
+  output?: string;
+  /** input() 에 넣은 값 (나중에 결과 맞히기에 쓸 수 있게) */
+  inputs?: string[];
 };
 
 export type TrackStage = {
@@ -31,6 +37,8 @@ export type TrackStage = {
   targetTpm: number;
   title?: string;
   keys?: string;
+  /** 연결된 파이썬 첫걸음 강 번호 (기호·코드) */
+  lessons?: number[];
   passages: TrackPassage[];
 };
 
@@ -41,7 +49,7 @@ export type TrackTier = {
   accuracy: number;
   contentType: string;
   targetRange: [number, number];
-  round: { passagesPerRound: number; pick: "random"; targetSeconds: number };
+  round: { passagesPerRound: number; pick: "random"; targetSeconds: number; avgPassageSeconds?: number };
   stages: TrackStage[];
 };
 

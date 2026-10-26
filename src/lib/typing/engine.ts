@@ -152,14 +152,26 @@ export function imeHint(s: SessionState): "korean" | "english" | null {
   return null;
 }
 
-/** 맞게 친 글자의 키 입력 수 */
-export function correctKeystrokes(target: string, typed: string): number {
+/** 맞게 친 글자의 키 입력 수. skipIndent 면 줄 앞 들여쓰기(자동으로 채워 주는 칸)는 세지 않음 */
+export function correctKeystrokes(target: string, typed: string, skipIndent = false): number {
   let n = 0;
-  for (let i = 0; i < typed.length && i < target.length; i++) {
+  for (let i = skipIndent ? leadingWhitespace(target).length : 0; i < typed.length && i < target.length; i++) {
     if (typed[i] === target[i]) n += toKeys(target[i]).length;
   }
   return n;
 }
+
+/**
+ * 여러 줄 타수. code(들여쓰기 자동 채움, 코드 지문)면 연습팩 규칙과 같게:
+ * 줄 앞 들여쓰기는 빼고, 다음 줄로 넘어갈 때 누른 Enter 는 1타씩 (enters = 넘어간 줄 수)
+ */
+export function linesKeystrokes(lines: readonly string[], typed: readonly string[], code: boolean, enters: number): number {
+  const chars = lines.reduce((n, line, i) => n + correctKeystrokes(line, typed[i] ?? "", code), 0);
+  return chars + (code ? Math.max(0, enters) : 0);
+}
+
+/** 서버용: 낸 줄 수로 Enter 수 세기 (끝까지 쳤으면 마지막 줄은 Enter 없이 끝남) */
+export const entersOf = (lineCount: number, doneCount: number) => (doneCount >= lineCount ? lineCount - 1 : doneCount);
 
 export type SessionStats = {
   /** 타/분 (자모 기준, 맞게 친 것만) */
@@ -175,12 +187,13 @@ export type SessionStats = {
 export function sessionStats(s: SessionState, now: number): SessionStats {
   const elapsedMs = s.startedAt === null ? 0 : (s.finishedAt ?? now) - s.startedAt;
 
-  let keystrokes = s.doneLines.reduce((sum, typed, i) => sum + correctKeystrokes(s.lines[i], typed), 0);
+  const enters = isFinished(s) ? s.doneLines.length - 1 : s.doneLines.length;
+  let keystrokes = linesKeystrokes(s.lines.slice(0, s.doneLines.length), s.doneLines, s.autoIndent, enters);
   if (!isFinished(s)) {
     const target = currentLine(s);
     // 조합 중인 글자는 목표로 가는 중이면 아직 세지 않음
     const settled = s.composing ? s.typed.slice(0, -1) : s.typed;
-    keystrokes += correctKeystrokes(target, settled);
+    keystrokes += correctKeystrokes(target, settled, s.autoIndent);
   }
 
   const committed = s.totalCommitted + (isFinished(s) ? 0 : s.lineCommitted);

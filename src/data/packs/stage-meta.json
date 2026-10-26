@@ -1,0 +1,770 @@
+{
+ "code": {
+  "version": 1,
+  "stages": {
+   "bronze-1": {
+    "title": "print 첫걸음",
+    "lessons": [
+     1,
+     2,
+     3
+    ],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-2": {
+    "title": "숫자와 계산 출력",
+    "lessons": [
+     7,
+     10,
+     11
+    ],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-3": {
+    "title": "쉼표와 sep",
+    "lessons": [
+     4,
+     5
+    ],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-4": {
+    "title": "자료형과 문자열 계산",
+    "lessons": [
+     6,
+     9,
+     13
+    ],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-5": {
+    "title": "계산 순서와 변환",
+    "lessons": [
+     12,
+     14
+    ],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "silver-1": {
+    "title": "변수에 넣고 보여 주기",
+    "lessons": [
+     15
+    ],
+    "passages": 8,
+    "roundSize": 4
+   },
+   "silver-2": {
+    "title": "값 바꾸기와 +=",
+    "lessons": [
+     16
+    ],
+    "passages": 8,
+    "roundSize": 4
+   },
+   "silver-3": {
+    "title": "문자열 변수",
+    "lessons": [
+     17,
+     18
+    ],
+    "passages": 8,
+    "roundSize": 4
+   },
+   "silver-4": {
+    "title": "f-문자열",
+    "lessons": [
+     19
+    ],
+    "passages": 8,
+    "roundSize": 4
+   },
+   "silver-5": {
+    "title": "입력받기",
+    "lessons": [
+     20,
+     21,
+     22
+    ],
+    "passages": 8,
+    "roundSize": 4
+   },
+   "gold-1": {
+    "title": "비교 결과 보여 주기",
+    "lessons": [
+     23,
+     24,
+     25
+    ],
+    "passages": 6,
+    "roundSize": 3
+   },
+   "gold-2": {
+    "title": "if 하나",
+    "lessons": [
+     26
+    ],
+    "passages": 6,
+    "roundSize": 3
+   },
+   "gold-3": {
+    "title": "if ~ else",
+    "lessons": [
+     27
+    ],
+    "passages": 6,
+    "roundSize": 3
+   },
+   "gold-4": {
+    "title": "elif 여러 갈래",
+    "lessons": [
+     28
+    ],
+    "passages": 6,
+    "roundSize": 3
+   },
+   "gold-5": {
+    "title": "입력받아 판단하기",
+    "lessons": [
+     29
+    ],
+    "passages": 6,
+    "roundSize": 3
+   },
+   "diamond-1": {
+    "title": "for와 range",
+    "lessons": [
+     30
+    ],
+    "passages": 6,
+    "roundSize": 5
+   },
+   "diamond-2": {
+    "title": "range 시작·끝·간격",
+    "lessons": [
+     31
+    ],
+    "passages": 6,
+    "roundSize": 5
+   },
+   "diamond-3": {
+    "title": "합계 쌓기",
+    "lessons": [
+     32
+    ],
+    "passages": 6,
+    "roundSize": 5
+   },
+   "diamond-4": {
+    "title": "while",
+    "lessons": [
+     33
+    ],
+    "passages": 6,
+    "roundSize": 5
+   },
+   "diamond-5": {
+    "title": "break와 continue",
+    "lessons": [
+     34
+    ],
+    "passages": 6,
+    "roundSize": 5
+   },
+   "master-1": {
+    "title": "리스트 만들고 꺼내기",
+    "lessons": [
+     35
+    ],
+    "passages": 5,
+    "roundSize": 4
+   },
+   "master-2": {
+    "title": "넣고 빼기",
+    "lessons": [
+     36
+    ],
+    "passages": 5,
+    "roundSize": 4
+   },
+   "master-3": {
+    "title": "리스트 도구",
+    "lessons": [
+     37
+    ],
+    "passages": 5,
+    "roundSize": 4
+   },
+   "master-4": {
+    "title": "리스트와 for, in",
+    "lessons": [
+     38
+    ],
+    "passages": 5,
+    "roundSize": 4
+   },
+   "master-5": {
+    "title": "잘라 내기와 2차원 리스트",
+    "lessons": [
+     39
+    ],
+    "passages": 5,
+    "roundSize": 4
+   },
+   "legend-1": {
+    "title": "함수 만들고 부르기",
+    "lessons": [
+     40,
+     41
+    ],
+    "passages": 4,
+    "roundSize": 3
+   },
+   "legend-2": {
+    "title": "return으로 돌려주기",
+    "lessons": [
+     42
+    ],
+    "passages": 4,
+    "roundSize": 3
+   },
+   "legend-3": {
+    "title": "계산기와 급여 계산",
+    "lessons": [
+     41,
+     42
+    ],
+    "passages": 4,
+    "roundSize": 3
+   },
+   "legend-4": {
+    "title": "리스트를 다루는 함수",
+    "lessons": [
+     38,
+     42
+    ],
+    "passages": 4,
+    "roundSize": 3
+   },
+   "legend-5": {
+    "title": "작은 프로그램 완성",
+    "lessons": [
+     29,
+     34,
+     43
+    ],
+    "passages": 4,
+    "roundSize": 3
+   }
+  }
+ },
+ "korean": {
+  "version": 1,
+  "stages": {
+   "bronze-1": {
+    "title": "기본 자리 (가운데 줄)",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-2": {
+    "title": "윗줄 더하기",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-3": {
+    "title": "아랫줄 더하기",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-4": {
+    "title": "쌍자음과 겹모음",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "bronze-5": {
+    "title": "겹받침과 종합",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "silver-1": {
+    "title": "낱말",
+    "lessons": [],
+    "passages": 30,
+    "roundSize": 15
+   },
+   "silver-2": {
+    "title": "낱말",
+    "lessons": [],
+    "passages": 30,
+    "roundSize": 15
+   },
+   "silver-3": {
+    "title": "낱말",
+    "lessons": [],
+    "passages": 30,
+    "roundSize": 15
+   },
+   "silver-4": {
+    "title": "낱말",
+    "lessons": [],
+    "passages": 30,
+    "roundSize": 15
+   },
+   "silver-5": {
+    "title": "낱말",
+    "lessons": [],
+    "passages": 30,
+    "roundSize": 15
+   },
+   "gold-1": {
+    "title": "문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "gold-2": {
+    "title": "문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "gold-3": {
+    "title": "문장",
+    "lessons": [],
+    "passages": 11,
+    "roundSize": 5
+   },
+   "gold-4": {
+    "title": "문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "gold-5": {
+    "title": "문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "diamond-1": {
+    "title": "긴 문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "diamond-2": {
+    "title": "긴 문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "diamond-3": {
+    "title": "긴 문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "diamond-4": {
+    "title": "긴 문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "diamond-5": {
+    "title": "긴 문장",
+    "lessons": [],
+    "passages": 10,
+    "roundSize": 4
+   },
+   "master-1": {
+    "title": "문단",
+    "lessons": [],
+    "passages": 8,
+    "roundSize": 2
+   },
+   "master-2": {
+    "title": "문단",
+    "lessons": [],
+    "passages": 7,
+    "roundSize": 2
+   },
+   "master-3": {
+    "title": "문단",
+    "lessons": [],
+    "passages": 8,
+    "roundSize": 2
+   },
+   "master-4": {
+    "title": "문단",
+    "lessons": [],
+    "passages": 7,
+    "roundSize": 2
+   },
+   "master-5": {
+    "title": "문단",
+    "lessons": [],
+    "passages": 8,
+    "roundSize": 2
+   },
+   "legend-1": {
+    "title": "정보 이야기",
+    "lessons": [],
+    "passages": 6,
+    "roundSize": 1
+   },
+   "legend-2": {
+    "title": "정보 이야기",
+    "lessons": [],
+    "passages": 6,
+    "roundSize": 1
+   },
+   "legend-3": {
+    "title": "정보 이야기",
+    "lessons": [],
+    "passages": 6,
+    "roundSize": 1
+   },
+   "legend-4": {
+    "title": "정보 이야기",
+    "lessons": [],
+    "passages": 6,
+    "roundSize": 1
+   },
+   "legend-5": {
+    "title": "정보 이야기",
+    "lessons": [],
+    "passages": 6,
+    "roundSize": 1
+   }
+  }
+ },
+ "symbol": {
+  "version": 1,
+  "stages": {
+   "bronze-1": {
+    "title": "괄호 짝 ( ) [ ]",
+    "lessons": [
+     2,
+     35
+    ],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "bronze-2": {
+    "title": "따옴표와 문장 부호 \" ' : , .",
+    "lessons": [
+     3,
+     4,
+     26
+    ],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "bronze-3": {
+    "title": "계산 기호 + - * / = %",
+    "lessons": [
+     10,
+     11,
+     15
+    ],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "bronze-4": {
+    "title": "비교·특수 기호 < > ! # _ { }",
+    "lessons": [
+     5,
+     17,
+     19,
+     23,
+     24
+    ],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "bronze-5": {
+    "title": "기호 종합",
+    "lessons": [
+     1,
+     43
+    ],
+    "passages": 10,
+    "roundSize": 5
+   },
+   "silver-1": {
+    "title": "괄호와 따옴표 조각",
+    "lessons": [
+     2,
+     3,
+     6
+    ],
+    "passages": 20,
+    "roundSize": 19
+   },
+   "silver-2": {
+    "title": "계산 조각",
+    "lessons": [
+     10,
+     11,
+     12,
+     13
+    ],
+    "passages": 20,
+    "roundSize": 19
+   },
+   "silver-3": {
+    "title": "변수와 대입 조각",
+    "lessons": [
+     15,
+     16,
+     17
+    ],
+    "passages": 20,
+    "roundSize": 19
+   },
+   "silver-4": {
+    "title": "비교와 콜론 조각",
+    "lessons": [
+     23,
+     24,
+     25,
+     26
+    ],
+    "passages": 20,
+    "roundSize": 19
+   },
+   "silver-5": {
+    "title": "리스트·함수 조각",
+    "lessons": [
+     19,
+     35,
+     36,
+     39,
+     40
+    ],
+    "passages": 20,
+    "roundSize": 19
+   },
+   "gold-1": {
+    "title": "print와 따옴표",
+    "lessons": [
+     2,
+     3,
+     4
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "gold-2": {
+    "title": "계산과 자료형",
+    "lessons": [
+     7,
+     9,
+     11,
+     12,
+     14
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "gold-3": {
+    "title": "변수와 입력",
+    "lessons": [
+     15,
+     16,
+     19,
+     20,
+     21
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "gold-4": {
+    "title": "조건식",
+    "lessons": [
+     23,
+     24,
+     25,
+     26
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "gold-5": {
+    "title": "반복·리스트·함수 한 줄",
+    "lessons": [
+     30,
+     31,
+     35,
+     36,
+     40,
+     42
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "diamond-1": {
+    "title": "따옴표와 괄호 겹치기",
+    "lessons": [
+     3,
+     9,
+     14,
+     21
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "diamond-2": {
+    "title": "f-문자열과 format",
+    "lessons": [
+     19
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "diamond-3": {
+    "title": "비교와 논리",
+    "lessons": [
+     23,
+     24,
+     25,
+     29
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "diamond-4": {
+    "title": "리스트 기호",
+    "lessons": [
+     35,
+     36,
+     37,
+     39
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "diamond-5": {
+    "title": "함수와 라이브러리",
+    "lessons": [
+     40,
+     41,
+     42,
+     43
+    ],
+    "passages": 10,
+    "roundSize": 10
+   },
+   "master-1": {
+    "title": "출력 꾸미기",
+    "lessons": [
+     4,
+     13,
+     19
+    ],
+    "passages": 8,
+    "roundSize": 6
+   },
+   "master-2": {
+    "title": "조건 기호",
+    "lessons": [
+     26,
+     27,
+     28
+    ],
+    "passages": 8,
+    "roundSize": 6
+   },
+   "master-3": {
+    "title": "반복 기호",
+    "lessons": [
+     30,
+     31,
+     32,
+     33
+    ],
+    "passages": 8,
+    "roundSize": 6
+   },
+   "master-4": {
+    "title": "리스트 기호",
+    "lessons": [
+     35,
+     36,
+     37,
+     38,
+     39
+    ],
+    "passages": 8,
+    "roundSize": 6
+   },
+   "master-5": {
+    "title": "함수 기호",
+    "lessons": [
+     40,
+     41,
+     42
+    ],
+    "passages": 8,
+    "roundSize": 6
+   },
+   "legend-1": {
+    "title": "딕셔너리와 중첩 리스트",
+    "lessons": [
+     9,
+     35
+    ],
+    "passages": 6,
+    "roundSize": 4
+   },
+   "legend-2": {
+    "title": "출력 서식 종합",
+    "lessons": [
+     4,
+     19
+    ],
+    "passages": 6,
+    "roundSize": 4
+   },
+   "legend-3": {
+    "title": "조건 종합",
+    "lessons": [
+     25,
+     28,
+     29
+    ],
+    "passages": 6,
+    "roundSize": 4
+   },
+   "legend-4": {
+    "title": "반복 종합",
+    "lessons": [
+     32,
+     34,
+     38
+    ],
+    "passages": 6,
+    "roundSize": 4
+   },
+   "legend-5": {
+    "title": "함수 종합",
+    "lessons": [
+     41,
+     42,
+     43
+    ],
+    "passages": 6,
+    "roundSize": 4
+   }
+  }
+ }
+}

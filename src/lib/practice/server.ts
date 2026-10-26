@@ -10,11 +10,12 @@ import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, MISS
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel } from "@/data/packs";
 import { contentLevelOf, getStage, STAGE_COUNT, startStage, tierOfStage } from "./stages";
+import { getStageWithPassages } from "@/lib/practice/packStage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
-import { correctKeystrokes } from "@/lib/typing/engine";
+import { entersOf, linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
-import { buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
+import { buildPackRound, buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
 import { blankMask, codeNote, lesson } from "@/data/codeNotes";
 import { dayKeyKST } from "./day";
 import { recentMedian, streakDays, weakKeys } from "./derive";
@@ -219,14 +220,21 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
     return { lines: l.lines, token, note: l.note };
   } else {
     // 연습·미션의 level 은 단계(1~30), 빈칸 채우기의 level 은 글 난이도(코드 레벨 1~8)
-    const level =
-      req.kind === "blank" ? getLevel(req.track, req.level) : getStage(req.track, req.level)?.level;
+    const stage = req.kind === "blank" ? undefined : getStageWithPassages(req.track, req.level);
+    const level = req.kind === "blank" ? getLevel(req.track, req.level) : stage?.level;
     if (!level) return { error: "단계를 찾을 수 없어요." };
     const open =
       req.kind === "blank"
         ? req.level <= contentLevelOf(req.track, data.progress.unlocked[req.track])
         : req.level <= data.progress.unlocked[req.track];
     if (!open) return { error: "아직 열리지 않은 단계예요." };
+
+    // 기호·코드 트랙 연습팩: 단계 지문에서 한 판 분량을 뽑음 (설명 카드 대신 첫걸음 강 연결)
+    if (stage?.fromPack && stage.roundSize) {
+      lines = buildPackRound(req.track, level, stage.roundSize);
+      const token = makeToken({ u: who.userId, r: req, h: hashLines(lines), s: Date.now() });
+      return { lines, token, code: level.mode === "code" };
+    }
 
     // 코드: 설명 카드·퀴즈를 붙이고, 빈칸 채우기면 가릴 곳도 알려 줌
     if (level.mode === "code") {
@@ -335,7 +343,11 @@ export async function saveRound(
 
   // 타수: 서버가 직접 다시 계산 (맞게 친 글자의 자모 수)
   const typed = sub.lines.map((_, i) => String(sub.typedLines[i] ?? "").slice(0, sub.lines[i].length));
-  const keystrokes = sub.lines.reduce((n, line, i) => n + correctKeystrokes(line, typed[i]), 0);
+  // 코드 지문(화면에서 들여쓰기를 자동으로 채움)은 들여쓰기 빼고 Enter 1타 (연습팩 규칙)
+  const codeRound =
+    track === "code" ||
+    ((req.kind === "practice" || (req.kind === "mission" && !req.weak && !req.packId)) && getStage(track, req.level)?.level.mode === "code");
+  const keystrokes = linesKeystrokes(sub.lines, typed, codeRound, entersOf(sub.lines.length, sub.typedLines.length));
   const cpm = Math.round(keystrokes / (durationMs / 60000));
 
   // 정확도: 클라이언트 값을 쓰되, 최종 결과보다 높을 수는 없음

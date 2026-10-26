@@ -1,0 +1,3849 @@
+{
+  "track": "code",
+  "trackName": "코드",
+  "version": 1,
+  "generatedAt": "2026-10-26",
+  "source": "파이썬 첫걸음 1~43강 순서에 맞춤 · 상위 단계는 고등학교 정보 파이썬 코딩 자료집 예시 코드를 중학생용으로 바꿈",
+  "notes": [
+    "타수: 영문·기호 1글자 = 1타, Enter = 1타, 줄 앞 들여쓰기는 자동으로 채워지므로 세지 않음",
+    "shiftKeys: Shift를 함께 누르는 글자 수 (대문자, ( ) \" : _ { } < > ! # % * + 등)",
+    "lessons: 이 단계에서 연습하는 파이썬 첫걸음 강 번호",
+    "output: 실제로 실행해서 얻은 결과 (코드 트랙, 기호 트랙 마스터·레전드)",
+    "한 판 = 단계 묶음에서 round.passagesPerRound 개를 무작위로 뽑음"
+  ],
+  "tiers": [
+    {
+      "id": "bronze",
+      "name": "브론즈",
+      "icon": "🟫",
+      "accuracy": 85,
+      "contentType": "한 줄 코드",
+      "targetRange": [
+        25,
+        45
+      ],
+      "round": {
+        "passagesPerRound": 4,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 29
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 25,
+          "title": "print 첫걸음",
+          "lessons": [
+            1,
+            2,
+            3
+          ],
+          "passages": [
+            {
+              "id": "cod-bronze-1-01",
+              "text": "print(\"Hello\")",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "Hello",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-bronze-1-02",
+              "text": "print(\"Python\")",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "Python",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "cod-bronze-1-03",
+              "text": "print('Hi')",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "Hi",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-bronze-1-04",
+              "text": "print(\"Good\")",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "Good",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-bronze-1-05",
+              "text": "print(\"I am Tadak\")",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "I am Tadak",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-bronze-1-06",
+              "text": "print('Bye')",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "Bye",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-bronze-1-07",
+              "text": "print(\"Hello, World!\")",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "Hello, World!",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 53
+            },
+            {
+              "id": "cod-bronze-1-08",
+              "text": "print(\"Nice to meet you\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "Nice to meet you",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 60
+            },
+            {
+              "id": "cod-bronze-1-09",
+              "text": "print(\"It's me\")",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "It's me",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 38
+            },
+            {
+              "id": "cod-bronze-1-10",
+              "text": "print(\"tadak tadak\")",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "tadak tadak",
+              "source": {
+                "lessons": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "estSeconds": 48
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 30,
+          "title": "숫자와 계산 출력",
+          "lessons": [
+            7,
+            10,
+            11
+          ],
+          "passages": [
+            {
+              "id": "cod-bronze-2-01",
+              "text": "print(7)",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "cod-bronze-2-02",
+              "text": "print(3 + 4)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-2-03",
+              "text": "print(9 - 2)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-2-04",
+              "text": "print(6 * 3)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "18",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-2-05",
+              "text": "print(8 / 2)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "4.0",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-2-06",
+              "text": "print(7 // 2)",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-bronze-2-07",
+              "text": "print(7 % 2)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "1",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-2-08",
+              "text": "print(2.5)",
+              "chars": 10,
+              "keystrokes": 10,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "2.5",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 20
+            },
+            {
+              "id": "cod-bronze-2-09",
+              "text": "print(10 - 7)",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-bronze-2-10",
+              "text": "print(3 * 4)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "12",
+              "source": {
+                "lessons": [
+                  7,
+                  10,
+                  11
+                ]
+              },
+              "estSeconds": 24
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 35,
+          "title": "쉼표와 sep",
+          "lessons": [
+            4,
+            5
+          ],
+          "passages": [
+            {
+              "id": "cod-bronze-3-01",
+              "text": "print(\"I\", \"am\", 14)",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "I am 14",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-bronze-3-02",
+              "text": "print(\"age\", 14)",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "age 14",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-bronze-3-03",
+              "text": "print(1, 2, 3)",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 1,
+              "output": "1 2 3",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-3-04",
+              "text": "print(\"a\", \"b\", sep=\"-\")",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 8,
+              "lines": 1,
+              "output": "a-b",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 41
+            },
+            {
+              "id": "cod-bronze-3-05",
+              "text": "print(2026, 3, 2, sep=\"-\")",
+              "chars": 26,
+              "keystrokes": 26,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "2026-3-2",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 45
+            },
+            {
+              "id": "cod-bronze-3-06",
+              "text": "print(\"go\", end=\"!\")",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "go!",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-bronze-3-07",
+              "text": "print(\"Hi\")  # hello",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "Hi",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-bronze-3-08",
+              "text": "print(\"A\", \"B\")",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 8,
+              "lines": 1,
+              "output": "A B",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-bronze-3-09",
+              "text": "print(\"x\", 1, \"y\", 2)",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "x 1 y 2",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "cod-bronze-3-10",
+              "text": "print(\"one\", end=\" \")",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "one ",
+              "source": {
+                "lessons": [
+                  4,
+                  5
+                ]
+              },
+              "estSeconds": 36
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 40,
+          "title": "자료형과 문자열 계산",
+          "lessons": [
+            6,
+            9,
+            13
+          ],
+          "passages": [
+            {
+              "id": "cod-bronze-4-01",
+              "text": "print(len(\"apple\"))",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "5",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-bronze-4-02",
+              "text": "print(type(10))",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "<class 'int'>",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-bronze-4-03",
+              "text": "print(type(\"10\"))",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "<class 'str'>",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-bronze-4-04",
+              "text": "print(type(2.5))",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "<class 'float'>",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-4-05",
+              "text": "print(True)",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "True",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "cod-bronze-4-06",
+              "text": "print(\"ha\" * 3)",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "hahaha",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-bronze-4-07",
+              "text": "print(\"4\" + \"4\")",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "44",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-4-08",
+              "text": "print(\"-\" * 10)",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 5,
+              "lines": 1,
+              "output": "----------",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-bronze-4-09",
+              "text": "print(5 > 3)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "output": "True",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.7",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "cod-bronze-4-10",
+              "text": "print(len(\"\"))",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "0",
+              "source": {
+                "lessons": [
+                  6,
+                  9,
+                  13
+                ]
+              },
+              "estSeconds": 21
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 45,
+          "title": "계산 순서와 변환",
+          "lessons": [
+            12,
+            14
+          ],
+          "passages": [
+            {
+              "id": "cod-bronze-5-01",
+              "text": "print(2 ** 3)",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "8",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "cod-bronze-5-02",
+              "text": "print(2 + 3 * 4)",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "14",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.10",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 21
+            },
+            {
+              "id": "cod-bronze-5-03",
+              "text": "print((2 + 3) * 4)",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 6,
+              "lines": 1,
+              "output": "20",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-bronze-5-04",
+              "text": "print(10 ** 2)",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "100",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "cod-bronze-5-05",
+              "text": "print(\"age: \" + str(14))",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 8,
+              "lines": 1,
+              "output": "age: 14",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 32
+            },
+            {
+              "id": "cod-bronze-5-06",
+              "text": "print(int(\"20\") + 5)",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "25",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-bronze-5-07",
+              "text": "print(float(\"2.5\") * 2)",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "5.0",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-bronze-5-08",
+              "text": "print(int(3.7))",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 20
+            },
+            {
+              "id": "cod-bronze-5-09",
+              "text": "print(str(3) + str(4))",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 7,
+              "lines": 1,
+              "output": "34",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-bronze-5-10",
+              "text": "print(2 + 5 - 2 * 2)",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 4,
+              "lines": 1,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  12,
+                  14
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.10",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 27
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "silver",
+      "name": "실버",
+      "icon": "◆",
+      "accuracy": 88,
+      "contentType": "두세 줄 코드",
+      "targetRange": [
+        50,
+        70
+      ],
+      "round": {
+        "passagesPerRound": 4,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 32
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 50,
+          "title": "변수에 넣고 보여 주기",
+          "lessons": [
+            15
+          ],
+          "passages": [
+            {
+              "id": "cod-silver-1-01",
+              "text": "x = 5\nprint(x)",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 2,
+              "output": "5",
+              "source": {
+                "lessons": [
+                  15
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "cod-silver-1-02",
+              "text": "a = 3\nb = 4\nprint(a + b)",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-silver-1-03",
+              "text": "n = 2 * 5\nprint(n)",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 3,
+              "lines": 2,
+              "output": "10",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-silver-1-04",
+              "text": "total = 3 + 4\nprint(total)",
+              "chars": 26,
+              "keystrokes": 26,
+              "shiftKeys": 3,
+              "lines": 2,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-silver-1-05",
+              "text": "w = 4\nh = 5\nprint(w * h)",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "20",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-silver-1-06",
+              "text": "age = 17\nprint(age)",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 2,
+              "lines": 2,
+              "output": "17",
+              "source": {
+                "lessons": [
+                  15
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.7",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 23
+            },
+            {
+              "id": "cod-silver-1-07",
+              "text": "pi = 3.14\nprint(pi * 2)",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 3,
+              "lines": 2,
+              "output": "6.28",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-silver-1-08",
+              "text": "x = 10\nprint(x // 3)",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 2,
+              "lines": 2,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  15
+                ]
+              },
+              "estSeconds": 24
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 55,
+          "title": "값 바꾸기와 +=",
+          "lessons": [
+            16
+          ],
+          "passages": [
+            {
+              "id": "cod-silver-2-01",
+              "text": "score = 50\nscore = score + 10\nprint(score)",
+              "chars": 42,
+              "keystrokes": 42,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "60",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-silver-2-02",
+              "text": "life = 3\nlife -= 1\nprint(life)",
+              "chars": 30,
+              "keystrokes": 30,
+              "shiftKeys": 2,
+              "lines": 3,
+              "output": "2",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "cod-silver-2-03",
+              "text": "coin = 2\ncoin *= 5\nprint(coin)",
+              "chars": 30,
+              "keystrokes": 30,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "10",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "cod-silver-2-04",
+              "text": "a, b = 15, 17\na, b = b, a\nprint(a, b)",
+              "chars": 37,
+              "keystrokes": 37,
+              "shiftKeys": 2,
+              "lines": 3,
+              "output": "17 15",
+              "source": {
+                "lessons": [
+                  16
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.9",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 40
+            },
+            {
+              "id": "cod-silver-2-05",
+              "text": "n = 0\nn += 10\nprint(n)",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "10",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-silver-2-06",
+              "text": "x = 5\nx = 10\nprint(x)",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 2,
+              "lines": 3,
+              "output": "10",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 23
+            },
+            {
+              "id": "cod-silver-2-07",
+              "text": "k = 9\nk -= 4\nprint(k)",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 2,
+              "lines": 3,
+              "output": "5",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 23
+            },
+            {
+              "id": "cod-silver-2-08",
+              "text": "t = 1\nt *= 3\nprint(t)",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 3,
+              "lines": 3,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  16
+                ]
+              },
+              "estSeconds": 23
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 60,
+          "title": "문자열 변수",
+          "lessons": [
+            17,
+            18
+          ],
+          "passages": [
+            {
+              "id": "cod-silver-3-01",
+              "text": "name = \"Tadak\"\nprint(name)",
+              "chars": 26,
+              "keystrokes": 26,
+              "shiftKeys": 5,
+              "lines": 2,
+              "output": "Tadak",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-silver-3-02",
+              "text": "pet = \"cat\"\nprint(pet)",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 4,
+              "lines": 2,
+              "output": "cat",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-silver-3-03",
+              "text": "first = \"Kim\"\nlast = \"Mina\"\nprint(first + \" \" + last)",
+              "chars": 53,
+              "keystrokes": 53,
+              "shiftKeys": 12,
+              "lines": 3,
+              "output": "Kim Mina",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 53
+            },
+            {
+              "id": "cod-silver-3-04",
+              "text": "line = \"=\" * 10\nprint(line)",
+              "chars": 27,
+              "keystrokes": 27,
+              "shiftKeys": 5,
+              "lines": 2,
+              "output": "==========",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-silver-3-05",
+              "text": "intro = \"Today is \"\ntoday = \"sunny\"\nprint(intro + today)",
+              "chars": 56,
+              "keystrokes": 56,
+              "shiftKeys": 8,
+              "lines": 3,
+              "output": "Today is sunny",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.6",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 56
+            },
+            {
+              "id": "cod-silver-3-06",
+              "text": "my_name = \"Lee\"\nprint(\"Hi, \" + my_name)",
+              "chars": 39,
+              "keystrokes": 39,
+              "shiftKeys": 11,
+              "lines": 2,
+              "output": "Hi, Lee",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 39
+            },
+            {
+              "id": "cod-silver-3-07",
+              "text": "food = \"pizza\"\nprint(\"food\")",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 6,
+              "lines": 2,
+              "output": "food",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-silver-3-08",
+              "text": "a = \"sun\"\nb = \"day\"\nprint(a + b)",
+              "chars": 32,
+              "keystrokes": 32,
+              "shiftKeys": 7,
+              "lines": 3,
+              "output": "sunday",
+              "source": {
+                "lessons": [
+                  17,
+                  18
+                ]
+              },
+              "estSeconds": 32
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 65,
+          "title": "f-문자열",
+          "lessons": [
+            19
+          ],
+          "passages": [
+            {
+              "id": "cod-silver-4-01",
+              "text": "name = \"Mina\"\nprint(f\"Hi, {name}\")",
+              "chars": 34,
+              "keystrokes": 34,
+              "shiftKeys": 10,
+              "lines": 2,
+              "output": "Hi, Mina",
+              "source": {
+                "lessons": [
+                  19
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-silver-4-02",
+              "text": "age = 14\nprint(f\"age: {age}\")",
+              "chars": 29,
+              "keystrokes": 29,
+              "shiftKeys": 7,
+              "lines": 2,
+              "output": "age: 14",
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-silver-4-03",
+              "text": "a = 3\nb = 4\nprint(f\"{a} + {b} = {a + b}\")",
+              "chars": 41,
+              "keystrokes": 41,
+              "shiftKeys": 12,
+              "lines": 3,
+              "output": "3 + 4 = 7",
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 38
+            },
+            {
+              "id": "cod-silver-4-04",
+              "text": "n = 3\nprint(f\"{n * 2}\")",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 7,
+              "lines": 2,
+              "output": "6",
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 21
+            },
+            {
+              "id": "cod-silver-4-05",
+              "text": "x = 5\nprint(f\"x is {x}\")",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 6,
+              "lines": 2,
+              "output": "x is 5",
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-silver-4-06",
+              "text": "print(\"id: {}, name: {}\".format(101, \"Kim\"))",
+              "chars": 44,
+              "keystrokes": 44,
+              "shiftKeys": 15,
+              "lines": 1,
+              "output": "id: 101, name: Kim",
+              "source": {
+                "lessons": [
+                  19
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 41
+            },
+            {
+              "id": "cod-silver-4-07",
+              "text": "w = 4\nprint(f\"area: {w * w}\")",
+              "chars": 29,
+              "keystrokes": 29,
+              "shiftKeys": 8,
+              "lines": 2,
+              "output": "area: 16",
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-silver-4-08",
+              "text": "name, age = \"Kim\", 17\nprint(f\"{name} is {age}\")",
+              "chars": 47,
+              "keystrokes": 47,
+              "shiftKeys": 11,
+              "lines": 2,
+              "output": "Kim is 17",
+              "source": {
+                "lessons": [
+                  19
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 43
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 70,
+          "title": "입력받기",
+          "lessons": [
+            20,
+            21,
+            22
+          ],
+          "passages": [
+            {
+              "id": "cod-silver-5-01",
+              "text": "name = input(\"name? \")\nprint(\"Hello\", name)",
+              "chars": 43,
+              "keystrokes": 43,
+              "shiftKeys": 10,
+              "lines": 2,
+              "output": "name? Mina\nHello Mina",
+              "inputs": [
+                "Mina"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 37
+            },
+            {
+              "id": "cod-silver-5-02",
+              "text": "age = int(input(\"age? \"))\nprint(age + 1)",
+              "chars": 40,
+              "keystrokes": 40,
+              "shiftKeys": 10,
+              "lines": 2,
+              "output": "age? 13\n14",
+              "inputs": [
+                "13"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-silver-5-03",
+              "text": "a = int(input(\"a? \"))\nb = int(input(\"b? \"))\nprint(a + b)",
+              "chars": 56,
+              "keystrokes": 56,
+              "shiftKeys": 17,
+              "lines": 3,
+              "output": "a? 3\nb? 4\n7",
+              "inputs": [
+                "3",
+                "4"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ]
+              },
+              "estSeconds": 48
+            },
+            {
+              "id": "cod-silver-5-04",
+              "text": "money = input(\"money? \")\nprint(int(money) * 2)",
+              "chars": 46,
+              "keystrokes": 46,
+              "shiftKeys": 10,
+              "lines": 2,
+              "output": "money? 500\n1000",
+              "inputs": [
+                "500"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.12",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 39
+            },
+            {
+              "id": "cod-silver-5-05",
+              "text": "a, b = input(\"two: \").split()\nprint(int(a) * int(b))",
+              "chars": 52,
+              "keystrokes": 52,
+              "shiftKeys": 14,
+              "lines": 2,
+              "output": "two: 2 4\n8",
+              "inputs": [
+                "2 4"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.11",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 45
+            },
+            {
+              "id": "cod-silver-5-06",
+              "text": "x = input(\"? \")\nprint(x + \"!\")",
+              "chars": 30,
+              "keystrokes": 30,
+              "shiftKeys": 11,
+              "lines": 2,
+              "output": "? hi\nhi!",
+              "inputs": [
+                "hi"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-silver-5-07",
+              "text": "h = float(input(\"height? \"))\nprint(h + 0.5)",
+              "chars": 43,
+              "keystrokes": 43,
+              "shiftKeys": 10,
+              "lines": 2,
+              "output": "height? 150.5\n151.0",
+              "inputs": [
+                "150.5"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ]
+              },
+              "estSeconds": 37
+            },
+            {
+              "id": "cod-silver-5-08",
+              "text": "word = input(\"word? \")\nprint(len(word))",
+              "chars": 39,
+              "keystrokes": 39,
+              "shiftKeys": 9,
+              "lines": 2,
+              "output": "word? python\n6",
+              "inputs": [
+                "python"
+              ],
+              "source": {
+                "lessons": [
+                  20,
+                  21,
+                  22
+                ]
+              },
+              "estSeconds": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gold",
+      "name": "골드",
+      "icon": "♛",
+      "accuracy": 90,
+      "contentType": "조건문 코드",
+      "targetRange": [
+        75,
+        95
+      ],
+      "round": {
+        "passagesPerRound": 3,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 43
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 75,
+          "title": "비교 결과 보여 주기",
+          "lessons": [
+            23,
+            24,
+            25
+          ],
+          "passages": [
+            {
+              "id": "cod-gold-1-01",
+              "text": "age = 14\nprint(age > 13)\nprint(age >= 15)",
+              "chars": 41,
+              "keystrokes": 41,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "True\nFalse",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "cod-gold-1-02",
+              "text": "pw = \"tadak\"\nprint(pw == \"tadak\")\nprint(pw != \"1234\")",
+              "chars": 53,
+              "keystrokes": 53,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "True\nTrue",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ]
+              },
+              "estSeconds": 42
+            },
+            {
+              "id": "cod-gold-1-03",
+              "text": "x = 10\nprint(x == 10)\nprint(x == 5)",
+              "chars": 35,
+              "keystrokes": 35,
+              "shiftKeys": 4,
+              "lines": 3,
+              "output": "True\nFalse",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-gold-1-04",
+              "text": "high = 182\nweight = 78\nprint(high >= 180 and weight <= 80)",
+              "chars": 58,
+              "keystrokes": 58,
+              "shiftKeys": 4,
+              "lines": 3,
+              "output": "True",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.17",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-gold-1-05",
+              "text": "a = True\nprint(not a)\nprint(a or False)",
+              "chars": 39,
+              "keystrokes": 39,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "False\nTrue",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-gold-1-06",
+              "text": "s = 80\nprint(s >= 80)\nprint(s > 80)",
+              "chars": 35,
+              "keystrokes": 35,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "True\nFalse",
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25
+                ]
+              },
+              "estSeconds": 28
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 80,
+          "title": "if 하나",
+          "lessons": [
+            26
+          ],
+          "passages": [
+            {
+              "id": "cod-gold-2-01",
+              "text": "temp = 30\nif temp > 25:\n    print(\"hot\")\nprint(\"bye\")",
+              "chars": 53,
+              "keystrokes": 49,
+              "shiftKeys": 10,
+              "lines": 4,
+              "output": "hot\nbye",
+              "source": {
+                "lessons": [
+                  26
+                ]
+              },
+              "estSeconds": 37
+            },
+            {
+              "id": "cod-gold-2-02",
+              "text": "rain = True\nif rain:\n    print(\"umbrella\")\nprint(\"go to school\")",
+              "chars": 64,
+              "keystrokes": 60,
+              "shiftKeys": 10,
+              "lines": 4,
+              "output": "umbrella\ngo to school",
+              "source": {
+                "lessons": [
+                  26
+                ]
+              },
+              "estSeconds": 45
+            },
+            {
+              "id": "cod-gold-2-03",
+              "text": "n = 7\nif n > 5:\n    print(\"big\")\nprint(\"end\")",
+              "chars": 45,
+              "keystrokes": 41,
+              "shiftKeys": 10,
+              "lines": 4,
+              "output": "big\nend",
+              "source": {
+                "lessons": [
+                  26
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-gold-2-04",
+              "text": "people = 17\nif people > 15:\n    print(\"too many!\")",
+              "chars": 50,
+              "keystrokes": 46,
+              "shiftKeys": 7,
+              "lines": 3,
+              "output": "too many!",
+              "source": {
+                "lessons": [
+                  26
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-gold-2-05",
+              "text": "score = 100\nif score == 100:\n    print(\"perfect\")",
+              "chars": 49,
+              "keystrokes": 45,
+              "shiftKeys": 5,
+              "lines": 3,
+              "output": "perfect",
+              "source": {
+                "lessons": [
+                  26
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-gold-2-06",
+              "text": "x = 3\nif x % 2 == 1:\n    print(\"odd\")",
+              "chars": 37,
+              "keystrokes": 33,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "odd",
+              "source": {
+                "lessons": [
+                  26
+                ]
+              },
+              "estSeconds": 25
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 85,
+          "title": "if ~ else",
+          "lessons": [
+            27
+          ],
+          "passages": [
+            {
+              "id": "cod-gold-3-01",
+              "text": "score = 70\nif score >= 60:\n    print(\"pass\")\nelse:\n    print(\"fail\")",
+              "chars": 68,
+              "keystrokes": 60,
+              "shiftKeys": 11,
+              "lines": 5,
+              "output": "pass",
+              "source": {
+                "lessons": [
+                  27
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 42
+            },
+            {
+              "id": "cod-gold-3-02",
+              "text": "n = 29\nif n % 2 == 0:\n    print(\"even\")\nelse:\n    print(\"odd\")",
+              "chars": 62,
+              "keystrokes": 54,
+              "shiftKeys": 11,
+              "lines": 5,
+              "output": "odd",
+              "source": {
+                "lessons": [
+                  27
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.31",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 38
+            },
+            {
+              "id": "cod-gold-3-03",
+              "text": "temp = 27\nif temp >= 27:\n    print(\"AC on\")\nelse:\n    print(\"AC off\")",
+              "chars": 69,
+              "keystrokes": 61,
+              "shiftKeys": 15,
+              "lines": 5,
+              "output": "AC on",
+              "source": {
+                "lessons": [
+                  27
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 43
+            },
+            {
+              "id": "cod-gold-3-04",
+              "text": "x = 10\nif x > 20:\n    print(\"A\")\nelse:\n    print(\"B\")",
+              "chars": 53,
+              "keystrokes": 45,
+              "shiftKeys": 13,
+              "lines": 5,
+              "output": "B",
+              "source": {
+                "lessons": [
+                  27
+                ]
+              },
+              "estSeconds": 32
+            },
+            {
+              "id": "cod-gold-3-05",
+              "text": "a, b = 3, 8\nif a > b:\n    print(a)\nelse:\n    print(b)",
+              "chars": 53,
+              "keystrokes": 45,
+              "shiftKeys": 7,
+              "lines": 5,
+              "output": "8",
+              "source": {
+                "lessons": [
+                  27
+                ]
+              },
+              "estSeconds": 32
+            },
+            {
+              "id": "cod-gold-3-06",
+              "text": "pw = \"abc\"\nif pw == \"tadak\":\n    print(\"welcome\")\nelse:\n    print(\"wrong\")",
+              "chars": 74,
+              "keystrokes": 66,
+              "shiftKeys": 14,
+              "lines": 5,
+              "output": "wrong",
+              "source": {
+                "lessons": [
+                  27
+                ]
+              },
+              "estSeconds": 47
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 90,
+          "title": "elif 여러 갈래",
+          "lessons": [
+            28
+          ],
+          "passages": [
+            {
+              "id": "cod-gold-4-01",
+              "text": "score = 85\nif score >= 90:\n    print(\"A\")\nelif score >= 80:\n    print(\"B\")\nelse:\n    print(\"C\")",
+              "chars": 95,
+              "keystrokes": 83,
+              "shiftKeys": 20,
+              "lines": 7,
+              "output": "B",
+              "source": {
+                "lessons": [
+                  28
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 55
+            },
+            {
+              "id": "cod-gold-4-02",
+              "text": "temp = 18\nif temp >= 28:\n    print(\"hot\")\nelif temp >= 15:\n    print(\"nice\")\nelse:\n    print(\"cold\")",
+              "chars": 100,
+              "keystrokes": 88,
+              "shiftKeys": 17,
+              "lines": 7,
+              "output": "nice",
+              "source": {
+                "lessons": [
+                  28
+                ]
+              },
+              "estSeconds": 59
+            },
+            {
+              "id": "cod-gold-4-03",
+              "text": "s = 65\nif s >= 80:\n    print(\"great\")\nelif s >= 60:\n    print(\"good\")\nelse:\n    print(\"try\")",
+              "chars": 92,
+              "keystrokes": 80,
+              "shiftKeys": 17,
+              "lines": 7,
+              "output": "good",
+              "source": {
+                "lessons": [
+                  28
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.32",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 53
+            },
+            {
+              "id": "cod-gold-4-04",
+              "text": "n = 0\nif n > 0:\n    print(\"+\")\nelif n < 0:\n    print(\"-\")\nelse:\n    print(\"zero\")",
+              "chars": 81,
+              "keystrokes": 69,
+              "shiftKeys": 18,
+              "lines": 7,
+              "output": "zero",
+              "source": {
+                "lessons": [
+                  28
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-gold-4-05",
+              "text": "t = 12\nif t >= 25:\n    print(\"summer\")\nelif t >= 10:\n    print(\"light\")\nelse:\n    print(\"winter\")",
+              "chars": 97,
+              "keystrokes": 85,
+              "shiftKeys": 17,
+              "lines": 7,
+              "output": "light",
+              "source": {
+                "lessons": [
+                  28
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.32",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 57
+            },
+            {
+              "id": "cod-gold-4-06",
+              "text": "age = 10\nif age >= 20:\n    print(\"adult\")\nelif age >= 13:\n    print(\"teen\")\nelse:\n    print(\"kid\")",
+              "chars": 98,
+              "keystrokes": 86,
+              "shiftKeys": 17,
+              "lines": 7,
+              "output": "kid",
+              "source": {
+                "lessons": [
+                  28
+                ]
+              },
+              "estSeconds": 57
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 95,
+          "title": "입력받아 판단하기",
+          "lessons": [
+            29
+          ],
+          "passages": [
+            {
+              "id": "cod-gold-5-01",
+              "text": "n = int(input(\"number? \"))\nif n % 2 == 0:\n    print(\"even\")\nelse:\n    print(\"odd\")",
+              "chars": 82,
+              "keystrokes": 74,
+              "shiftKeys": 18,
+              "lines": 5,
+              "output": "number? 7\nodd",
+              "inputs": [
+                "7"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ]
+              },
+              "estSeconds": 47
+            },
+            {
+              "id": "cod-gold-5-02",
+              "text": "h = int(input(\"height? \"))\nif h >= 120:\n    print(\"OK, enjoy!\")\nelse:\n    print(\"Sorry\")",
+              "chars": 88,
+              "keystrokes": 80,
+              "shiftKeys": 22,
+              "lines": 5,
+              "output": "height? 135\nOK, enjoy!",
+              "inputs": [
+                "135"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ]
+              },
+              "estSeconds": 51
+            },
+            {
+              "id": "cod-gold-5-03",
+              "text": "pw = input(\"password? \")\nif pw == \"tadak123\":\n    print(\"welcome\")\nelse:\n    print(\"wrong\")",
+              "chars": 91,
+              "keystrokes": 83,
+              "shiftKeys": 17,
+              "lines": 5,
+              "output": "password? tadak123\nwelcome",
+              "inputs": [
+                "tadak123"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.37",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 52
+            },
+            {
+              "id": "cod-gold-5-04",
+              "text": "score = int(input(\"score: \"))\nif score >= 80:\n    print(\"great\")\nelif score >= 60:\n    print(\"good\")\nelse:\n    print(\"try\")",
+              "chars": 123,
+              "keystrokes": 111,
+              "shiftKeys": 24,
+              "lines": 7,
+              "output": "score: 70\ngood",
+              "inputs": [
+                "70"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.32",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 70
+            },
+            {
+              "id": "cod-gold-5-05",
+              "text": "speed = int(input(\"speed: \"))\nif speed >= 30:\n    print(\"slow down\")\nelse:\n    print(\"ok\")",
+              "chars": 90,
+              "keystrokes": 82,
+              "shiftKeys": 18,
+              "lines": 5,
+              "output": "speed: 42\nslow down",
+              "inputs": [
+                "42"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.56",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 52
+            },
+            {
+              "id": "cod-gold-5-06",
+              "text": "a = int(input(\"a? \"))\nb = int(input(\"b? \"))\nif a > b:\n    print(a)\nelse:\n    print(b)",
+              "chars": 85,
+              "keystrokes": 77,
+              "shiftKeys": 21,
+              "lines": 6,
+              "output": "a? 4\nb? 2\n4",
+              "inputs": [
+                "4",
+                "2"
+              ],
+              "source": {
+                "lessons": [
+                  29
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.51",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 49
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diamond",
+      "name": "다이아",
+      "icon": "◇",
+      "accuracy": 92,
+      "contentType": "반복문 코드",
+      "targetRange": [
+        100,
+        120
+      ],
+      "round": {
+        "passagesPerRound": 5,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 26
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 100,
+          "title": "for와 range",
+          "lessons": [
+            30
+          ],
+          "passages": [
+            {
+              "id": "cod-diamond-1-01",
+              "text": "for i in range(3):\n    print(\"hi\", i)\nprint(\"end\")",
+              "chars": 50,
+              "keystrokes": 46,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "hi 0\nhi 1\nhi 2\nend",
+              "source": {
+                "lessons": [
+                  30
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-diamond-1-02",
+              "text": "for i in range(3):\n    print(i)",
+              "chars": 31,
+              "keystrokes": 27,
+              "shiftKeys": 5,
+              "lines": 2,
+              "output": "0\n1\n2",
+              "source": {
+                "lessons": [
+                  30
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "cod-diamond-1-03",
+              "text": "for i in range(2):\n    print(\"tadak\")\nprint(\"done\")",
+              "chars": 51,
+              "keystrokes": 47,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "tadak\ntadak\ndone",
+              "source": {
+                "lessons": [
+                  30
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "cod-diamond-1-04",
+              "text": "for n in range(4):\n    print(n * 10)",
+              "chars": 36,
+              "keystrokes": 32,
+              "shiftKeys": 6,
+              "lines": 2,
+              "output": "0\n10\n20\n30",
+              "source": {
+                "lessons": [
+                  30
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "cod-diamond-1-05",
+              "text": "for i in [1, 2, 3, 4]:\n    print(i, end=\" \")\nprint()",
+              "chars": 52,
+              "keystrokes": 48,
+              "shiftKeys": 7,
+              "lines": 3,
+              "output": "1 2 3 4 ",
+              "source": {
+                "lessons": [
+                  30
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-diamond-1-06",
+              "text": "for i in range(5):\n    print(\"*\", end=\"\")\nprint()",
+              "chars": 49,
+              "keystrokes": 45,
+              "shiftKeys": 12,
+              "lines": 3,
+              "output": "*****",
+              "source": {
+                "lessons": [
+                  30
+                ]
+              },
+              "estSeconds": 27
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 105,
+          "title": "range 시작·끝·간격",
+          "lessons": [
+            31
+          ],
+          "passages": [
+            {
+              "id": "cod-diamond-2-01",
+              "text": "for n in range(1, 4):\n    print(n)",
+              "chars": 34,
+              "keystrokes": 30,
+              "shiftKeys": 5,
+              "lines": 2,
+              "output": "1\n2\n3",
+              "source": {
+                "lessons": [
+                  31
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "cod-diamond-2-02",
+              "text": "for n in range(2, 11, 2):\n    print(n)",
+              "chars": 38,
+              "keystrokes": 34,
+              "shiftKeys": 5,
+              "lines": 2,
+              "output": "2\n4\n6\n8\n10",
+              "source": {
+                "lessons": [
+                  31
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "cod-diamond-2-03",
+              "text": "for n in range(3, 0, -1):\n    print(n)\nprint(\"go!\")",
+              "chars": 51,
+              "keystrokes": 47,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "3\n2\n1\ngo!",
+              "source": {
+                "lessons": [
+                  31
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-diamond-2-04",
+              "text": "for i in range(1, 5, 1):\n    print(i, end=\" \")\nprint()",
+              "chars": 54,
+              "keystrokes": 50,
+              "shiftKeys": 9,
+              "lines": 3,
+              "output": "1 2 3 4 ",
+              "source": {
+                "lessons": [
+                  31
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-diamond-2-05",
+              "text": "print(list(range(1, 10, 2)))\nprint(list(range(4)))",
+              "chars": 50,
+              "keystrokes": 50,
+              "shiftKeys": 12,
+              "lines": 2,
+              "output": "[1, 3, 5, 7, 9]\n[0, 1, 2, 3]",
+              "source": {
+                "lessons": [
+                  31
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.18",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-diamond-2-06",
+              "text": "for i in range(1, 4):\n    print(\"*\" * i)",
+              "chars": 40,
+              "keystrokes": 36,
+              "shiftKeys": 9,
+              "lines": 2,
+              "output": "*\n**\n***",
+              "source": {
+                "lessons": [
+                  31
+                ]
+              },
+              "estSeconds": 21
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 110,
+          "title": "합계 쌓기",
+          "lessons": [
+            32
+          ],
+          "passages": [
+            {
+              "id": "cod-diamond-3-01",
+              "text": "total = 0\nfor i in range(1, 5):\n    total += i\nprint(total)",
+              "chars": 59,
+              "keystrokes": 55,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "10",
+              "source": {
+                "lessons": [
+                  32
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-diamond-3-02",
+              "text": "total = 0\nfor i in range(1, 101):\n    total += i\nprint(total)",
+              "chars": 61,
+              "keystrokes": 57,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "5050",
+              "source": {
+                "lessons": [
+                  32
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-diamond-3-03",
+              "text": "result = 1\nfor i in range(1, 5):\n    result *= i\nprint(result)",
+              "chars": 62,
+              "keystrokes": 58,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "24",
+              "source": {
+                "lessons": [
+                  32
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.50",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 32
+            },
+            {
+              "id": "cod-diamond-3-04",
+              "text": "s = 0\nfor i in range(3):\n    s += 2\nprint(s)",
+              "chars": 44,
+              "keystrokes": 40,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "6",
+              "source": {
+                "lessons": [
+                  32
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-diamond-3-05",
+              "text": "total = 0\nfor i in range(1, 6):\n    total += i\n    print(total)",
+              "chars": 63,
+              "keystrokes": 55,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "1\n3\n6\n10\n15",
+              "source": {
+                "lessons": [
+                  32
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-diamond-3-06",
+              "text": "even = 0\nfor i in range(0, 11, 2):\n    even += i\nprint(even)",
+              "chars": 60,
+              "keystrokes": 56,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "30",
+              "source": {
+                "lessons": [
+                  32
+                ]
+              },
+              "estSeconds": 31
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 115,
+          "title": "while",
+          "lessons": [
+            33
+          ],
+          "passages": [
+            {
+              "id": "cod-diamond-4-01",
+              "text": "n = 1\nwhile n <= 3:\n    print(n)\n    n += 1",
+              "chars": 43,
+              "keystrokes": 35,
+              "shiftKeys": 5,
+              "lines": 4,
+              "output": "1\n2\n3",
+              "source": {
+                "lessons": [
+                  33
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "cod-diamond-4-02",
+              "text": "i = 1\nwhile i <= 4:\n    print(i, end=\" \")\n    i += 1\nprint()",
+              "chars": 60,
+              "keystrokes": 52,
+              "shiftKeys": 9,
+              "lines": 5,
+              "output": "1 2 3 4 ",
+              "source": {
+                "lessons": [
+                  33
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.29",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "cod-diamond-4-03",
+              "text": "n = 3\nwhile n > 0:\n    print(n)\n    n -= 1\nprint(\"go!\")",
+              "chars": 55,
+              "keystrokes": 47,
+              "shiftKeys": 9,
+              "lines": 5,
+              "output": "3\n2\n1\ngo!",
+              "source": {
+                "lessons": [
+                  33
+                ]
+              },
+              "estSeconds": 25
+            },
+            {
+              "id": "cod-diamond-4-04",
+              "text": "k = 0\nwhile k < 3:\n    k += 1\nprint(k)",
+              "chars": 38,
+              "keystrokes": 34,
+              "shiftKeys": 5,
+              "lines": 4,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  33
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "cod-diamond-4-05",
+              "text": "n = 1\nwhile n < 100:\n    n *= 2\nprint(n)",
+              "chars": 40,
+              "keystrokes": 36,
+              "shiftKeys": 5,
+              "lines": 4,
+              "output": "128",
+              "source": {
+                "lessons": [
+                  33
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "cod-diamond-4-06",
+              "text": "money = 1000\nwhile money >= 300:\n    money -= 300\nprint(money)",
+              "chars": 62,
+              "keystrokes": 58,
+              "shiftKeys": 4,
+              "lines": 4,
+              "output": "100",
+              "source": {
+                "lessons": [
+                  33
+                ]
+              },
+              "estSeconds": 30
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 120,
+          "title": "break와 continue",
+          "lessons": [
+            34
+          ],
+          "passages": [
+            {
+              "id": "cod-diamond-5-01",
+              "text": "for i in range(10):\n    if i == 3:\n        break\n    print(i)\nprint(\"stop\")",
+              "chars": 75,
+              "keystrokes": 59,
+              "shiftKeys": 10,
+              "lines": 5,
+              "output": "0\n1\n2\nstop",
+              "source": {
+                "lessons": [
+                  34
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-diamond-5-02",
+              "text": "for i in range(5):\n    if i == 2:\n        continue\n    print(i)",
+              "chars": 63,
+              "keystrokes": 47,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "0\n1\n3\n4",
+              "source": {
+                "lessons": [
+                  34
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-diamond-5-03",
+              "text": "for i in range(1, 10):\n    if i % 4 == 0:\n        break\n    print(i)",
+              "chars": 68,
+              "keystrokes": 52,
+              "shiftKeys": 7,
+              "lines": 4,
+              "output": "1\n2\n3",
+              "source": {
+                "lessons": [
+                  34
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-diamond-5-04",
+              "text": "while True:\n    n = int(input(\"guess? \"))\n    if n == 3:\n        print(\"correct!\")\n        break\n    print(\"try again\")",
+              "chars": 119,
+              "keystrokes": 91,
+              "shiftKeys": 19,
+              "lines": 6,
+              "output": "guess? 1\ntry again\nguess? 3\ncorrect!",
+              "inputs": [
+                "1",
+                "3"
+              ],
+              "source": {
+                "lessons": [
+                  34
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.33",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-diamond-5-05",
+              "text": "n = 0\nwhile True:\n    n += 1\n    if n == 5:\n        break\nprint(n)",
+              "chars": 66,
+              "keystrokes": 50,
+              "shiftKeys": 6,
+              "lines": 6,
+              "output": "5",
+              "source": {
+                "lessons": [
+                  34
+                ]
+              },
+              "estSeconds": 25
+            },
+            {
+              "id": "cod-diamond-5-06",
+              "text": "for c in \"banana\":\n    if c == \"n\":\n        continue\n    print(c, end=\"\")\nprint()",
+              "chars": 81,
+              "keystrokes": 65,
+              "shiftKeys": 12,
+              "lines": 5,
+              "output": "baaa",
+              "source": {
+                "lessons": [
+                  34
+                ]
+              },
+              "estSeconds": 32
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "master",
+      "name": "마스터",
+      "icon": "★",
+      "accuracy": 93,
+      "contentType": "리스트 코드",
+      "targetRange": [
+        130,
+        150
+      ],
+      "round": {
+        "passagesPerRound": 4,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 33
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 130,
+          "title": "리스트 만들고 꺼내기",
+          "lessons": [
+            35
+          ],
+          "passages": [
+            {
+              "id": "cod-master-1-01",
+              "text": "pets = [\"cat\", \"dog\", \"fish\"]\nprint(pets[0])\nprint(pets[-1])\nprint(pets)",
+              "chars": 72,
+              "keystrokes": 72,
+              "shiftKeys": 12,
+              "lines": 4,
+              "output": "cat\nfish\n['cat', 'dog', 'fish']",
+              "source": {
+                "lessons": [
+                  35
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "cod-master-1-02",
+              "text": "book = [\"cloud\", 2024, \"Kim\", 813.5, True]\nprint(\"title:\", book[0])\nprint(\"year:\", book[1])\nprint(\"last:\", book[-1])",
+              "chars": 116,
+              "keystrokes": 116,
+              "shiftKeys": 21,
+              "lines": 4,
+              "output": "title: cloud\nyear: 2024\nlast: True",
+              "source": {
+                "lessons": [
+                  35
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.18",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 54
+            },
+            {
+              "id": "cod-master-1-03",
+              "text": "nums = [10, 20, 30]\nnums[0] = 5\nprint(nums)\nprint(nums[1] + nums[2])",
+              "chars": 68,
+              "keystrokes": 68,
+              "shiftKeys": 5,
+              "lines": 4,
+              "output": "[5, 20, 30]\n50",
+              "source": {
+                "lessons": [
+                  35
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-master-1-04",
+              "text": "hw = [\"keyboard\", \"mouse\", \"monitor\"]\nprint(hw[0])\nprint(hw[1:])",
+              "chars": 64,
+              "keystrokes": 64,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "keyboard\n['mouse', 'monitor']",
+              "source": {
+                "lessons": [
+                  35
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.20",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-1-05",
+              "text": "season = [\"spring\", \"summer\", \"fall\", \"winter\"]\nprint(season[1])\nprint(len(season))",
+              "chars": 83,
+              "keystrokes": 83,
+              "shiftKeys": 14,
+              "lines": 3,
+              "output": "summer\n4",
+              "source": {
+                "lessons": [
+                  35
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.19",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 38
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 135,
+          "title": "넣고 빼기",
+          "lessons": [
+            36
+          ],
+          "passages": [
+            {
+              "id": "cod-master-2-01",
+              "text": "cart = [\"milk\"]\ncart.append(\"bread\")\ncart.append(\"egg\")\nprint(cart)",
+              "chars": 67,
+              "keystrokes": 67,
+              "shiftKeys": 12,
+              "lines": 4,
+              "output": "['milk', 'bread', 'egg']",
+              "source": {
+                "lessons": [
+                  36
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-2-02",
+              "text": "subject = [\"kor\", \"math\", \"info\"]\nsubject.pop(1)\nsubject.append(\"eng\")\nprint(subject)",
+              "chars": 85,
+              "keystrokes": 85,
+              "shiftKeys": 14,
+              "lines": 4,
+              "output": "['kor', 'info', 'eng']",
+              "source": {
+                "lessons": [
+                  36
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.22",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 38
+            },
+            {
+              "id": "cod-master-2-03",
+              "text": "wish = [\"sea\", \"hike\", \"park\", \"village\"]\ndel wish[1]\nprint(wish)",
+              "chars": 65,
+              "keystrokes": 65,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "['sea', 'park', 'village']",
+              "source": {
+                "lessons": [
+                  36
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.23",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-master-2-04",
+              "text": "pets = [\"cat\", \"dog\"]\npets.append(\"rabbit\")\npets.remove(\"cat\")\nprint(pets)",
+              "chars": 74,
+              "keystrokes": 74,
+              "shiftKeys": 14,
+              "lines": 4,
+              "output": "['dog', 'rabbit']",
+              "source": {
+                "lessons": [
+                  36
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "cod-master-2-05",
+              "text": "a = [\"a\", \"c\"]\na.insert(1, \"b\")\nprint(a)\nprint(a.index(\"c\"))",
+              "chars": 60,
+              "keystrokes": 60,
+              "shiftKeys": 16,
+              "lines": 4,
+              "output": "['a', 'b', 'c']\n2",
+              "source": {
+                "lessons": [
+                  36
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.18",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 27
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 140,
+          "title": "리스트 도구",
+          "lessons": [
+            37
+          ],
+          "passages": [
+            {
+              "id": "cod-master-3-01",
+              "text": "scores = [80, 95, 70, 85]\nprint(len(scores))\nprint(sum(scores))\nprint(max(scores), min(scores))",
+              "chars": 95,
+              "keystrokes": 95,
+              "shiftKeys": 14,
+              "lines": 4,
+              "output": "4\n330\n95 70",
+              "source": {
+                "lessons": [
+                  37
+                ]
+              },
+              "estSeconds": 41
+            },
+            {
+              "id": "cod-master-3-02",
+              "text": "scores = [80, 95, 70, 85]\navg = sum(scores) / len(scores)\nprint(avg)",
+              "chars": 68,
+              "keystrokes": 68,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "82.5",
+              "source": {
+                "lessons": [
+                  37
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-master-3-03",
+              "text": "food = [\"chicken\", \"rice\", \"noodle\", \"tteok\"]\nfood2 = sorted(food)\nprint(food2)\nprint(food)",
+              "chars": 91,
+              "keystrokes": 91,
+              "shiftKeys": 14,
+              "lines": 4,
+              "output": "['chicken', 'noodle', 'rice', 'tteok']\n['chicken', 'rice', 'noodle', 'tteok']",
+              "source": {
+                "lessons": [
+                  37
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.25",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 39
+            },
+            {
+              "id": "cod-master-3-04",
+              "text": "num = [0, 5, -20, 1.22]\nprint(max(num))\nprint(min(num))\nprint(sum(num))",
+              "chars": 71,
+              "keystrokes": 71,
+              "shiftKeys": 12,
+              "lines": 4,
+              "output": "5\n-20\n-13.78",
+              "source": {
+                "lessons": [
+                  37
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.24",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-3-05",
+              "text": "nums = [3, 1, 2]\nnums.sort(reverse=True)\nprint(nums)\nnums.reverse()\nprint(nums)",
+              "chars": 79,
+              "keystrokes": 79,
+              "shiftKeys": 9,
+              "lines": 5,
+              "output": "[3, 2, 1]\n[1, 2, 3]",
+              "source": {
+                "lessons": [
+                  37
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.18",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 34
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 145,
+          "title": "리스트와 for, in",
+          "lessons": [
+            38
+          ],
+          "passages": [
+            {
+              "id": "cod-master-4-01",
+              "text": "pets = [\"cat\", \"dog\", \"fish\"]\nfor p in pets:\n    print(\"I like\", p)",
+              "chars": 67,
+              "keystrokes": 63,
+              "shiftKeys": 12,
+              "lines": 3,
+              "output": "I like cat\nI like dog\nI like fish",
+              "source": {
+                "lessons": [
+                  38
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-master-4-02",
+              "text": "fruits = [\"apple\", \"kiwi\"]\nfor f in fruits:\n    print(f)\nprint(\"kiwi\" in fruits)",
+              "chars": 80,
+              "keystrokes": 76,
+              "shiftKeys": 11,
+              "lines": 4,
+              "output": "apple\nkiwi\nTrue",
+              "source": {
+                "lessons": [
+                  38
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "cod-master-4-03",
+              "text": "members = [\"kim\", \"lee\", \"park\"]\nname = \"lee\"\nif name in members:\n    print(\"welcome\")\nelse:\n    print(\"who are you?\")",
+              "chars": 118,
+              "keystrokes": 110,
+              "shiftKeys": 19,
+              "lines": 6,
+              "output": "welcome",
+              "source": {
+                "lessons": [
+                  38
+                ]
+              },
+              "estSeconds": 46
+            },
+            {
+              "id": "cod-master-4-04",
+              "text": "scores = [70, 85, 92]\ntotal = 0\nfor s in scores:\n    total += s\nprint(total)",
+              "chars": 76,
+              "keystrokes": 72,
+              "shiftKeys": 4,
+              "lines": 5,
+              "output": "247",
+              "source": {
+                "lessons": [
+                  38
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-4-05",
+              "text": "print(10 in [10, 20, 30, 40])\nprint(\"a\" not in (\"a\", \"b\"))\nprint(\"py\" in \"python\")",
+              "chars": 82,
+              "keystrokes": 82,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "True\nFalse\nTrue",
+              "source": {
+                "lessons": [
+                  38
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.30",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 34
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 150,
+          "title": "잘라 내기와 2차원 리스트",
+          "lessons": [
+            39
+          ],
+          "passages": [
+            {
+              "id": "cod-master-5-01",
+              "text": "nums = [10, 20, 30, 40, 50]\nprint(nums[1:4])\nprint(nums[:2])\nprint(nums[3:])",
+              "chars": 76,
+              "keystrokes": 76,
+              "shiftKeys": 9,
+              "lines": 4,
+              "output": "[20, 30, 40]\n[10, 20]\n[40, 50]",
+              "source": {
+                "lessons": [
+                  39
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-5-02",
+              "text": "word = \"python\"\nprint(word[0])\nprint(word[0:2])\nprint(word[::-1])",
+              "chars": 65,
+              "keystrokes": 65,
+              "shiftKeys": 11,
+              "lines": 4,
+              "output": "p\npy\nnohtyp",
+              "source": {
+                "lessons": [
+                  39
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-master-5-03",
+              "text": "jobs = \"coding teaches you how to think\"\nprint(jobs[0:6])\nprint(jobs[-5:])",
+              "chars": 74,
+              "keystrokes": 74,
+              "shiftKeys": 8,
+              "lines": 3,
+              "output": "coding\nthink",
+              "source": {
+                "lessons": [
+                  39
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.26",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "cod-master-5-04",
+              "text": "book = [[\"cloud\", 2024], [\"sun\", 2023]]\nprint(book[1][0], book[1][1])\nprint(book[0])",
+              "chars": 84,
+              "keystrokes": 84,
+              "shiftKeys": 8,
+              "lines": 3,
+              "output": "sun 2023\n['cloud', 2024]",
+              "source": {
+                "lessons": [
+                  39
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.18",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 34
+            },
+            {
+              "id": "cod-master-5-05",
+              "text": "flower = [[\"rose\", \"lily\"], [\"tulip\", \"iris\"]]\nfor row in flower:\n    print(row[0])",
+              "chars": 83,
+              "keystrokes": 79,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "rose\ntulip",
+              "source": {
+                "lessons": [
+                  39
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.27",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 32
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "legend",
+      "name": "레전드",
+      "icon": "👑",
+      "accuracy": 95,
+      "contentType": "함수와 종합 코드",
+      "targetRange": [
+        160,
+        180
+      ],
+      "round": {
+        "passagesPerRound": 3,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 41
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 160,
+          "title": "함수 만들고 부르기",
+          "lessons": [
+            40,
+            41
+          ],
+          "passages": [
+            {
+              "id": "cod-legend-1-01",
+              "text": "def cheer():\n    print(\"fighting!\")\ncheer()\ncheer()",
+              "chars": 51,
+              "keystrokes": 47,
+              "shiftKeys": 12,
+              "lines": 4,
+              "output": "fighting!\nfighting!",
+              "source": {
+                "lessons": [
+                  40,
+                  41
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "cod-legend-1-02",
+              "text": "def hello(name):\n    print(name, \"hi\")\nhello(\"Jimin\")\nhello(\"Taeho\")",
+              "chars": 68,
+              "keystrokes": 64,
+              "shiftKeys": 17,
+              "lines": 4,
+              "output": "Jimin hi\nTaeho hi",
+              "source": {
+                "lessons": [
+                  40,
+                  41
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.49",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "cod-legend-1-03",
+              "text": "def menu():\n    print(\"=\" * 8)\n    print(\"1. start\")\n    print(\"2. quit\")\nmenu()",
+              "chars": 80,
+              "keystrokes": 68,
+              "shiftKeys": 18,
+              "lines": 5,
+              "output": "========\n1. start\n2. quit",
+              "source": {
+                "lessons": [
+                  40,
+                  41
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "cod-legend-1-04",
+              "text": "def add(a, b):\n    print(a + b)\nadd(3, 4)\nadd(10, 20)",
+              "chars": 53,
+              "keystrokes": 49,
+              "shiftKeys": 10,
+              "lines": 4,
+              "output": "7\n30",
+              "source": {
+                "lessons": [
+                  40,
+                  41
+                ]
+              },
+              "estSeconds": 18
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 165,
+          "title": "return으로 돌려주기",
+          "lessons": [
+            42
+          ],
+          "passages": [
+            {
+              "id": "cod-legend-2-01",
+              "text": "def add(a, b):\n    return a + b\nresult = add(3, 4)\nprint(result)",
+              "chars": 64,
+              "keystrokes": 60,
+              "shiftKeys": 8,
+              "lines": 4,
+              "output": "7",
+              "source": {
+                "lessons": [
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.47",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "cod-legend-2-02",
+              "text": "def grade(score):\n    if score >= 60:\n        return \"pass\"\n    return \"fail\"\nprint(grade(75))\nprint(grade(40))",
+              "chars": 111,
+              "keystrokes": 95,
+              "shiftKeys": 17,
+              "lines": 6,
+              "output": "pass\nfail",
+              "source": {
+                "lessons": [
+                  42
+                ]
+              },
+              "estSeconds": 35
+            },
+            {
+              "id": "cod-legend-2-03",
+              "text": "def max_number(a, b):\n    if a > b:\n        return a\n    else:\n        return b\nprint(max_number(4, 2))",
+              "chars": 103,
+              "keystrokes": 79,
+              "shiftKeys": 12,
+              "lines": 6,
+              "output": "4",
+              "source": {
+                "lessons": [
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.51",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "cod-legend-2-04",
+              "text": "def reverse_string(s):\n    return s[::-1]\ns = input(\"text: \")\nprint(\"reversed:\", reverse_string(s))",
+              "chars": 99,
+              "keystrokes": 95,
+              "shiftKeys": 19,
+              "lines": 4,
+              "output": "text: python\nreversed: nohtyp",
+              "inputs": [
+                "python"
+              ],
+              "source": {
+                "lessons": [
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.51",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 35
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 170,
+          "title": "계산기와 급여 계산",
+          "lessons": [
+            41,
+            42
+          ],
+          "passages": [
+            {
+              "id": "cod-legend-3-01",
+              "text": "def calculator(a, b, op):\n    if op == \"+\":\n        return a + b\n    elif op == \"-\":\n        return a - b\n    elif op == \"*\":\n        return a * b\n    else:\n        return a / b\nprint(\"result:\", calculator(10, 5, \"+\"))",
+              "chars": 218,
+              "keystrokes": 170,
+              "shiftKeys": 27,
+              "lines": 10,
+              "output": "result: 15",
+              "source": {
+                "lessons": [
+                  41,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.51",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 60
+            },
+            {
+              "id": "cod-legend-3-02",
+              "text": "def weekly_pay(rate, hour):\n    if hour > 30:\n        money = rate * 30 + 1.5 * rate * (hour - 30)\n    else:\n        money = rate * hour\n    return money\nprint(int(weekly_pay(11000, 32)))",
+              "chars": 187,
+              "keystrokes": 159,
+              "shiftKeys": 21,
+              "lines": 7,
+              "output": "363000",
+              "source": {
+                "lessons": [
+                  41,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.57",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 56
+            },
+            {
+              "id": "cod-legend-3-03",
+              "text": "def factorial(a):\n    result = 1\n    for i in range(1, a + 1):\n        result *= i\n    return result\nprint(factorial(5))",
+              "chars": 120,
+              "keystrokes": 100,
+              "shiftKeys": 12,
+              "lines": 6,
+              "output": "120",
+              "source": {
+                "lessons": [
+                  41,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.50",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 35
+            },
+            {
+              "id": "cod-legend-3-04",
+              "text": "def average(nums):\n    return sum(nums) / len(nums)\nscores = [92, 88, 73]\nprint(f\"avg: {average(scores)}\")",
+              "chars": 106,
+              "keystrokes": 102,
+              "shiftKeys": 16,
+              "lines": 4,
+              "output": "avg: 84.33333333333333",
+              "source": {
+                "lessons": [
+                  41,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.63",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 36
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 175,
+          "title": "리스트를 다루는 함수",
+          "lessons": [
+            38,
+            42
+          ],
+          "passages": [
+            {
+              "id": "cod-legend-4-01",
+              "text": "def filter_odd(lst):\n    odd = []\n    for num in lst:\n        if num % 2 != 0:\n            odd.append(num)\n    return odd\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nprint(filter_odd(numbers))",
+              "chars": 190,
+              "keystrokes": 158,
+              "shiftKeys": 15,
+              "lines": 8,
+              "output": "[1, 3, 5, 7, 9]",
+              "source": {
+                "lessons": [
+                  38,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.51",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 54
+            },
+            {
+              "id": "cod-legend-4-02",
+              "text": "def count_vowels(s):\n    count = 0\n    for ch in s.lower():\n        if ch in \"aeiou\":\n            count += 1\n    return count\nprint(count_vowels(\"Hello World\"))",
+              "chars": 160,
+              "keystrokes": 128,
+              "shiftKeys": 20,
+              "lines": 7,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  38,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.52",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 44
+            },
+            {
+              "id": "cod-legend-4-03",
+              "text": "def check_stock(stock):\n    low = []\n    for name, n in stock:\n        if n <= 5:\n            low.append(name)\n    return low\nprint(check_stock([[\"pen\", 3], [\"note\", 12], [\"eraser\", 5]]))",
+              "chars": 187,
+              "keystrokes": 155,
+              "shiftKeys": 20,
+              "lines": 7,
+              "output": "['pen', 'eraser']",
+              "source": {
+                "lessons": [
+                  38,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.54",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 53
+            },
+            {
+              "id": "cod-legend-4-04",
+              "text": "lunch = [[\"rice\", 8000, 3], [\"cutlet\", 10500, 2], [\"noodle\", 9500, 4]]\ntotal = 0\nfor name, price, count in lunch:\n    total += price * count\nprint(\"total:\", total)",
+              "chars": 163,
+              "keystrokes": 159,
+              "shiftKeys": 14,
+              "lines": 5,
+              "output": "total: 83000",
+              "source": {
+                "lessons": [
+                  38,
+                  42
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.28",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 55
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 180,
+          "title": "작은 프로그램 완성",
+          "lessons": [
+            29,
+            34,
+            43
+          ],
+          "passages": [
+            {
+              "id": "cod-legend-5-01",
+              "text": "year = int(input(\"year: \"))\nif year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):\n    print(f\"{year}: leap year\")\nelse:\n    print(f\"{year}: common year\")",
+              "chars": 158,
+              "keystrokes": 150,
+              "shiftKeys": 29,
+              "lines": 5,
+              "output": "year: 2024\n2024: leap year",
+              "inputs": [
+                "2024"
+              ],
+              "source": {
+                "lessons": [
+                  29,
+                  34,
+                  43
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.35",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 50
+            },
+            {
+              "id": "cod-legend-5-02",
+              "text": "a = int(input(\"start: \"))\nb = int(input(\"end: \"))\ns = 0\nfor i in range(a, b + 1):\n    if i % 2 == 1:\n        s = s + i\n    else:\n        s = s - i\nprint(\"result:\", s)",
+              "chars": 166,
+              "keystrokes": 142,
+              "shiftKeys": 27,
+              "lines": 9,
+              "output": "start: 1\nend: 10\nresult: -5",
+              "inputs": [
+                "1",
+                "10"
+              ],
+              "source": {
+                "lessons": [
+                  29,
+                  34,
+                  43
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.40",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 47
+            },
+            {
+              "id": "cod-legend-5-03",
+              "text": "import random\ndef random_lunch():\n    menus = [\"kimchi stew\", \"bibimbap\", \"ramen\", \"pizza\"]\n    return random.choice(menus)\nprint(f\"today: {random_lunch()}\")",
+              "chars": 157,
+              "keystrokes": 149,
+              "shiftKeys": 24,
+              "lines": 5,
+              "output": "today: ramen",
+              "outputNote": "무작위라서 실행할 때마다 달라요",
+              "source": {
+                "lessons": [
+                  29,
+                  34,
+                  43
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.60",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 50
+            },
+            {
+              "id": "cod-legend-5-04",
+              "text": "import random\nanswer = random.randint(1, 10)\ntries = 0\nwhile True:\n    n = int(input(\"guess? \"))\n    tries += 1\n    if n == answer:\n        print(f\"correct! ({tries} tries)\")\n        break\n    elif n < answer:\n        print(\"up\")\n    else:\n        print(\"down\")",
+              "chars": 261,
+              "keystrokes": 209,
+              "shiftKeys": 33,
+              "lines": 13,
+              "output": "guess? 1\nup\nguess? 2\nup\nguess? 3\nup\nguess? 4\nup\nguess? 5\nup\nguess? 6\ncorrect! (6 tries)",
+              "outputNote": "무작위라서 실행할 때마다 달라요",
+              "source": {
+                "lessons": [
+                  29,
+                  34,
+                  43
+                ],
+                "textbook": "고등학교 정보 파이썬 코딩 자료집 p.33",
+                "edits": [
+                  "자료집 예시를 바탕으로 중학생용으로 바꿈 (한글 문자열은 영어로)"
+                ]
+              },
+              "estSeconds": 70
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

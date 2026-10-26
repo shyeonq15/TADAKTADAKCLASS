@@ -30,7 +30,7 @@ export function blankMask(lines: readonly string[], note: CodeNote) {
   return start < 0 ? null : { line: note.blank.line, start, length: note.blank.text.length };
 }
 
-/* ───────── 파이썬 첫걸음 (print부터 함수까지 14강) ───────── */
+/* ───────── 파이썬 첫걸음 (9단원 43강: print부터 함수·import까지) ───────── */
 
 /** 설명 슬라이드 한 장: 글 + (예시 코드와 결과) + (확인 문제, 첫 보기가 정답) */
 export type LessonSlide = {
@@ -41,7 +41,7 @@ export type LessonSlide = {
   check?: { q: string; choices: string[]; answer: number; why: string };
 };
 
-type LessonRow = Omit<CodeNote, "explain"> & { code: string; summary: string; slides: LessonSlide[] };
+type LessonRow = Omit<CodeNote, "explain"> & { unit?: string; code: string; summary: string; slides: LessonSlide[] };
 
 export const LESSON_COUNT = (LESSONS as unknown as LessonRow[]).length;
 
@@ -56,5 +56,8 @@ export function lesson(n: number): { note: CodeNote; lines: string[] } | null {
 }
 
 export const lessonTitle = (n: number) => (LESSONS as unknown as LessonRow[])[n - 1]?.concept ?? "";
+
+/** 단원 이름 (예: "6단원 · 조건 (선택문)") */
+export const lessonUnit = (n: number) => (LESSONS as unknown as LessonRow[])[n - 1]?.unit ?? "";
 
 export const lessonSlides = (n: number): LessonSlide[] => (LESSONS as unknown as LessonRow[])[n - 1]?.slides ?? [];

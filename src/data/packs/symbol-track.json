@@ -1,0 +1,5888 @@
+{
+  "track": "symbol",
+  "trackName": "기호",
+  "version": 1,
+  "generatedAt": "2026-10-26",
+  "source": "파이썬 첫걸음 1~43강 순서에 맞춤 · 상위 단계는 고등학교 정보 파이썬 코딩 자료집 예시 코드를 중학생용으로 바꿈",
+  "notes": [
+    "타수: 영문·기호 1글자 = 1타, Enter = 1타, 줄 앞 들여쓰기는 자동으로 채워지므로 세지 않음",
+    "shiftKeys: Shift를 함께 누르는 글자 수 (대문자, ( ) \" : _ { } < > ! # % * + 등)",
+    "lessons: 이 단계에서 연습하는 파이썬 첫걸음 강 번호",
+    "output: 실제로 실행해서 얻은 결과 (코드 트랙, 기호 트랙 마스터·레전드)",
+    "한 판 = 단계 묶음에서 round.passagesPerRound 개를 무작위로 뽑음"
+  ],
+  "tiers": [
+    {
+      "id": "bronze",
+      "name": "브론즈",
+      "icon": "🟫",
+      "accuracy": 85,
+      "contentType": "기호 자리 연습",
+      "targetRange": [
+        25,
+        45
+      ],
+      "round": {
+        "passagesPerRound": 5,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 22
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 25,
+          "title": "괄호 짝 ( ) [ ]",
+          "lessons": [
+            2,
+            35
+          ],
+          "passages": [
+            {
+              "id": "sym-bronze-1-01",
+              "text": "( ) ( ) ( ) ( )",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "sym-bronze-1-02",
+              "text": "[ ] [ ] [ ] [ ]",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "sym-bronze-1-03",
+              "text": "( ) [ ] ( ) [ ]",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "sym-bronze-1-04",
+              "text": "() () () ()",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-1-05",
+              "text": "[] [] [] []",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-1-06",
+              "text": "(( )) [[ ]]",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-1-07",
+              "text": "( [ ] ) ( [ ] )",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "sym-bronze-1-08",
+              "text": "[( )] [( )]",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-1-09",
+              "text": "() [] () []",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-1-10",
+              "text": "(()) [[]] (())",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  35
+                ]
+              },
+              "estSeconds": 34
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 30,
+          "title": "따옴표와 문장 부호 \" ' : , .",
+          "lessons": [
+            3,
+            4,
+            26
+          ],
+          "passages": [
+            {
+              "id": "sym-bronze-2-01",
+              "text": "\" \" \" \" \" \"",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-02",
+              "text": "' ' ' ' ' '",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-03",
+              "text": "\"\" '' \"\" ''",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-04",
+              "text": ": : : : : :",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-05",
+              "text": ", , , , , ,",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-06",
+              "text": ". . . . . .",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-07",
+              "text": "\" : \" , ' : '",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-2-08",
+              "text": ": , . : , .",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-09",
+              "text": "\"a\" 'b' \"c\"",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-2-10",
+              "text": "\" , \" ' . '",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  4,
+                  26
+                ]
+              },
+              "estSeconds": 22
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 35,
+          "title": "계산 기호 + - * / = %",
+          "lessons": [
+            10,
+            11,
+            15
+          ],
+          "passages": [
+            {
+              "id": "sym-bronze-3-01",
+              "text": "+ + + - - -",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-bronze-3-02",
+              "text": "* * * / / /",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-bronze-3-03",
+              "text": "= = = = = =",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-bronze-3-04",
+              "text": "% % % % % %",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-bronze-3-05",
+              "text": "+ - * / + - * /",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-3-06",
+              "text": "= + = - = * = /",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 26
+            },
+            {
+              "id": "sym-bronze-3-07",
+              "text": "// // ** ** %%",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "sym-bronze-3-08",
+              "text": "+= -= *= /=",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-bronze-3-09",
+              "text": "1 + 2 - 3 * 4",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-3-10",
+              "text": "8 / 4 // 2 % 1",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  15
+                ]
+              },
+              "estSeconds": 24
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 40,
+          "title": "비교·특수 기호 < > ! # _ { }",
+          "lessons": [
+            5,
+            17,
+            19,
+            23,
+            24
+          ],
+          "passages": [
+            {
+              "id": "sym-bronze-4-01",
+              "text": "< < < > > >",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-02",
+              "text": "! ! ! # # #",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-03",
+              "text": "_ _ _ _ _ _",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-04",
+              "text": "{ } { } { }",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-05",
+              "text": "<= >= == !=",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-06",
+              "text": "< > <= >= == !=",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-bronze-4-07",
+              "text": "# _ # _ # _",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-08",
+              "text": "{ } { } < >",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-09",
+              "text": "! = ! = ! =",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-bronze-4-10",
+              "text": "a_b c_d e_f",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  5,
+                  17,
+                  19,
+                  23,
+                  24
+                ]
+              },
+              "estSeconds": 16
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 45,
+          "title": "기호 종합",
+          "lessons": [
+            1,
+            43
+          ],
+          "passages": [
+            {
+              "id": "sym-bronze-5-01",
+              "text": "( [ { } ] )",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-bronze-5-02",
+              "text": "\" ' : , . #",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-bronze-5-03",
+              "text": "+ - * / % =",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-bronze-5-04",
+              "text": "< > ! _ { }",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-bronze-5-05",
+              "text": "( ) [ ] { } \" '",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 20
+            },
+            {
+              "id": "sym-bronze-5-06",
+              "text": ": ; , . ! ?",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-bronze-5-07",
+              "text": "== != <= >= += -=",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 23
+            },
+            {
+              "id": "sym-bronze-5-08",
+              "text": "# ( ) \" : [ ]",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-bronze-5-09",
+              "text": "{ \" \" : [ ] }",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-bronze-5-10",
+              "text": "_ = ( ) * [ ] / { }",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  1,
+                  43
+                ]
+              },
+              "estSeconds": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "silver",
+      "name": "실버",
+      "icon": "◆",
+      "accuracy": 88,
+      "contentType": "기호 조각",
+      "targetRange": [
+        50,
+        70
+      ],
+      "round": {
+        "passagesPerRound": 19,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 6
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 50,
+          "title": "괄호와 따옴표 조각",
+          "lessons": [
+            2,
+            3,
+            6
+          ],
+          "passages": [
+            {
+              "id": "sym-silver-1-01",
+              "text": "()",
+              "chars": 2,
+              "keystrokes": 2,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 2
+            },
+            {
+              "id": "sym-silver-1-02",
+              "text": "[]",
+              "chars": 2,
+              "keystrokes": 2,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 2
+            },
+            {
+              "id": "sym-silver-1-03",
+              "text": "{}",
+              "chars": 2,
+              "keystrokes": 2,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 2
+            },
+            {
+              "id": "sym-silver-1-04",
+              "text": "\"hi\"",
+              "chars": 4,
+              "keystrokes": 4,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-1-05",
+              "text": "'hi'",
+              "chars": 4,
+              "keystrokes": 4,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-1-06",
+              "text": "print()",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-1-07",
+              "text": "len()",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-1-08",
+              "text": "(\"a\")",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-1-09",
+              "text": "('b')",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-1-10",
+              "text": "[0]",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-11",
+              "text": "[1]",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-12",
+              "text": "[-1]",
+              "chars": 4,
+              "keystrokes": 4,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-1-13",
+              "text": "\"A\"",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-14",
+              "text": "\"\"",
+              "chars": 2,
+              "keystrokes": 2,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 2
+            },
+            {
+              "id": "sym-silver-1-15",
+              "text": "''",
+              "chars": 2,
+              "keystrokes": 2,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 2
+            },
+            {
+              "id": "sym-silver-1-16",
+              "text": "type()",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-1-17",
+              "text": "(1)",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-18",
+              "text": "(x)",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-19",
+              "text": "[a]",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-1-20",
+              "text": "{b}",
+              "chars": 3,
+              "keystrokes": 3,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  6
+                ]
+              },
+              "estSeconds": 4
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 55,
+          "title": "계산 조각",
+          "lessons": [
+            10,
+            11,
+            12,
+            13
+          ],
+          "passages": [
+            {
+              "id": "sym-silver-2-01",
+              "text": "1 + 2",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-02",
+              "text": "5 - 3",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-03",
+              "text": "2 * 4",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-04",
+              "text": "8 / 2",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-05",
+              "text": "7 // 2",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-2-06",
+              "text": "7 % 2",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-07",
+              "text": "2 ** 3",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-2-08",
+              "text": "(1 + 2)",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-2-09",
+              "text": "\"ab\" * 2",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-2-10",
+              "text": "\"a\" + \"b\"",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-silver-2-11",
+              "text": "10 - 4",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-2-12",
+              "text": "3 * 3",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-13",
+              "text": "9 / 3",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-14",
+              "text": "9 // 4",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-2-15",
+              "text": "9 % 4",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-2-16",
+              "text": "3 ** 2",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-2-17",
+              "text": "(4 - 1)",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-2-18",
+              "text": "\"-\" * 5",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-2-19",
+              "text": "\"x\" + \"y\"",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-silver-2-20",
+              "text": "2 * (3 + 1)",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  10,
+                  11,
+                  12,
+                  13
+                ]
+              },
+              "estSeconds": 12
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 60,
+          "title": "변수와 대입 조각",
+          "lessons": [
+            15,
+            16,
+            17
+          ],
+          "passages": [
+            {
+              "id": "sym-silver-3-01",
+              "text": "x = 5",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-3-02",
+              "text": "y = 3",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-3-03",
+              "text": "a = b",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-3-04",
+              "text": "n += 1",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-3-05",
+              "text": "n -= 1",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-3-06",
+              "text": "n *= 2",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-3-07",
+              "text": "my_score",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-3-08",
+              "text": "total = 0",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-3-09",
+              "text": "name = \"Mina\"",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-silver-3-10",
+              "text": "age = 14",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-3-11",
+              "text": "a, b = 1, 2",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-silver-3-12",
+              "text": "is_ok = True",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-silver-3-13",
+              "text": "x = x + 1",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-3-14",
+              "text": "score += 10",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-silver-3-15",
+              "text": "life -= 1",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-3-16",
+              "text": "big_num",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-3-17",
+              "text": "last_name",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-3-18",
+              "text": "pi = 3.14",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-3-19",
+              "text": "msg = \"hi\"",
+              "chars": 10,
+              "keystrokes": 10,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-silver-3-20",
+              "text": "k = n // 2",
+              "chars": 10,
+              "keystrokes": 10,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  17
+                ]
+              },
+              "estSeconds": 10
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 65,
+          "title": "비교와 콜론 조각",
+          "lessons": [
+            23,
+            24,
+            25,
+            26
+          ],
+          "passages": [
+            {
+              "id": "sym-silver-4-01",
+              "text": "a > b",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-4-02",
+              "text": "a < b",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-4-03",
+              "text": "a >= b",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-04",
+              "text": "a <= b",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-05",
+              "text": "a == b",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-06",
+              "text": "a != b",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-07",
+              "text": "if x:",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-4-08",
+              "text": "else:",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-4-09",
+              "text": "not ok",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-10",
+              "text": "a and b",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-11",
+              "text": "a or b",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-12",
+              "text": "x == 10",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-13",
+              "text": "x != 0",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-14",
+              "text": "n % 2 == 0",
+              "chars": 10,
+              "keystrokes": 10,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-4-15",
+              "text": "if a > b:",
+              "chars": 9,
+              "keystrokes": 9,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-silver-4-16",
+              "text": "elif x:",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-17",
+              "text": "while n:",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-4-18",
+              "text": "for i in a:",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-silver-4-19",
+              "text": "x >= 60",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-4-20",
+              "text": "pw == \"abc\"",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 10
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 70,
+          "title": "리스트·함수 조각",
+          "lessons": [
+            19,
+            35,
+            36,
+            39,
+            40
+          ],
+          "passages": [
+            {
+              "id": "sym-silver-5-01",
+              "text": "[1, 2]",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-5-02",
+              "text": "a[0]",
+              "chars": 4,
+              "keystrokes": 4,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 3
+            },
+            {
+              "id": "sym-silver-5-03",
+              "text": "a[-1]",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-5-04",
+              "text": "a[1:3]",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-5-05",
+              "text": "a[:2]",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-5-06",
+              "text": "a[2:]",
+              "chars": 5,
+              "keystrokes": 5,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 4
+            },
+            {
+              "id": "sym-silver-5-07",
+              "text": "s[::-1]",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-5-08",
+              "text": "a.append(1)",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-5-09",
+              "text": "a.pop()",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-5-10",
+              "text": "def f():",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-5-11",
+              "text": "f(x)",
+              "chars": 4,
+              "keystrokes": 4,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 3
+            },
+            {
+              "id": "sym-silver-5-12",
+              "text": "f(a, b)",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-5-13",
+              "text": "return x",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-5-14",
+              "text": "{name}",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-5-15",
+              "text": "f\"{x}\"",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 5
+            },
+            {
+              "id": "sym-silver-5-16",
+              "text": "range(5)",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-silver-5-17",
+              "text": "range(1, 4)",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-silver-5-18",
+              "text": "\"a b\".split()",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-silver-5-19",
+              "text": "input()",
+              "chars": 7,
+              "keystrokes": 7,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-silver-5-20",
+              "text": "int(n)",
+              "chars": 6,
+              "keystrokes": 6,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19,
+                  35,
+                  36,
+                  39,
+                  40
+                ]
+              },
+              "estSeconds": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gold",
+      "name": "골드",
+      "icon": "♛",
+      "accuracy": 90,
+      "contentType": "한 줄 식",
+      "targetRange": [
+        75,
+        100
+      ],
+      "round": {
+        "passagesPerRound": 10,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 11
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 75,
+          "title": "print와 따옴표",
+          "lessons": [
+            2,
+            3,
+            4
+          ],
+          "passages": [
+            {
+              "id": "sym-gold-1-01",
+              "text": "print(\"Hello\")",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-1-02",
+              "text": "print('Python')",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-gold-1-03",
+              "text": "print(\"It's me\")",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-1-04",
+              "text": "print('He said \"hi\"')",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-gold-1-05",
+              "text": "print(\"a\", \"b\")",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-gold-1-06",
+              "text": "print(1, 2, sep=\"-\")",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-gold-1-07",
+              "text": "print(\"A\", end=\"\")",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-gold-1-08",
+              "text": "print(\"Hi\" + \"!\")",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 9,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-gold-1-09",
+              "text": "print(7)",
+              "chars": 8,
+              "keystrokes": 8,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 6
+            },
+            {
+              "id": "sym-gold-1-10",
+              "text": "print(\"Hi\", \"Bye\")",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "estSeconds": 14
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 81,
+          "title": "계산과 자료형",
+          "lessons": [
+            7,
+            9,
+            11,
+            12,
+            14
+          ],
+          "passages": [
+            {
+              "id": "sym-gold-2-01",
+              "text": "print(7 // 2)",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-2-02",
+              "text": "print(7 % 2)",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-gold-2-03",
+              "text": "print(2 ** 10)",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-2-04",
+              "text": "print((2 + 3) * 4)",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-2-05",
+              "text": "print(type(3.14))",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-2-06",
+              "text": "print(len(\"abc\"))",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-2-07",
+              "text": "print(int(\"20\") + 5)",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-gold-2-08",
+              "text": "print(\"age: \" + str(14))",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "sym-gold-2-09",
+              "text": "print(float(\"2.5\"))",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-gold-2-10",
+              "text": "print(10 / 4)",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  7,
+                  9,
+                  11,
+                  12,
+                  14
+                ]
+              },
+              "estSeconds": 10
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 88,
+          "title": "변수와 입력",
+          "lessons": [
+            15,
+            16,
+            19,
+            20,
+            21
+          ],
+          "passages": [
+            {
+              "id": "sym-gold-3-01",
+              "text": "name = input(\"name? \")",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-gold-3-02",
+              "text": "age = int(input(\"age? \"))",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-gold-3-03",
+              "text": "total = a + b",
+              "chars": 13,
+              "keystrokes": 13,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-gold-3-04",
+              "text": "total += price",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-3-05",
+              "text": "a, b = b, a",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-gold-3-06",
+              "text": "print(f\"{name} hi\")",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-3-07",
+              "text": "line = \"=\" * 10",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-3-08",
+              "text": "x = 2 * (3 + 4)",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-3-09",
+              "text": "avg = (a + b) / 2",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-gold-3-10",
+              "text": "r = 2.5 * 2",
+              "chars": 11,
+              "keystrokes": 11,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  15,
+                  16,
+                  19,
+                  20,
+                  21
+                ]
+              },
+              "estSeconds": 8
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 94,
+          "title": "조건식",
+          "lessons": [
+            23,
+            24,
+            25,
+            26
+          ],
+          "passages": [
+            {
+              "id": "sym-gold-4-01",
+              "text": "if score >= 60:",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-4-02",
+              "text": "if n % 2 == 0:",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-gold-4-03",
+              "text": "if pw == \"tadak\":",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-4-04",
+              "text": "elif score >= 80:",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-4-05",
+              "text": "if x > 0 and y > 0:",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-gold-4-06",
+              "text": "if a < 5 or b < 5:",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-4-07",
+              "text": "if not done:",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-gold-4-08",
+              "text": "while n <= 10:",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-gold-4-09",
+              "text": "if name != \"\":",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-gold-4-10",
+              "text": "if age >= 12 and ok:",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  26
+                ]
+              },
+              "estSeconds": 13
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 100,
+          "title": "반복·리스트·함수 한 줄",
+          "lessons": [
+            30,
+            31,
+            35,
+            36,
+            40,
+            42
+          ],
+          "passages": [
+            {
+              "id": "sym-gold-5-01",
+              "text": "for i in range(3):",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-5-02",
+              "text": "for n in range(1, 11):",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-5-03",
+              "text": "for p in pets:",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-gold-5-04",
+              "text": "pets = [\"cat\", \"dog\"]",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-gold-5-05",
+              "text": "pets.append(\"fox\")",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-gold-5-06",
+              "text": "print(pets[0])",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-gold-5-07",
+              "text": "print(nums[1:3])",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-gold-5-08",
+              "text": "def add(a, b):",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-gold-5-09",
+              "text": "return a + b",
+              "chars": 12,
+              "keystrokes": 12,
+              "shiftKeys": 1,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 7
+            },
+            {
+              "id": "sym-gold-5-10",
+              "text": "print(add(3, 4))",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  35,
+                  36,
+                  40,
+                  42
+                ]
+              },
+              "estSeconds": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diamond",
+      "name": "다이아",
+      "icon": "◇",
+      "accuracy": 92,
+      "contentType": "기호가 많은 한 줄",
+      "targetRange": [
+        110,
+        130
+      ],
+      "round": {
+        "passagesPerRound": 10,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 12
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 110,
+          "title": "따옴표와 괄호 겹치기",
+          "lessons": [
+            3,
+            9,
+            14,
+            21
+          ],
+          "passages": [
+            {
+              "id": "sym-diamond-1-01",
+              "text": "print(type(\"10\"))",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-1-02",
+              "text": "print(len(str(2026)))",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-diamond-1-03",
+              "text": "n = int(input(\"n: \"))",
+              "chars": 21,
+              "keystrokes": 21,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-diamond-1-04",
+              "text": "print('say \"yes\"')",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-diamond-1-05",
+              "text": "print(\"x\" * 3, \"y\" * 2)",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-1-06",
+              "text": "print(str(1) + str(2))",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-1-07",
+              "text": "print(int(input(\"a? \")) + 1)",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 10,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-diamond-1-08",
+              "text": "print(len(\"a b c\"))",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-diamond-1-09",
+              "text": "print(\"(\" + \")\")",
+              "chars": 16,
+              "keystrokes": 16,
+              "shiftKeys": 9,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-1-10",
+              "text": "print(\"[\", \"]\", sep=\"\")",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  3,
+                  9,
+                  14,
+                  21
+                ]
+              },
+              "estSeconds": 13
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 115,
+          "title": "f-문자열과 format",
+          "lessons": [
+            19
+          ],
+          "passages": [
+            {
+              "id": "sym-diamond-2-01",
+              "text": "print(f\"{a} + {b} = {a + b}\")",
+              "chars": 29,
+              "keystrokes": 29,
+              "shiftKeys": 12,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-diamond-2-02",
+              "text": "print(f\"{name} is {age}\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-2-03",
+              "text": "print(f\"[{x}]\")",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-diamond-2-04",
+              "text": "print(f\"{n * 2}\")",
+              "chars": 17,
+              "keystrokes": 17,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-2-05",
+              "text": "print(\"{} and {}\".format(1, 2))",
+              "chars": 31,
+              "keystrokes": 31,
+              "shiftKeys": 10,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-diamond-2-06",
+              "text": "print(f\"total: {sum(a)}\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 9,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-2-07",
+              "text": "print(f\"{w}x{h}={w * h}\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 11,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-2-08",
+              "text": "print(f\"next: {age + 1}\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-2-09",
+              "text": "print(\"id: {}, name: {}\".format(101, \"Kim\"))",
+              "chars": 44,
+              "keystrokes": 44,
+              "shiftKeys": 15,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 23
+            },
+            {
+              "id": "sym-diamond-2-10",
+              "text": "print(f\"{len(s)} chars\")",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  19
+                ]
+              },
+              "estSeconds": 13
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 120,
+          "title": "비교와 논리",
+          "lessons": [
+            23,
+            24,
+            25,
+            29
+          ],
+          "passages": [
+            {
+              "id": "sym-diamond-3-01",
+              "text": "print(3 >= 3 and 4 != 5)",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-3-02",
+              "text": "print(not (1 > 2))",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-3-03",
+              "text": "if (a > 0) and (b > 0):",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 7,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-3-04",
+              "text": "print(x == 1 or y == 2)",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-3-05",
+              "text": "if year % 4 == 0 and year % 100 != 0:",
+              "chars": 37,
+              "keystrokes": 37,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "sym-diamond-3-06",
+              "text": "print(\"a\" in \"cat\")",
+              "chars": 19,
+              "keystrokes": 19,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-diamond-3-07",
+              "text": "if n % 3 == 0 or n % 5 == 0:",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-diamond-3-08",
+              "text": "print(7 == \"7\")",
+              "chars": 15,
+              "keystrokes": 15,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-diamond-3-09",
+              "text": "if not (score < 60):",
+              "chars": 20,
+              "keystrokes": 20,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-diamond-3-10",
+              "text": "print(10 in [10, 20, 30])",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  23,
+                  24,
+                  25,
+                  29
+                ]
+              },
+              "estSeconds": 12
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 125,
+          "title": "리스트 기호",
+          "lessons": [
+            35,
+            36,
+            37,
+            39
+          ],
+          "passages": [
+            {
+              "id": "sym-diamond-4-01",
+              "text": "nums = [10, 20, 30, 40]",
+              "chars": 23,
+              "keystrokes": 23,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-diamond-4-02",
+              "text": "print(nums[-1], nums[0])",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-4-03",
+              "text": "print(nums[1:3], nums[:2])",
+              "chars": 26,
+              "keystrokes": 26,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-4-04",
+              "text": "board = [[1, 2], [3, 4]]",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 0,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-4-05",
+              "text": "print(board[1][0])",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-4-06",
+              "text": "print(sorted([3, 1, 2]))",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-4-07",
+              "text": "print(sum(nums) / len(nums))",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-4-08",
+              "text": "print(\"abc\"[::-1])",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 9
+            },
+            {
+              "id": "sym-diamond-4-09",
+              "text": "print(list(range(1, 10, 2)))",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-4-10",
+              "text": "a, b = input().split()",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  39
+                ]
+              },
+              "estSeconds": 11
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 130,
+          "title": "함수와 라이브러리",
+          "lessons": [
+            40,
+            41,
+            42,
+            43
+          ],
+          "passages": [
+            {
+              "id": "sym-diamond-5-01",
+              "text": "def hello(name=\"you\"):",
+              "chars": 22,
+              "keystrokes": 22,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 10
+            },
+            {
+              "id": "sym-diamond-5-02",
+              "text": "return (a + b) / 2",
+              "chars": 18,
+              "keystrokes": 18,
+              "shiftKeys": 3,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 8
+            },
+            {
+              "id": "sym-diamond-5-03",
+              "text": "print(double(double(2)))",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-diamond-5-04",
+              "text": "x = random.randint(1, 6)",
+              "chars": 24,
+              "keystrokes": 24,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 11
+            },
+            {
+              "id": "sym-diamond-5-05",
+              "text": "print(random.choice([\"a\", \"b\"]))",
+              "chars": 32,
+              "keystrokes": 32,
+              "shiftKeys": 8,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-diamond-5-06",
+              "text": "def area(w, h): return w * h",
+              "chars": 28,
+              "keystrokes": 28,
+              "shiftKeys": 4,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-diamond-5-07",
+              "text": "print(max(a, b), min(a, b))",
+              "chars": 27,
+              "keystrokes": 27,
+              "shiftKeys": 6,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-5-08",
+              "text": "result = calc(10, 5, \"+\")",
+              "chars": 25,
+              "keystrokes": 25,
+              "shiftKeys": 5,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-5-09",
+              "text": "print(\" \".join([\"a\", \"b\"]))",
+              "chars": 27,
+              "keystrokes": 27,
+              "shiftKeys": 10,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-diamond-5-10",
+              "text": "return s[::-1]",
+              "chars": 14,
+              "keystrokes": 14,
+              "shiftKeys": 2,
+              "lines": 1,
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "master",
+      "name": "마스터",
+      "icon": "★",
+      "accuracy": 93,
+      "contentType": "기호가 많은 짧은 코드",
+      "targetRange": [
+        140,
+        160
+      ],
+      "round": {
+        "passagesPerRound": 6,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 19
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 140,
+          "title": "출력 꾸미기",
+          "lessons": [
+            4,
+            13,
+            19
+          ],
+          "passages": [
+            {
+              "id": "sym-master-1-01",
+              "text": "line = \"=\" * 12\nprint(line)\nprint(\"|\", \"MENU\", \"|\")\nprint(line)",
+              "chars": 63,
+              "keystrokes": 63,
+              "shiftKeys": 21,
+              "lines": 4,
+              "output": "============\n| MENU |\n============",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "sym-master-1-02",
+              "text": "a, b = 3, 4\nprint(f\"{a} * {b} = {a * b}\")\nprint(f\"{a} ** {b} = {a ** b}\")",
+              "chars": 73,
+              "keystrokes": 73,
+              "shiftKeys": 26,
+              "lines": 3,
+              "output": "3 * 4 = 12\n3 ** 4 = 81",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "sym-master-1-03",
+              "text": "print(2026, 10, 26, sep=\"-\")\nprint(\"10:30\", end=\" \")\nprint(\"[start]\")",
+              "chars": 69,
+              "keystrokes": 69,
+              "shiftKeys": 15,
+              "lines": 3,
+              "output": "2026-10-26\n10:30 [start]",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "sym-master-1-04",
+              "text": "name = \"Mina\"\nprint(\"Hi, \" + name + \"!\")\nprint(f\"<{name}>\")",
+              "chars": 59,
+              "keystrokes": 59,
+              "shiftKeys": 21,
+              "lines": 3,
+              "output": "Hi, Mina!\n<Mina>",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 25
+            },
+            {
+              "id": "sym-master-1-05",
+              "text": "print('\"quote\"')\nprint(\"it's\")\nprint(\"a\\tb\")",
+              "chars": 44,
+              "keystrokes": 44,
+              "shiftKeys": 12,
+              "lines": 3,
+              "output": "\"quote\"\nit's\na\tb",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-1-06",
+              "text": "w, h = 3, 5\nprint(f\"({w}, {h})\")\nprint(f\"area = {w * h}\")",
+              "chars": 57,
+              "keystrokes": 57,
+              "shiftKeys": 17,
+              "lines": 3,
+              "output": "(3, 5)\narea = 15",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 24
+            },
+            {
+              "id": "sym-master-1-07",
+              "text": "n = 7\nprint(f\"{n} // 2 = {n // 2}\")\nprint(f\"{n} % 2 = {n % 2}\")",
+              "chars": 63,
+              "keystrokes": 63,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "7 // 2 = 3\n7 % 2 = 1",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "sym-master-1-08",
+              "text": "print(\"#\" * 5)\nprint(\"# hi #\")\nprint(\"#\" * 5)",
+              "chars": 45,
+              "keystrokes": 45,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "#####\n# hi #\n#####",
+              "source": {
+                "lessons": [
+                  4,
+                  13,
+                  19
+                ]
+              },
+              "estSeconds": 19
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 145,
+          "title": "조건 기호",
+          "lessons": [
+            26,
+            27,
+            28
+          ],
+          "passages": [
+            {
+              "id": "sym-master-2-01",
+              "text": "n = 9\nif n % 3 == 0:\n    print(\"3x\")",
+              "chars": 36,
+              "keystrokes": 32,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "3x",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-master-2-02",
+              "text": "x = -2\nif x >= 0:\n    print(\"+\")\nelse:\n    print(\"-\")",
+              "chars": 53,
+              "keystrokes": 45,
+              "shiftKeys": 12,
+              "lines": 5,
+              "output": "-",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-2-03",
+              "text": "s = 85\nif s >= 90:\n    print(\"A\")\nelif s >= 80:\n    print(\"B\")",
+              "chars": 62,
+              "keystrokes": 54,
+              "shiftKeys": 14,
+              "lines": 5,
+              "output": "B",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-master-2-04",
+              "text": "pw = \"abc\"\nif pw != \"\":\n    print(\"[ok]\")",
+              "chars": 41,
+              "keystrokes": 37,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "[ok]",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-master-2-05",
+              "text": "a, b = 3, 8\nif a > b:\n    print(a)\nelse:\n    print(b)",
+              "chars": 53,
+              "keystrokes": 45,
+              "shiftKeys": 7,
+              "lines": 5,
+              "output": "8",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-2-06",
+              "text": "t = 30\nif t >= 25 and t < 35:\n    print(\"hot\")",
+              "chars": 46,
+              "keystrokes": 42,
+              "shiftKeys": 7,
+              "lines": 3,
+              "output": "hot",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-master-2-07",
+              "text": "c = \"y\"\nif c == \"y\" or c == \"Y\":\n    print(\"yes!\")",
+              "chars": 50,
+              "keystrokes": 46,
+              "shiftKeys": 13,
+              "lines": 3,
+              "output": "yes!",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-2-08",
+              "text": "age = 13\nif not age < 12:\n    print(\"{teen}\")",
+              "chars": 45,
+              "keystrokes": 41,
+              "shiftKeys": 8,
+              "lines": 3,
+              "output": "{teen}",
+              "source": {
+                "lessons": [
+                  26,
+                  27,
+                  28
+                ]
+              },
+              "estSeconds": 17
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 150,
+          "title": "반복 기호",
+          "lessons": [
+            30,
+            31,
+            32,
+            33
+          ],
+          "passages": [
+            {
+              "id": "sym-master-3-01",
+              "text": "for i in range(1, 4):\n    print(\"*\" * i)",
+              "chars": 40,
+              "keystrokes": 36,
+              "shiftKeys": 9,
+              "lines": 2,
+              "output": "*\n**\n***",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-master-3-02",
+              "text": "total = 0\nfor i in range(1, 6):\n    total += i\nprint(total)",
+              "chars": 59,
+              "keystrokes": 55,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "15",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-master-3-03",
+              "text": "for i in range(3, 0, -1):\n    print(f\"[{i}]\")",
+              "chars": 45,
+              "keystrokes": 41,
+              "shiftKeys": 9,
+              "lines": 2,
+              "output": "[3]\n[2]\n[1]",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-master-3-04",
+              "text": "n = 1\nwhile n <= 8:\n    print(n, end=\" \")\n    n *= 2",
+              "chars": 52,
+              "keystrokes": 44,
+              "shiftKeys": 7,
+              "lines": 4,
+              "output": "1 2 4 8 ",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "sym-master-3-05",
+              "text": "for i in range(2, 10, 2):\n    print(i, end=\",\")",
+              "chars": 47,
+              "keystrokes": 43,
+              "shiftKeys": 7,
+              "lines": 2,
+              "output": "2,4,6,8,",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-master-3-06",
+              "text": "k = 10\nwhile k > 0:\n    k -= 3\nprint(k)",
+              "chars": 39,
+              "keystrokes": 35,
+              "shiftKeys": 4,
+              "lines": 4,
+              "output": "-2",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-master-3-07",
+              "text": "for c in \"abc\":\n    print(c.upper())",
+              "chars": 36,
+              "keystrokes": 32,
+              "shiftKeys": 7,
+              "lines": 2,
+              "output": "A\nB\nC",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-master-3-08",
+              "text": "r = 1\nfor i in range(1, 5):\n    r *= i\nprint(r)",
+              "chars": 47,
+              "keystrokes": 43,
+              "shiftKeys": 6,
+              "lines": 4,
+              "output": "24",
+              "source": {
+                "lessons": [
+                  30,
+                  31,
+                  32,
+                  33
+                ]
+              },
+              "estSeconds": 17
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 155,
+          "title": "리스트 기호",
+          "lessons": [
+            35,
+            36,
+            37,
+            38,
+            39
+          ],
+          "passages": [
+            {
+              "id": "sym-master-4-01",
+              "text": "a = [5, 3, 8]\na.append(1)\nprint(a[-1], len(a))",
+              "chars": 46,
+              "keystrokes": 46,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "1 4",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "sym-master-4-02",
+              "text": "pets = [\"cat\", \"dog\"]\npets.insert(0, \"fox\")\nprint(pets)",
+              "chars": 55,
+              "keystrokes": 55,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "['fox', 'cat', 'dog']",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 21
+            },
+            {
+              "id": "sym-master-4-03",
+              "text": "nums = [1, 2, 3, 4, 5]\nprint(nums[1:4])\nprint(nums[::-1])",
+              "chars": 57,
+              "keystrokes": 57,
+              "shiftKeys": 7,
+              "lines": 3,
+              "output": "[2, 3, 4]\n[5, 4, 3, 2, 1]",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-master-4-04",
+              "text": "m = [[1, 2], [3, 4]]\nprint(m[0][1] + m[1][0])",
+              "chars": 45,
+              "keystrokes": 45,
+              "shiftKeys": 3,
+              "lines": 2,
+              "output": "5",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-master-4-05",
+              "text": "s = [80, 90, 70]\nprint(sum(s) / len(s))",
+              "chars": 39,
+              "keystrokes": 39,
+              "shiftKeys": 6,
+              "lines": 2,
+              "output": "80.0",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 15
+            },
+            {
+              "id": "sym-master-4-06",
+              "text": "w = [\"sea\", \"hike\", \"park\"]\ndel w[1]\nprint(w)",
+              "chars": 45,
+              "keystrokes": 45,
+              "shiftKeys": 8,
+              "lines": 3,
+              "output": "['sea', 'park']",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-master-4-07",
+              "text": "a = [3, 1, 2]\na.sort()\nprint(a)",
+              "chars": 31,
+              "keystrokes": 31,
+              "shiftKeys": 4,
+              "lines": 3,
+              "output": "[1, 2, 3]",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            },
+            {
+              "id": "sym-master-4-08",
+              "text": "x = \"a-b-c\".split(\"-\")\nprint(x)",
+              "chars": 31,
+              "keystrokes": 31,
+              "shiftKeys": 8,
+              "lines": 2,
+              "output": "['a', 'b', 'c']",
+              "source": {
+                "lessons": [
+                  35,
+                  36,
+                  37,
+                  38,
+                  39
+                ]
+              },
+              "estSeconds": 12
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 160,
+          "title": "함수 기호",
+          "lessons": [
+            40,
+            41,
+            42
+          ],
+          "passages": [
+            {
+              "id": "sym-master-5-01",
+              "text": "def sq(n):\n    return n ** 2\nprint(sq(4))",
+              "chars": 41,
+              "keystrokes": 37,
+              "shiftKeys": 9,
+              "lines": 3,
+              "output": "16",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 14
+            },
+            {
+              "id": "sym-master-5-02",
+              "text": "def hi(name):\n    print(f\"Hi, {name}!\")\nhi(\"Kim\")",
+              "chars": 49,
+              "keystrokes": 45,
+              "shiftKeys": 16,
+              "lines": 3,
+              "output": "Hi, Kim!",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 17
+            },
+            {
+              "id": "sym-master-5-03",
+              "text": "def avg(a, b):\n    return (a + b) / 2\nprint(avg(3, 4))",
+              "chars": 54,
+              "keystrokes": 50,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "3.5",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-5-04",
+              "text": "def big(a, b):\n    if a > b:\n        return a\n    return b\nprint(big(4, 2))",
+              "chars": 75,
+              "keystrokes": 59,
+              "shiftKeys": 9,
+              "lines": 5,
+              "output": "4",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-master-5-05",
+              "text": "def rev(s):\n    return s[::-1]\nprint(rev(\"python\"))",
+              "chars": 51,
+              "keystrokes": 47,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "nohtyp",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 18
+            },
+            {
+              "id": "sym-master-5-06",
+              "text": "def line(n):\n    print(\"-\" * n)\nline(6)",
+              "chars": 39,
+              "keystrokes": 35,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "------",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 13
+            },
+            {
+              "id": "sym-master-5-07",
+              "text": "def is_even(n):\n    return n % 2 == 0\nprint(is_even(7))",
+              "chars": 55,
+              "keystrokes": 51,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "False",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 19
+            },
+            {
+              "id": "sym-master-5-08",
+              "text": "def first(a):\n    return a[0]\nprint(first([\"x\", \"y\"]))",
+              "chars": 54,
+              "keystrokes": 50,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "x",
+              "source": {
+                "lessons": [
+                  40,
+                  41,
+                  42
+                ]
+              },
+              "estSeconds": 19
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "legend",
+      "name": "레전드",
+      "icon": "👑",
+      "accuracy": 95,
+      "contentType": "기호가 촘촘한 코드",
+      "targetRange": [
+        170,
+        200
+      ],
+      "round": {
+        "passagesPerRound": 4,
+        "pick": "random",
+        "targetSeconds": 120,
+        "avgPassageSeconds": 30
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "targetTpm": 170,
+          "title": "딕셔너리와 중첩 리스트",
+          "lessons": [
+            9,
+            35
+          ],
+          "passages": [
+            {
+              "id": "sym-legend-1-01",
+              "text": "phone = {\"kim\": 1012345678, \"lee\": 1098765432}\nprint(type(phone))\nprint(phone[\"kim\"])",
+              "chars": 85,
+              "keystrokes": 85,
+              "shiftKeys": 16,
+              "lines": 3,
+              "output": "<class 'dict'>\n1012345678",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "sym-legend-1-02",
+              "text": "book = [[\"cloud\", 2024, True], [\"sun\", 2023, False]]\nprint(book[1][0], book[1][2])\nprint(book[0][-1])",
+              "chars": 101,
+              "keystrokes": 101,
+              "shiftKeys": 10,
+              "lines": 3,
+              "output": "sun False\nTrue",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 36
+            },
+            {
+              "id": "sym-legend-1-03",
+              "text": "hw = [\"keyboard\", \"mouse\", [\"printer\", \"scanner\"]]\nprint(hw[0])\nprint(hw[2][1])\nprint(len(hw))",
+              "chars": 94,
+              "keystrokes": 94,
+              "shiftKeys": 16,
+              "lines": 4,
+              "output": "keyboard\nscanner\n3",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 33
+            },
+            {
+              "id": "sym-legend-1-04",
+              "text": "birthday = {\"robin\": 210406, \"ben\": 220812}\nbirthday[\"amy\"] = 230101\nprint(len(birthday))",
+              "chars": 89,
+              "keystrokes": 89,
+              "shiftKeys": 14,
+              "lines": 3,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "sym-legend-1-05",
+              "text": "grid = [[0] * 3 for _ in range(2)]\ngrid[1][2] = 9\nprint(grid)",
+              "chars": 61,
+              "keystrokes": 61,
+              "shiftKeys": 6,
+              "lines": 3,
+              "output": "[[0, 0, 0], [0, 0, 9]]",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 22
+            },
+            {
+              "id": "sym-legend-1-06",
+              "text": "menu = {\"rice\": 8000, \"noodle\": 9500}\nfor k in menu:\n    print(f\"{k}: {menu[k]}\")",
+              "chars": 81,
+              "keystrokes": 77,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "rice: 8000\nnoodle: 9500",
+              "source": {
+                "lessons": [
+                  9,
+                  35
+                ]
+              },
+              "estSeconds": 27
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "targetTpm": 178,
+          "title": "출력 서식 종합",
+          "lessons": [
+            4,
+            19
+          ],
+          "passages": [
+            {
+              "id": "sym-legend-2-01",
+              "text": "print(\"bank: {}, name: {}\".format(\"info\", \"Kim\"))\nprint(f\"[{2007}]\", \"born\", sep=\", \")",
+              "chars": 86,
+              "keystrokes": 86,
+              "shiftKeys": 27,
+              "lines": 2,
+              "output": "bank: info, name: Kim\n[2007], born",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "sym-legend-2-02",
+              "text": "a, b = 15, 17\na, b = b, a\nprint(f\"a={a}, b={b}\")\nprint(a, b, sep=\" <-> \")",
+              "chars": 73,
+              "keystrokes": 73,
+              "shiftKeys": 14,
+              "lines": 4,
+              "output": "a=17, b=15\n17 <-> 15",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 25
+            },
+            {
+              "id": "sym-legend-2-03",
+              "text": "date = \"1026\"\nprint(\"<today>\")\nprint(f\"{date[:2]}/{date[2:]}\")",
+              "chars": 62,
+              "keystrokes": 62,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "<today>\n10/26",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 21
+            },
+            {
+              "id": "sym-legend-2-04",
+              "text": "high, weight = 182, 78\nprint(\"(180 <=)?\", high >= 180)\nprint(\"(<= 80)?\", weight <= 80)",
+              "chars": 86,
+              "keystrokes": 86,
+              "shiftKeys": 18,
+              "lines": 3,
+              "output": "(180 <=)? True\n(<= 80)? True",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 29
+            },
+            {
+              "id": "sym-legend-2-05",
+              "text": "x = 3.14159\nprint(f\"{x:.2f}\")\nprint(round(x, 1))",
+              "chars": 48,
+              "keystrokes": 48,
+              "shiftKeys": 11,
+              "lines": 3,
+              "output": "3.14\n3.1",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 16
+            },
+            {
+              "id": "sym-legend-2-06",
+              "text": "items = [\"a\", \"b\", \"c\"]\nprint(\", \".join(items))\nprint(\"[\" + \"|\".join(items) + \"]\")",
+              "chars": 82,
+              "keystrokes": 82,
+              "shiftKeys": 25,
+              "lines": 3,
+              "output": "a, b, c\n[a|b|c]",
+              "source": {
+                "lessons": [
+                  4,
+                  19
+                ]
+              },
+              "estSeconds": 28
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "targetTpm": 185,
+          "title": "조건 종합",
+          "lessons": [
+            25,
+            28,
+            29
+          ],
+          "passages": [
+            {
+              "id": "sym-legend-3-01",
+              "text": "year = 2024\nif year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):\n    print(f\"{year}: leap\")\nelse:\n    print(f\"{year}: common\")",
+              "chars": 132,
+              "keystrokes": 124,
+              "shiftKeys": 22,
+              "lines": 5,
+              "output": "2024: leap",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 40
+            },
+            {
+              "id": "sym-legend-3-02",
+              "text": "temp = 18\nif temp >= 25:\n    print(\"summer\")\nelif temp >= 10:\n    print(\"light\")\nelse:\n    print(\"winter\")",
+              "chars": 106,
+              "keystrokes": 94,
+              "shiftKeys": 17,
+              "lines": 7,
+              "output": "light",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "sym-legend-3-03",
+              "text": "unit, t = \"C\", 30.0\nif unit == \"C\":\n    print(f\"{t}C = {t * 9 / 5 + 32}F\")\nelse:\n    print(f\"{t}F = {(t - 32) * 5 / 9}C\")",
+              "chars": 121,
+              "keystrokes": 113,
+              "shiftKeys": 33,
+              "lines": 5,
+              "output": "30.0C = 86.0F",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 37
+            },
+            {
+              "id": "sym-legend-3-04",
+              "text": "score = 72\ngrade = \"A\" if score >= 90 else (\"B\" if score >= 80 else \"C\")\nprint(f\"[{grade}]\")",
+              "chars": 92,
+              "keystrokes": 92,
+              "shiftKeys": 19,
+              "lines": 3,
+              "output": "[C]",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 30
+            },
+            {
+              "id": "sym-legend-3-05",
+              "text": "speed = 35\nif speed >= 30:\n    print(\"slow down! (\", speed, \")\")\nelse:\n    print(\"ok\")",
+              "chars": 86,
+              "keystrokes": 78,
+              "shiftKeys": 16,
+              "lines": 5,
+              "output": "slow down! ( 35 )",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 25
+            },
+            {
+              "id": "sym-legend-3-06",
+              "text": "ids = [\"tadak\", \"class\"]\nuid = \"tadak\"\nif uid in ids and len(uid) >= 5:\n    print(f\"welcome, {uid}!\")",
+              "chars": 101,
+              "keystrokes": 97,
+              "shiftKeys": 17,
+              "lines": 4,
+              "output": "welcome, tadak!",
+              "source": {
+                "lessons": [
+                  25,
+                  28,
+                  29
+                ]
+              },
+              "estSeconds": 31
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "targetTpm": 192,
+          "title": "반복 종합",
+          "lessons": [
+            32,
+            34,
+            38
+          ],
+          "passages": [
+            {
+              "id": "sym-legend-4-01",
+              "text": "a, b = 3, 7\ns = 0\nfor i in range(a, b + 1):\n    if i % 2 == 1:\n        s += i\n    else:\n        s -= i\nprint(\"result:\", s)",
+              "chars": 122,
+              "keystrokes": 98,
+              "shiftKeys": 13,
+              "lines": 8,
+              "output": "result: 5",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 31
+            },
+            {
+              "id": "sym-legend-4-02",
+              "text": "a, b = 12, 18\ndata = []\nfor i in range(1, a + 1):\n    if (a % i == 0) and (b % i == 0):\n        data.append(i)\nprint(data, max(data))",
+              "chars": 133,
+              "keystrokes": 121,
+              "shiftKeys": 17,
+              "lines": 6,
+              "output": "[1, 2, 3, 6] 6",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 38
+            },
+            {
+              "id": "sym-legend-4-03",
+              "text": "for i in range(1, 4):\n    for j in range(1, 4):\n        print(f\"{i}x{j}={i * j}\", end=\" \")\n    print()",
+              "chars": 102,
+              "keystrokes": 86,
+              "shiftKeys": 21,
+              "lines": 4,
+              "output": "1x1=1 1x2=2 1x3=3 \n2x1=2 2x2=4 2x3=6 \n3x1=3 3x2=6 3x3=9 ",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "sym-legend-4-04",
+              "text": "n = 0\nwhile True:\n    n += 1\n    if n % 7 == 0:\n        break\nprint(f\"first: {n}\")",
+              "chars": 82,
+              "keystrokes": 66,
+              "shiftKeys": 12,
+              "lines": 6,
+              "output": "first: 7",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 21
+            },
+            {
+              "id": "sym-legend-4-05",
+              "text": "words = [\"Hi\", \"Python\", \"is\", \"FUN\"]\nfor w in words:\n    print(w.lower(), end=\" \")\nprint()",
+              "chars": 91,
+              "keystrokes": 87,
+              "shiftKeys": 22,
+              "lines": 4,
+              "output": "hi python is fun ",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 27
+            },
+            {
+              "id": "sym-legend-4-06",
+              "text": "nums = [3, -1, 4, -5]\npos = [n for n in nums if n > 0]\nprint(pos, sum(pos))",
+              "chars": 75,
+              "keystrokes": 75,
+              "shiftKeys": 5,
+              "lines": 3,
+              "output": "[3, 4] 7",
+              "source": {
+                "lessons": [
+                  32,
+                  34,
+                  38
+                ]
+              },
+              "estSeconds": 23
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "targetTpm": 200,
+          "title": "함수 종합",
+          "lessons": [
+            41,
+            42,
+            43
+          ],
+          "passages": [
+            {
+              "id": "sym-legend-5-01",
+              "text": "def calculator(a, b, op):\n    if op == \"+\":\n        return a + b\n    elif op == \"-\":\n        return a - b\n    return a * b\nprint(\"result:\", calculator(10, 5, \"+\"))",
+              "chars": 163,
+              "keystrokes": 135,
+              "shiftKeys": 22,
+              "lines": 7,
+              "output": "result: 15",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 40
+            },
+            {
+              "id": "sym-legend-5-02",
+              "text": "def weekly_pay(rate, hour):\n    if hour > 30:\n        return rate * 30 + 1.5 * rate * (hour - 30)\n    return rate * hour\nprint(int(weekly_pay(11000, 32)))",
+              "chars": 154,
+              "keystrokes": 138,
+              "shiftKeys": 20,
+              "lines": 5,
+              "output": "363000",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 41
+            },
+            {
+              "id": "sym-legend-5-03",
+              "text": "def filter_odd(lst):\n    odd = []\n    for n in lst:\n        if n % 2 != 0:\n            odd.append(n)\n    return odd\nprint(filter_odd([1, 2, 3, 4, 5]))",
+              "chars": 150,
+              "keystrokes": 118,
+              "shiftKeys": 15,
+              "lines": 7,
+              "output": "[1, 3, 5]",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 35
+            },
+            {
+              "id": "sym-legend-5-04",
+              "text": "def factorial(n):\n    r = 1\n    for i in range(1, n + 1):\n        r *= i\n    return r\nprint(f\"5! = {factorial(5)}\")",
+              "chars": 115,
+              "keystrokes": 95,
+              "shiftKeys": 17,
+              "lines": 6,
+              "output": "5! = 120",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 28
+            },
+            {
+              "id": "sym-legend-5-05",
+              "text": "def count_vowels(s):\n    c = 0\n    for ch in s.lower():\n        if ch in \"aeiou\":\n            c += 1\n    return c\nprint(count_vowels(\"Tadak Class\"))",
+              "chars": 148,
+              "keystrokes": 116,
+              "shiftKeys": 20,
+              "lines": 7,
+              "output": "3",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 35
+            },
+            {
+              "id": "sym-legend-5-06",
+              "text": "import random\ndef lunch():\n    menus = [\"rice\", \"ramen\", \"pizza\"]\n    return random.choice(menus)\nprint(f\"today: {lunch()}\")",
+              "chars": 124,
+              "keystrokes": 116,
+              "shiftKeys": 20,
+              "lines": 5,
+              "output": "today: ramen",
+              "outputNote": "무작위라서 실행할 때마다 달라요",
+              "source": {
+                "lessons": [
+                  41,
+                  42,
+                  43
+                ]
+              },
+              "estSeconds": 35
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
