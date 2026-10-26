@@ -227,6 +227,24 @@ img {
   }
 }
 
+/* 말풍선·이름표가 톡 튀어나오기 (픽셀 느낌으로 4단계 끊어서) */
+@keyframes pop-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@utility animate-pop-in {
+  animation: pop-in 240ms steps(4, end) both;
+}
+
+/* 토끼 선생님이 통통 (2프레임) */
+@keyframes bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+@utility animate-bob {
+  animation: bob 900ms steps(2, jump-none) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .blink,
   [class*="animate-"] {
