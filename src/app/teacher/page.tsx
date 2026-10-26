@@ -1,22 +1,30 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
+import { BattleBoard } from "@/components/battle/BattleBoard";
 import { Loading } from "@/components/ui/Loading";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { schoolYearOf } from "@/lib/auth/config";
 import { requireTeacher } from "@/lib/auth/viewer";
+import { loadBattle } from "@/lib/battle/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CreateClassForm } from "./CreateClassForm";
 
 async function Classes() {
+  await connection(); // 로그인·날짜는 요청마다 새로 확인
   const t = await requireTeacher();
   const year = schoolYearOf();
   const { data: classes } = await createAdminClient()
     .from("classes")
-    .select("id, grade, class_no, join_code, coins, enrollments(count), school_years!inner(year, school_id)")
+    .select("id, school_year_id, grade, class_no, join_code, coins, enrollments(count), school_years!inner(year, school_id)")
     .eq("school_years.school_id", t.schoolId)
     .eq("school_years.year", year)
     .order("grade")
     .order("class_no");
+
+  // 학년마다 반 대결 순위판
+  const grades = [...new Map((classes ?? []).map((c) => [c.grade, c.school_year_id])).entries()];
+  const battles = await Promise.all(grades.map(([grade, schoolYearId]) => loadBattle({ schoolYearId, grade })));
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,6 +62,12 @@ async function Classes() {
           <p>아직 반이 없어요. 아래에서 반을 만들어 주세요.</p>
         )}
       </RetroWindow>
+
+      {battles.map((b) => (
+        <RetroWindow key={b.grade} title={`${b.grade}학년 반 대결 순위판`}>
+          <BattleBoard data={b} />
+        </RetroWindow>
+      ))}
 
       <RetroWindow title="새 반 만들기">
         <CreateClassForm />

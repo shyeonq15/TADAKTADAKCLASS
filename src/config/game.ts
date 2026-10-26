@@ -33,6 +33,14 @@ export const GROWTH = {
   classBattlePeriodDays: 14,
 } as const;
 
+/* ── 반 대결 (2주 단위, 월요일 시작) ── */
+export const CLASS_BATTLE = {
+  /** 첫 집계가 시작되는 월요일 (YYYY-MM-DD, 한국 시간). 여기서부터 14일씩 끊어요 */
+  firstMonday: "2026-10-26",
+  /** 1위 반 지갑 보너스 (같은 점수면 같이 1위) */
+  winnerBonus: 300,
+} as const;
+
 /* ── 실력 티어 (개인 명예용, 트랙별) ── */
 export const TIERS = ["bronze", "silver", "gold", "diamond", "master", "legend"] as const;
 export type Tier = (typeof TIERS)[number];

@@ -7,6 +7,8 @@ import { Loading } from "@/components/ui/Loading";
 import { requireStudent } from "@/lib/auth/viewer";
 import { loadPracticeData } from "@/lib/practice/server";
 import { loadRoom } from "@/lib/room/server";
+import { loadMyBattle } from "@/lib/battle/server";
+import { BattleBoard } from "@/components/battle/BattleBoard";
 import { ClassRoom } from "@/components/room/ClassRoom";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
@@ -23,7 +25,8 @@ async function PlacementGate({ children }: { children: React.ReactNode }) {
 /** 첫 화면 맨 위: 우리 반 미니룸 (반 친구 미니미 + 반 지갑으로 산 가구) */
 async function HomeRoom() {
   const v = await requireStudent();
-  const room = await loadRoom({ userId: v.userId, classId: v.enrollment?.classId ?? null });
+  const who = { userId: v.userId, classId: v.enrollment?.classId ?? null };
+  const [room, battle] = await Promise.all([loadRoom(who), loadMyBattle(who.userId, who.classId)]);
   if (!room) return null;
   const done = room.members.filter((m) => m.doneToday).length;
   return (
@@ -41,6 +44,14 @@ async function HomeRoom() {
           미니룸 꾸미기 투표
         </PixelLink>
       </div>
+      {battle && (
+        <div className="mt-4 border-t-2 border-win-shadow pt-3">
+          <BattleBoard data={battle} compact />
+          <PixelLink href="/battle" variant="ghost" size="sm" className="mt-2">
+            반 대결 자세히 보기
+          </PixelLink>
+        </div>
+      )}
     </RetroWindow>
   );
 }
