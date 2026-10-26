@@ -259,7 +259,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
 
         {/* 내 토끼 */}
         <div className="absolute" style={{ left: `${BUNNY_X - 6}%`, bottom: GROUND_H - 3 + jumpY }}>
-          <PixelSprite sprite={BUNNY} scale={4} className={ouch ? "opacity-50" : ""} />
+          {/* 오른쪽에서 오는 장애물을 보고 달리게 좌우로 뒤집어요 */}
+          <PixelSprite sprite={BUNNY} scale={4} className={`-scale-x-100 ${ouch ? "opacity-50" : ""}`} />
           {ouch && <span className="absolute -top-6 left-2 font-pixel text-body font-bold text-red-500">쿵!</span>}
         </div>
       </div>

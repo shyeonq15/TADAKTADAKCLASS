@@ -45,10 +45,11 @@ export function RaceLanes({ lanes }: { lanes: Lane[] }) {
                 {l.bubble && (
                   <span className="absolute -top-7 left-4 border-2 border-navy-900 bg-paper px-1 text-body leading-none">{l.bubble}</span>
                 )}
+                {/* 토끼 그림은 왼쪽을 보고 있어서, 오른쪽으로 달리는 트랙에서는 좌우로 뒤집어요 */}
                 {l.look ? (
-                  <Minimi look={l.look} scale={2} className={l.ghost ? "opacity-40" : ""} />
+                  <Minimi look={l.look} scale={2} className={`-scale-x-100 ${l.ghost ? "opacity-40" : ""}`} />
                 ) : (
-                  <PixelSprite sprite={BUNNY} scale={2} className={l.ghost ? "opacity-40" : ""} />
+                  <PixelSprite sprite={BUNNY} scale={2} className={`-scale-x-100 ${l.ghost ? "opacity-40" : ""}`} />
                 )}
               </div>
             </div>
