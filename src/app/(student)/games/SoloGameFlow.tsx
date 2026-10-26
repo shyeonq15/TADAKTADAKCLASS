@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentType, type MutableRefObject, type ReactNode } from "react";
 import { GAME_LABELS, TRACK_LABELS, TRACKS, type SoloGame, type Track } from "@/config/game";
 import { startGame, submitGame } from "@/app/(student)/actions";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
@@ -20,7 +20,30 @@ import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
 // 혼자 하는 게임 공통 흐름: 트랙 고르기 → 게임 → 서버가 점수 계산 → 결과
 
 export type GameEnd = { events: RainEvent[]; durationMs: number; keyTimes: number[]; reason: "hearts" | "time" };
-export type FieldProps = { words: string[]; track: Track; onEnd: (r: GameEnd) => void };
+/** 지금까지의 기록 (게임이 이미 끝났으면 null). 부르면 그 판은 끝난 것으로 처리돼요 */
+export type GameSnapshot = () => Omit<GameEnd, "reason"> | null;
+export type FieldProps = { words: string[]; track: Track; onEnd: (r: GameEnd) => void; onSnapshot?: (fn: GameSnapshot) => void };
+
+/**
+ * 게임 중에 다른 메뉴로 나가거나 새로고침·창 닫기를 하면 그 자리에서 판을 끝내고 저장해요.
+ * (나갔다 들어와서 하트를 다시 채우는 일이 없게. 화면이 사라지는 중이라 sendBeacon 으로 보냄)
+ */
+function useEndOnLeave(token: string | null, snapshot: MutableRefObject<GameSnapshot | null>) {
+  useEffect(() => {
+    if (!token) return;
+    const send = () => {
+      const snap = snapshot.current?.();
+      if (!snap) return;
+      const body = new Blob([JSON.stringify({ token, ...snap })], { type: "application/json" });
+      navigator.sendBeacon("/api/games/abandon", body);
+    };
+    window.addEventListener("pagehide", send);
+    return () => {
+      window.removeEventListener("pagehide", send);
+      send();
+    };
+  }, [token, snapshot]);
+}
 
 type Props = {
   game: SoloGame;
@@ -49,6 +72,11 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "select" });
   const [track, setTrack] = useState<Track>("korean");
+  const snapshot = useRef<GameSnapshot | null>(null);
+  const registerSnapshot = useCallback((fn: GameSnapshot) => {
+    snapshot.current = fn;
+  }, []);
+  useEndOnLeave(phase.name === "playing" ? phase.token : null, snapshot);
 
   const bestOf = (t: Track) =>
     Math.max(0, ...data.attempts.filter((a) => a.kind === "game" && a.mode === game && a.track === t && !a.suspicious).map((a) => a.score ?? 0));
@@ -112,6 +140,7 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
         <Field
           words={phase.words}
           track={track}
+          onSnapshot={registerSnapshot}
           onEnd={async ({ events, durationMs, keyTimes, reason }) => {
             setPhase({ name: "saving" });
             const res = await safeCall(() => submitGame({ token, events, durationMs, keyTimes }));

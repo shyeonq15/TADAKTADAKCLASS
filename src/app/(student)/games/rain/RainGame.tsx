@@ -25,7 +25,7 @@ const IGNORED_KEYS = new Set(["Shift", "Control", "Alt", "Meta", "CapsLock", "Ha
 
 /* ───────── 게임 판 ───────── */
 
-function Field({ words, track, onEnd }: FieldProps) {
+function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
   const [view, setView] = useState<View>(EMPTY_VIEW);
   const [value, setValue] = useState("");
   const [shake, setShake] = useState(0);
@@ -55,6 +55,8 @@ function Field({ words, track, onEnd }: FieldProps) {
   useEffect(() => {
     const s = g.current;
     s.start = performance.now();
+    // 게임 중에 화면을 떠나면 지금까지의 기록으로 판을 끝내요 (SoloGameFlow 가 부름)
+    onSnapshot?.(() => (s.ended ? null : ((s.ended = true), { events: s.events, durationMs: Math.round(now()), keyTimes: s.keyTimes })));
     let raf = 0;
     const loop = () => {
       const t = now();
