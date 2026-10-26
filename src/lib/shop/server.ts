@@ -16,7 +16,7 @@ export type ShopData = {
 };
 
 /** 저장된 모양에서 없는 아이템·다른 칸 아이템은 빼고 돌려줌 */
-function cleanLook(raw: unknown): MinimiLook {
+export function cleanLook(raw: unknown): MinimiLook {
   const look: MinimiLook = {};
   if (!raw || typeof raw !== "object") return look;
   for (const slot of MINIMI_SLOTS) {

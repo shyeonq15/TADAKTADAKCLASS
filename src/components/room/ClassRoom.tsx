@@ -1,4 +1,4 @@
-import { Minimi } from "@/components/pixel/Minimi";
+import { minimiUrl } from "@/components/pixel/minimiSvg";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { ROOM_ART, ROOM_SURFACES } from "@/components/pixel/roomArt";
 import { SPARKLE } from "@/components/pixel/sprites";
@@ -83,7 +83,9 @@ export function ClassRoom({ wall, floor, furniture, members, meId, preview }: Pr
             {m.doneToday && (
               <PixelSprite sprite={SPARKLE} className="absolute -top-1 right-1 w-[22%]" style={{ height: "auto" }} />
             )}
-            <Minimi look={m.look} style={{ width: "100%", height: "auto", display: "block" }} />
+            {/* 친구가 많아도 가볍게: 그림 주소로 (같은 모양은 한 번만 받아요) */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={minimiUrl(m.look)} alt="" width={64} height={64} className="block h-auto w-full" style={{ imageRendering: "pixelated" }} />
             {me && (
               <span className="absolute -top-2 left-1/2 -translate-x-1/2 border-2 border-navy-900 bg-yellow-400 px-1 font-pixel text-small leading-none text-navy-900">
                 나

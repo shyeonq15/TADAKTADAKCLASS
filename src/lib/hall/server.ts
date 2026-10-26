@@ -146,9 +146,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
 }
 
 /** 학생: 내 학년 명예의 전당 */
-export async function loadMyHall(userId: string, classId: string | null) {
-  if (!classId) return null;
-  const { data } = await createAdminClient().from("classes").select("school_year_id, grade").eq("id", classId).single();
-  if (!data) return null;
-  return loadHall({ schoolYearId: data.school_year_id, grade: data.grade, myId: userId });
+export async function loadMyHall(userId: string, enrollment: { schoolYearId: string; grade: number } | null) {
+  if (!enrollment) return null;
+  return loadHall({ schoolYearId: enrollment.schoolYearId, grade: enrollment.grade, myId: userId });
 }

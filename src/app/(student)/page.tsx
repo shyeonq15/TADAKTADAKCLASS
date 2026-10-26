@@ -26,7 +26,7 @@ async function PlacementGate({ children }: { children: React.ReactNode }) {
 async function HomeRoom() {
   const v = await requireStudent();
   const who = { userId: v.userId, classId: v.enrollment?.classId ?? null };
-  const [room, battle] = await Promise.all([loadRoom(who), loadMyBattle(who.userId, who.classId)]);
+  const [room, battle] = await Promise.all([loadRoom(who), loadMyBattle(who.userId, v.enrollment)]);
   if (!room) return null;
   const done = room.members.filter((m) => m.doneToday).length;
   return (

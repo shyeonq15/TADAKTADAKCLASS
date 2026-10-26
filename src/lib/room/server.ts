@@ -7,7 +7,7 @@ import "server-only";
 import { ROOM, roomItem, type MinimiLook, type RoomItem } from "@/config/shop";
 import { dayKeyKST } from "@/lib/practice/day";
 import type { Who } from "@/lib/practice/server";
-import { loadLooks } from "@/lib/shop/server";
+import { cleanLook } from "@/lib/shop/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type RoomMember = { id: string; nickname: string; number: number; look: MinimiLook; doneToday: boolean };
@@ -49,7 +49,12 @@ async function loadRaw(classId: string) {
   const admin = createAdminClient();
   const [cls, members, placed, proposals] = await Promise.all([
     admin.from("classes").select("coins").eq("id", classId).single(),
-    admin.from("enrollments").select("student_id, number, profiles!inner(nickname, role)").eq("class_id", classId),
+    // 반 친구 + 미니미 모양 + 오늘 미션 완료를 한 번에
+    admin
+      .from("enrollments")
+      .select("student_id, number, profiles!inner(nickname, role, minimi_looks(look), mission_completions(day))")
+      .eq("class_id", classId)
+      .eq("profiles.mission_completions.day", dayKeyKST()),
     admin.from("room_items").select("item_id, placed_at").eq("class_id", classId).order("placed_at"),
     admin
       .from("room_proposals")
@@ -62,9 +67,9 @@ async function loadRaw(classId: string) {
 }
 
 /** 찬성이 기준을 넘은 추천을 반 지갑으로 사기 (지갑이 모자라면 그대로 둠) */
-async function settle(classId: string): Promise<void> {
-  const { members, placed, proposals } = await loadRaw(classId);
-  if (proposals.error || placed.error) return;
+async function settle({ members, placed, proposals }: Awaited<ReturnType<typeof loadRaw>>): Promise<boolean> {
+  if (proposals.error || placed.error) return false;
+  let bought = false;
   const need = votesNeeded((members.data ?? []).length);
   const ownedSurfaces = (placed.data ?? []).map((p) => p.item_id).filter((id) => roomItem(id)?.kind !== "furniture");
   const admin = createAdminClient();
@@ -72,33 +77,36 @@ async function settle(classId: string): Promise<void> {
     const item = roomItem(p.item_id);
     if (!item || (p.room_votes ?? []).length < need) continue;
     const [x, y] = item.at ?? [0, 0];
-    await admin.rpc("buy_room_item", {
+    const { data } = await admin.rpc("buy_room_item", {
       p_proposal: p.id,
       p_price: priceFor(item, ownedSurfaces),
       p_reason: `미니룸: ${item.name}`,
       p_x: x,
       p_y: y,
     });
+    if (data === "ok") bought = true;
   }
+  return bought;
 }
 
 export async function loadRoom(who: Who): Promise<RoomData | null> {
   if (!who.classId) return null;
   const classId = who.classId;
-  await settle(classId);
-  const { cls, members, placed, proposals } = await loadRaw(classId);
+  let raw = await loadRaw(classId);
+  // 찬성이 다 모인 추천이 있어서 샀을 때만 다시 읽어요
+  if (await settle(raw)) raw = await loadRaw(classId);
+  const { cls, members, placed, proposals } = raw;
 
-  type MemberRow = { student_id: string; number: number; profiles: { nickname: string | null; role: string } };
+  type One<T> = T | T[] | null;
+  const first = <T,>(v: One<T>) => (Array.isArray(v) ? (v[0] ?? null) : v);
+  type MemberRow = {
+    student_id: string;
+    number: number;
+    profiles: { nickname: string | null; role: string; minimi_looks: One<{ look: unknown }>; mission_completions: { day: string }[] };
+  };
   const rows = ((members.data ?? []) as unknown as MemberRow[]).filter((m) => m.profiles.role === "student");
-  const ids = rows.map((m) => m.student_id);
-  const admin = createAdminClient();
-  const [looks, done] = await Promise.all([
-    loadLooks(ids),
-    ids.length
-      ? admin.from("mission_completions").select("student_id").eq("day", dayKeyKST()).in("student_id", ids)
-      : Promise.resolve({ data: [] as { student_id: string }[] }),
-  ]);
-  const doneSet = new Set((done.data ?? []).map((d) => d.student_id));
+  const looks = Object.fromEntries(rows.map((m) => [m.student_id, cleanLook(first(m.profiles.minimi_looks)?.look)]));
+  const doneSet = new Set(rows.filter((m) => (m.profiles.mission_completions ?? []).length > 0).map((m) => m.student_id));
   const nick = new Map(rows.map((m) => [m.student_id, m.profiles.nickname ?? "친구"]));
 
   const placedIds = (placed.data ?? []).map((p) => p.item_id).filter((id) => roomItem(id));

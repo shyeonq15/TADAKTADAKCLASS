@@ -11,7 +11,7 @@ import { loadMyBattle } from "@/lib/battle/server";
 async function Content() {
   await connection();
   const v = await requireStudent();
-  const data = await loadMyBattle(v.userId, v.enrollment?.classId ?? null);
+  const data = await loadMyBattle(v.userId, v.enrollment);
   return (
     <RetroWindow title="반대결_순위판.exe">
       {data ? (

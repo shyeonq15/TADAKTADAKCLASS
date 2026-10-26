@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import { minimiItem, type MinimiLook } from "@/config/shop";
-import { spriteRects } from "./PixelSprite";
-import { FUR_COLORS, MINIMI_BODY, MINIMI_LAYERS, MINIMI_SIZE } from "./minimiArt";
+import type { MinimiLook } from "@/config/shop";
+import { MINIMI_SIZE } from "./minimiArt";
+import { minimiRects } from "./minimiSvg";
 
 type Props = {
   look?: MinimiLook | null;
@@ -15,14 +15,7 @@ type Props = {
 
 /** 내 미니미(픽셀 토끼). 몸 → 목 → 얼굴 → 모자 순서로 겹쳐 그려요. */
 export function Minimi({ look, scale = 4, className, style, label }: Props) {
-  const fur = minimiItem(look?.fur);
-  const recolor = fur?.slot === "fur" ? FUR_COLORS[fur.art as keyof typeof FUR_COLORS] : undefined;
-  const layers = (["neck", "face", "hat"] as const)
-    .map((slot) => minimiItem(look?.[slot]))
-    .filter((i) => i && MINIMI_LAYERS[i.art])
-    .map((i) => MINIMI_LAYERS[i!.art]);
-
-  const rects = [spriteRects(MINIMI_BODY, recolor), ...layers.map((l) => spriteRects(l))].flat();
+  const rects = minimiRects(look);
 
   return (
     <svg

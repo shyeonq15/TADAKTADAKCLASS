@@ -15,6 +15,7 @@ export type Enrollment = {
   grade: number;
   classNo: number;
   joinCode: string;
+  schoolYearId: string;
 };
 
 export type Viewer = {
@@ -79,41 +80,51 @@ async function loadEnrollment(studentId: string): Promise<Enrollment | null> {
   const admin = createAdminClient();
   const { data } = await admin
     .from("enrollments")
-    .select("id, number, class_id, classes!inner(grade, class_no, join_code, school_years!inner(year))")
+    .select("id, number, class_id, classes!inner(grade, class_no, join_code, school_year_id, school_years!inner(year))")
     .eq("student_id", studentId)
     .eq("classes.school_years.year", schoolYearOf())
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (!data) return null;
-  const c = data.classes as unknown as { grade: number; class_no: number; join_code: string };
-  return { id: data.id, classId: data.class_id, number: data.number, grade: c.grade, classNo: c.class_no, joinCode: c.join_code };
+  const c = data.classes as unknown as { grade: number; class_no: number; join_code: string; school_year_id: string };
+  return {
+    id: data.id,
+    classId: data.class_id,
+    number: data.number,
+    grade: c.grade,
+    classNo: c.class_no,
+    joinCode: c.join_code,
+    schoolYearId: c.school_year_id,
+  };
 }
 
 /** 로그인 안 했으면 null. 한 요청 안에서는 한 번만 조회 */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  const user = data.user;
-  if (!user) return null;
+  // 로그인 토큰을 서버에서 바로 확인해요 (서명 확인, 인증 서버에 다시 묻지 않아서 빨라요)
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims?.sub) return null;
+  const userId = claims.sub;
 
+  // 프로필과 반 정보를 동시에 읽어요
   const admin = createAdminClient();
-  const { data: p } = await admin
-    .from("profiles")
-    .select("role, nickname, real_name, school_id, login_method, email")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: p }, enrollment] = await Promise.all([
+    admin.from("profiles").select("role, nickname, real_name, school_id, login_method, email").eq("id", userId).maybeSingle(),
+    loadEnrollment(userId),
+  ]);
   if (!p) return null;
 
   return {
-    userId: user.id,
-    email: p.email ?? user.email ?? "",
+    userId,
+    email: p.email ?? (typeof claims.email === "string" ? claims.email : ""),
     role: p.role,
     nickname: p.nickname,
     realName: p.real_name,
     schoolId: p.school_id,
     loginMethod: p.login_method,
-    enrollment: p.role === "student" ? await loadEnrollment(user.id) : null,
+    enrollment: p.role === "student" ? enrollment : null,
   };
 });
 

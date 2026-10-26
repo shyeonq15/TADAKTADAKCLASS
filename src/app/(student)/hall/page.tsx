@@ -41,7 +41,7 @@ function Board({ board }: { board: HallBoard }) {
 async function Content() {
   await connection();
   const v = await requireStudent();
-  const hall = await loadMyHall(v.userId, v.enrollment?.classId ?? null);
+  const hall = await loadMyHall(v.userId, v.enrollment);
   if (!hall) {
     return (
       <RetroWindow title="명예의 전당">

@@ -139,26 +139,35 @@ export async function loadBattle(opts: {
   const classes = await classesOf(opts.schoolYearId, opts.grade);
 
   const prev = periodOf(toDay(toMs(period.start) - DAY));
-  let ready = true;
-  let last: BattleData["last"] = null;
-  if (prev.start >= CLASS_BATTLE.firstMonday && classes.length) {
-    ready = await settle(classes, prev.start, prev.end);
-    if (ready) {
-      const { data } = await createAdminClient()
-        .from("class_battle_results")
-        .select("class_id, rank, bonus")
-        .eq("period_start", prev.start)
-        .in("class_id", classes.map((c) => c.id));
-      const winners = (data ?? []).filter((r) => r.rank === 1 && r.bonus > 0);
-      last = {
-        ...prev,
-        winners: winners.map((w) => classes.find((c) => c.id === w.class_id)?.class_no ?? 0).sort((a, b) => a - b),
-        bonus: CLASS_BATTLE.winnerBonus,
-      };
-    }
-  }
+  const hasPrev = prev.start >= CLASS_BATTLE.firstMonday && classes.length > 0;
+  const prevResults = () =>
+    createAdminClient()
+      .from("class_battle_results")
+      .select("class_id, rank, bonus")
+      .eq("period_start", prev.start)
+      .in("class_id", classes.map((c) => c.id));
 
-  const scores = classes.length ? await scoresFor(classes, period.start, today) : [];
+  // 지난 결과와 이번 점수를 동시에 읽어요
+  let [prevRes, scores] = await Promise.all([
+    hasPrev ? prevResults() : Promise.resolve(null),
+    classes.length ? scoresFor(classes, period.start, today) : Promise.resolve([]),
+  ]);
+  let ready = !prevRes?.error;
+  // 지난 기간 결과가 아직 없으면 (기간이 바뀐 뒤 처음 연 사람) 지금 저장하고 다시 읽어요
+  if (hasPrev && ready && !(prevRes?.data ?? []).length) {
+    ready = await settle(classes, prev.start, prev.end);
+    if (ready) prevRes = await prevResults();
+  }
+  let last: BattleData["last"] = null;
+  if (hasPrev && ready) {
+    const winners = (prevRes?.data ?? []).filter((r) => r.rank === 1 && r.bonus > 0);
+    last = {
+      ...prev,
+      winners: winners.map((w) => classes.find((c) => c.id === w.class_id)?.class_no ?? 0).sort((a, b) => a - b),
+      bonus: CLASS_BATTLE.winnerBonus,
+    };
+  }
+  scores = scores ?? [];
   const myPoints = opts.myId
     ? scores.flatMap((s) => s.growth).filter((g) => g.student_id === opts.myId).reduce((n, g) => n + g.total, 0)
     : null;
@@ -181,10 +190,8 @@ export async function loadBattle(opts: {
   };
 }
 
-/** 학생: 내 반이 속한 학년의 순위판 */
-export async function loadMyBattle(userId: string, classId: string | null) {
-  if (!classId) return null;
-  const { data } = await createAdminClient().from("classes").select("school_year_id, grade").eq("id", classId).single();
-  if (!data) return null;
-  return loadBattle({ schoolYearId: data.school_year_id, grade: data.grade, myClassId: classId, myId: userId });
+/** 학생: 내 반이 속한 학년의 순위판 (반 정보는 로그인 정보에 이미 있어요) */
+export async function loadMyBattle(userId: string, enrollment: { classId: string; schoolYearId: string; grade: number } | null) {
+  if (!enrollment) return null;
+  return loadBattle({ schoolYearId: enrollment.schoolYearId, grade: enrollment.grade, myClassId: enrollment.classId, myId: userId });
 }

@@ -70,7 +70,7 @@ export const toAttempt = (r: AttemptRow): Attempt => ({
 /** 학생 한 명의 기록·진행 상황 (저장 직후처럼 새로 읽어야 할 때 직접 부름) */
 export async function loadUncached(userId: string): Promise<PracticeData> {
   const admin = createAdminClient();
-  const [attempts, progress, clears, wallet, coinLog, classCoins, missions] = await Promise.all([
+  const [attempts, progress, clears, wallet, coinLog, classCoins, missions, packs] = await Promise.all([
     admin.from("attempts").select("*").eq("student_id", userId).order("created_at", { ascending: false }).limit(300),
     admin.from("track_progress").select("track, unlocked_level, placement_cpm").eq("student_id", userId),
     admin.from("level_clears").select("track, level, cleared_at").eq("student_id", userId),
@@ -84,6 +84,7 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
       .limit(100),
     admin.from("coin_transactions").select("amount").eq("student_id", userId).not("class_id", "is", null),
     admin.from("mission_completions").select("day").eq("student_id", userId),
+    loadPacks(userId),
   ]);
 
   const unlocked = { ...EMPTY_DATA.progress.unlocked };
@@ -108,7 +109,7 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
         .reverse(),
       missionDays: (missions.data ?? []).map((m) => m.day),
     },
-    packs: await loadPacks(userId),
+    packs,
   };
 }
 
@@ -116,7 +117,15 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
 async function loadPacks(userId: string): Promise<TeacherPack[]> {
   const admin = createAdminClient();
   const today = dayKeyKST();
-  const { data: me } = await admin.from("profiles").select("role, school_id").eq("id", userId).maybeSingle();
+  // 프로필과 "우리 반에 배포된 연습팩"을 한꺼번에 읽어요 (차례로 읽으면 느려서)
+  const [{ data: me }, { data: assigned }] = await Promise.all([
+    admin.from("profiles").select("role, school_id").eq("id", userId).maybeSingle(),
+    admin
+      .from("pack_assignments")
+      .select("mission_day, packs!inner(id, title, track, passages(count)), classes!inner(enrollments!inner(student_id), school_years!inner(year))")
+      .eq("classes.enrollments.student_id", userId)
+      .eq("classes.school_years.year", schoolYearOf()),
+  ]);
   type Row = { id: string; title: string; track: Track; passages: { count: number }[] };
 
   if (me?.role === "teacher") {
@@ -124,17 +133,7 @@ async function loadPacks(userId: string): Promise<TeacherPack[]> {
     return ((data ?? []) as Row[]).map((p) => ({ id: p.id, title: p.title, track: p.track, rounds: p.passages[0]?.count ?? 0, missionToday: false }));
   }
 
-  const { data: enr } = await admin
-    .from("enrollments")
-    .select("class_id, classes!inner(school_years!inner(year))")
-    .eq("student_id", userId)
-    .eq("classes.school_years.year", schoolYearOf());
-  const classIds = (enr ?? []).map((e) => e.class_id);
-  if (!classIds.length) return [];
-  const { data } = await admin
-    .from("pack_assignments")
-    .select("mission_day, packs!inner(id, title, track, passages(count))")
-    .in("class_id", classIds);
+  const data = assigned;
   const byId = new Map<string, TeacherPack>();
   for (const a of data ?? []) {
     const p = a.packs as unknown as Row;
