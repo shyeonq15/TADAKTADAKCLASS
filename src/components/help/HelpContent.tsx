@@ -2,6 +2,7 @@
 // 숫자는 모두 config/game.ts 에서 읽어서, 기준을 바꾸면 설명도 자동으로 바뀌어요.
 
 import {
+  CLASS_BATTLE,
   COINS,
   GAME_COINS,
   GAMES,
@@ -17,6 +18,8 @@ import {
   TRACKS,
 } from "@/config/game";
 import { TierBadge } from "@/components/ui/TierBadge";
+import { MINIMI_ITEMS, ROOM } from "@/config/shop";
+import { lockLabel } from "@/lib/shop/lock";
 
 function Box({ children }: { children: React.ReactNode }) {
   return <div className="my-3 border-3 border-navy-900 bg-paper px-4 py-3">{children}</div>;
@@ -155,11 +158,20 @@ export function CoinHelp() {
             오늘의 미션 완료({MISSION.rounds}판) · 나에게 {COINS.missionPersonal}코인 + 우리 반 지갑에 {COINS.missionClass}코인
           </li>
           <li>
-            단어 비 한 판 · {GAME_COINS.play}코인, 최고 점수 갱신 · {GAME_COINS.best}코인
+            게임 한 판 · {GAME_COINS.play}코인, 최고 점수 갱신 · {GAME_COINS.best}코인
+          </li>
+          <li>
+            친구 대결 · 참여 {GAME_COINS.play}코인, 1등 {GAME_COINS.raceWin}코인 더
+          </li>
+          <li>
+            보스 처음 격파 · 나에게 {GAME_COINS.bossWin}코인 + 우리 반 지갑에 {GAME_COINS.bossClass}코인
+          </li>
+          <li>
+            반 대결 1위 · 우리 반 지갑에 {CLASS_BATTLE.winnerBonus}코인
           </li>
         </ul>
       </Box>
-      <p>개인 코인으로는 미니미 꾸미기, 반 코인으로는 우리 반 미니룸 꾸미기를 할 수 있게 될 거예요. (준비 중)</p>
+      <p>개인 코인은 <strong>상점</strong>에서 미니미 꾸미기에, 반 코인은 <strong>우리 반 미니룸</strong> 꾸미기에 써요.</p>
       <p className="mt-2">이상하게 빠른 기록은 선생님이 확인한 뒤에 코인이 들어와요.</p>
     </>
   );
@@ -179,10 +191,74 @@ export function RainHelp() {
   );
 }
 
+export function ShopHelp() {
+  const locked = MINIMI_ITEMS.filter((i) => i.lock);
+  return (
+    <>
+      <p>
+        내 코인으로 미니미(픽셀 토끼)의 <strong>털 색 · 모자 · 얼굴 · 목</strong>을 꾸밀 수 있어요. 꾸민 모습은 우리 반 미니룸과 대결 화면에
+        그대로 나와요.
+      </p>
+      <Box>
+        <ul className="list-disc pl-5">
+          <li>아이템을 누르면 사기 전에 미리 입혀 볼 수 있어요.</li>
+          <li>한 번 산 아이템은 언제든 다시 입고 벗을 수 있어요.</li>
+          <li>티어를 올려야 열리는 특별한 아이템도 있어요.</li>
+        </ul>
+      </Box>
+      <ul className="list-disc pl-5">
+        {locked.map((i) => (
+          <li key={i.id}>
+            {i.name} · {lockLabel(i.lock!)}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export function RoomHelp() {
+  return (
+    <>
+      <p>우리 반 친구들의 미니미가 모두 모여 있는 방이에요. 오늘의 미션을 끝낸 친구는 반짝여요!</p>
+      <Box>
+        <ol className="list-decimal pl-5">
+          <li>미니룸 꾸미기 투표에서 갖고 싶은 가구·벽지·바닥을 골라 추천해요.</li>
+          <li>
+            반 친구 {Math.round(ROOM.voteRatio * 100)}%(최소 {ROOM.minVotes}명)가 찬성하면 우리 반 지갑으로 자동으로 사요.
+          </li>
+          <li>찬성이 다 모였는데 반 코인이 모자라면, 코인이 모이는 순간 사요.</li>
+        </ol>
+      </Box>
+      <p>추천은 한 사람당 {ROOM.maxOpenPerStudent}개까지 올릴 수 있어요. 찬성은 여러 개에 해도 돼요.</p>
+    </>
+  );
+}
+
+export function BattleHelp() {
+  return (
+    <>
+      <p>같은 학년 반끼리 2주 동안 성장 점수를 겨뤄요. 월요일에 시작해서 2주 뒤 월요일에 결과가 나와요.</p>
+      <Box>
+        <p className="font-bold">반 점수 = 우리 반 친구들의 성장 점수 합 ÷ 반 인원</p>
+        <p className="mt-1">인원으로 나누니까 반 인원이 많든 적든 공평해요.</p>
+      </Box>
+      <ul className="list-disc pl-5">
+        <li>빠른 친구만 잘하는 게 아니라, 모두가 자기 기록보다 나아지면 반 점수가 올라요.</li>
+        <li>매일 오늘의 미션을 하는 게 가장 확실한 방법이에요.</li>
+        <li>1위 반은 반 지갑에 {CLASS_BATTLE.winnerBonus}코인 보너스를 받아요!</li>
+      </ul>
+    </>
+  );
+}
+
 export const HELP_SECTIONS = [
   { id: "growth", title: "성장 점수", Body: GrowthHelp },
   { id: "tier", title: "티어와 단계", Body: TierHelp },
   { id: "level", title: "단계와 배치 테스트", Body: LevelHelp },
   { id: "coin", title: "코인", Body: CoinHelp },
   { id: "rain", title: "단어 비", Body: RainHelp },
+  { id: "shop", title: "상점", Body: ShopHelp },
+  { id: "room", title: "반 미니룸", Body: RoomHelp },
+  { id: "battle", title: "반 대결", Body: BattleHelp },
 ] as const;
