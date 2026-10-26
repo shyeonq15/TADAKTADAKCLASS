@@ -92,7 +92,12 @@ function finishLine(s: SessionState, typed: string, now: number): SessionState {
   const committedHere = Math.max(next.lineCommitted, body.length);
   next = { ...next, totalCommitted: next.totalCommitted + committedHere, doneLines: [...next.doneLines, body] };
 
-  const lineIndex = s.lineIndex + 1;
+  let lineIndex = s.lineIndex + 1;
+  // 코드 지문 사이의 빈 줄(프로그램 구분)은 Enter 없이 저절로 건너뛰어요
+  while (s.autoIndent && lineIndex < s.lines.length && s.lines[lineIndex] === "") {
+    next = { ...next, doneLines: [...next.doneLines, ""] };
+    lineIndex++;
+  }
   if (lineIndex >= s.lines.length) {
     return { ...next, lineIndex, typed: "", lineErrors: [], lineCommitted: 0, finishedAt: now };
   }
@@ -163,15 +168,16 @@ export function correctKeystrokes(target: string, typed: string, skipIndent = fa
 
 /**
  * 여러 줄 타수. code(들여쓰기 자동 채움, 코드 지문)면 연습팩 규칙과 같게:
- * 줄 앞 들여쓰기는 빼고, 다음 줄로 넘어갈 때 누른 Enter 는 1타씩 (enters = 넘어간 줄 수)
+ * 줄 앞 들여쓰기는 빼고, 다음 줄로 넘어갈 때 누른 Enter 는 1타씩.
+ * doneCount = 넘어간 줄 수(끝까지 쳤으면 전체), 빈 줄은 저절로 건너뛰므로 Enter 에 넣지 않아요.
  */
-export function linesKeystrokes(lines: readonly string[], typed: readonly string[], code: boolean, enters: number): number {
+export function linesKeystrokes(lines: readonly string[], typed: readonly string[], code: boolean, doneCount: number): number {
   const chars = lines.reduce((n, line, i) => n + correctKeystrokes(line, typed[i] ?? "", code), 0);
-  return chars + (code ? Math.max(0, enters) : 0);
+  if (!code) return chars;
+  const finished = doneCount >= lines.length;
+  const enters = lines.slice(0, doneCount).filter((l) => l !== "").length - (finished ? 1 : 0);
+  return chars + Math.max(0, enters);
 }
-
-/** 서버용: 낸 줄 수로 Enter 수 세기 (끝까지 쳤으면 마지막 줄은 Enter 없이 끝남) */
-export const entersOf = (lineCount: number, doneCount: number) => (doneCount >= lineCount ? lineCount - 1 : doneCount);
 
 export type SessionStats = {
   /** 타/분 (자모 기준, 맞게 친 것만) */
@@ -187,8 +193,7 @@ export type SessionStats = {
 export function sessionStats(s: SessionState, now: number): SessionStats {
   const elapsedMs = s.startedAt === null ? 0 : (s.finishedAt ?? now) - s.startedAt;
 
-  const enters = isFinished(s) ? s.doneLines.length - 1 : s.doneLines.length;
-  let keystrokes = linesKeystrokes(s.lines.slice(0, s.doneLines.length), s.doneLines, s.autoIndent, enters);
+  let keystrokes = linesKeystrokes(s.lines, s.doneLines, s.autoIndent, s.doneLines.length);
   if (!isFinished(s)) {
     const target = currentLine(s);
     // 조합 중인 글자는 목표로 가는 중이면 아직 세지 않음

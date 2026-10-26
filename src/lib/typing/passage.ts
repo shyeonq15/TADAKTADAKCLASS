@@ -89,14 +89,16 @@ export function buildPlacementRound(track: Track): string[] {
 
 /**
  * 연습팩 한 판 (기호·코드 트랙): 단계 지문에서 count 개를 겹치지 않게 뽑아요.
- *  · 코드: 줄바꿈·들여쓰기 그대로, 지문 사이에 빈 줄 하나
+ *  · 코드: 줄바꿈·들여쓰기 그대로, 여러 줄 프로그램 사이에만 빈 줄 하나
  *  · 기호 조각(낱말): 공백으로 이어 붙여 줄을 채움
  *  · 그 밖(한 줄 식): 지문 하나 = 한 줄 (식을 중간에서 자르지 않음)
  */
 export function buildPackRound(track: Track, level: Level, count: number): string[] {
   const picked = pickRound(level.items, count);
   if (level.mode === "code") {
-    return picked.flatMap((text, i) => [...(i > 0 ? [""] : []), ...text.split("\n").map((l) => l.trimEnd())]);
+    // 여러 줄 프로그램 사이에만 빈 줄 (빈 줄은 타자 칸에서 저절로 건너뜀). 한 줄 코드끼리는 그냥 이어서
+    const gap = picked.some((text) => text.includes("\n"));
+    return picked.flatMap((text, i) => [...(gap && i > 0 ? [""] : []), ...text.split("\n").map((l) => l.trimEnd())]);
   }
   if (level.mode === "words") {
     const lines: string[] = [];

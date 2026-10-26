@@ -5,7 +5,7 @@ import "server-only";
 
 import { BOSS, GAME_COINS, INTEGRITY, TRACKS, type Track } from "@/config/game";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { entersOf, linesKeystrokes } from "@/lib/typing/engine";
+import { linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildRound, pickCode } from "@/lib/typing/passage";
 import { stageName } from "@/lib/practice/stages";
@@ -54,7 +54,7 @@ export function scoreRun(sub: BossSubmission, elapsed: number, track: Track) {
   const typed = sub.lines.map((l, i) => String(sub.typedLines[i] ?? "").slice(0, l.length));
   // 코드 트랙은 화면처럼 들여쓰기 빼고 Enter 1타 (연습팩 규칙)
   const code = track === "code";
-  const keystrokes = linesKeystrokes(sub.lines, typed, code, entersOf(sub.lines.length, sub.typedLines.length));
+  const keystrokes = linesKeystrokes(sub.lines, typed, code, sub.typedLines.length);
   const cpm = Math.round(keystrokes / (durationMs / 60000));
   const typedChars = typed.reduce((n, t) => n + t.length, 0);
   const correct = typed.reduce((n, t, i) => n + [...t].filter((ch, j) => ch === sub.lines[i][j]).length, 0);

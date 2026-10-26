@@ -13,7 +13,7 @@ import { contentLevelOf, getStage, STAGE_COUNT, startStage, tierOfStage } from "
 import { getStageWithPassages } from "@/lib/practice/packStage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
-import { entersOf, linesKeystrokes } from "@/lib/typing/engine";
+import { linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPackRound, buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
 import { blankMask, codeNote, lesson } from "@/data/codeNotes";
@@ -347,7 +347,7 @@ export async function saveRound(
   const codeRound =
     track === "code" ||
     ((req.kind === "practice" || (req.kind === "mission" && !req.weak && !req.packId)) && getStage(track, req.level)?.level.mode === "code");
-  const keystrokes = linesKeystrokes(sub.lines, typed, codeRound, entersOf(sub.lines.length, sub.typedLines.length));
+  const keystrokes = linesKeystrokes(sub.lines, typed, codeRound, sub.typedLines.length);
   const cpm = Math.round(keystrokes / (durationMs / 60000));
 
   // 정확도: 클라이언트 값을 쓰되, 최종 결과보다 높을 수는 없음
