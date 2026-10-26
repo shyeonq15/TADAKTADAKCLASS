@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Track } from "@/config/game";
 import { lessonTitle } from "@/data/codeNotes";
 import { MODE_LABELS } from "@/data/packs";
-import { getStage, stageName } from "@/lib/practice/stages";
+import { getStage, missingLessons, stageName } from "@/lib/practice/stages";
 import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
@@ -25,6 +25,35 @@ export function LevelRound({ track, level }: { track: Track; level: number }) {
         <div className="mt-4 flex gap-2">
           <PixelLink href={`/practice/${track}/${progress.unlocked[track]}`} size="sm" variant="success">
             {stageName(progress.unlocked[track])} 하러 가기
+          </PixelLink>
+          <PixelLink href="/practice" size="sm" variant="ghost">
+            트랙 맵
+          </PixelLink>
+        </div>
+      </RetroWindow>
+    );
+  }
+
+  // 코드 트랙: 연결된 파이썬 첫걸음 강을 먼저 들어야 열려요
+  const needs = missingLessons(track, level, progress.cleared);
+  if (needs.length) {
+    return (
+      <RetroWindow title="강의를 먼저 들어요" className="mx-auto w-full max-w-md">
+        <p className="font-pixel text-body">
+          📘 이 단계는 파이썬 첫걸음 <strong>{needs.map((n) => `${n}강`).join(", ")}</strong>을 들으면 열려요. 배운 걸 바로 쳐 보는 단계예요!
+        </p>
+        <ul className="mt-3 flex flex-col gap-1 font-pixel text-body">
+          {needs.map((n) => (
+            <li key={n}>
+              <Link href={`/learn/${n}`} className="underline underline-offset-4">
+                {n}강 · {lessonTitle(n)} ▶
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 flex gap-2">
+          <PixelLink href={`/learn/${needs[0]}`} size="sm" variant="success">
+            {needs[0]}강 들으러 가기
           </PixelLink>
           <PixelLink href="/practice" size="sm" variant="ghost">
             트랙 맵

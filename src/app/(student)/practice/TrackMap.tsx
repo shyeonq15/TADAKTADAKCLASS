@@ -11,7 +11,7 @@ import { HelpButton } from "@/components/ui/HelpButton";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
-import { getStage } from "@/lib/practice/stages";
+import { getStage, missingLessons } from "@/lib/practice/stages";
 import { usePracticeData, weakKeys } from "@/lib/practice/store";
 import { allTiers, isCodeMaster, tierProgress } from "@/lib/scoring/tier";
 
@@ -57,7 +57,9 @@ function Ladder({ track }: { track: Track }) {
                 const n = first + i;
                 const stage = getStage(track, n)!;
                 const cleared = progress.cleared.includes(`${track}-${n}`);
-                const open = n <= unlocked;
+                // 코드 트랙: 연결된 파이썬 첫걸음 강을 들어야 열려요 (📘 누르면 그 강으로)
+                const needs = n <= unlocked ? missingLessons(track, n, progress.cleared) : [];
+                const open = n <= unlocked && needs.length === 0;
                 const here = n === unlocked && !cleared;
                 const pin = (
                   <span
@@ -65,8 +67,8 @@ function Ladder({ track }: { track: Track }) {
                       cleared ? "bg-lime-400" : here ? "bg-yellow-400" : open ? "bg-sky-100" : "bg-win-gray text-text-muted"
                     }`}
                   >
-                    <span className="text-heading leading-none">{cleared ? "✓" : open ? i + 1 : "🔒"}</span>
-                    <span className="font-pixel text-small leading-tight">{stage.goalCpm}타</span>
+                    <span className="text-heading leading-none">{cleared ? "✓" : open ? i + 1 : needs.length ? "📘" : "🔒"}</span>
+                    <span className="font-pixel text-small leading-tight">{needs.length ? `${needs[0]}강 먼저` : `${stage.goalCpm}타`}</span>
                   </span>
                 );
                 return (
@@ -78,6 +80,15 @@ function Ladder({ track }: { track: Track }) {
                         className="w-full"
                         aria-label={`${TIER_LABELS[tier]} ${i + 1}단계 · ${stage.level.title} · ${stage.goalCpm}타`}
                         title={`${stage.level.title} (${MODE_LABELS[stage.level.mode]}) · ${stage.goalCpm}타 · 정확도 ${stage.minAccuracy}%`}
+                      >
+                        {pin}
+                      </Link>
+                    ) : needs.length ? (
+                      <Link
+                        href={`/learn/${needs[0]}`}
+                        className="w-full"
+                        aria-label={`${TIER_LABELS[tier]} ${i + 1}단계는 파이썬 첫걸음 ${needs.join(", ")}강을 들으면 열려요`}
+                        title={`파이썬 첫걸음 ${needs.join(", ")}강을 들으면 열려요`}
                       >
                         {pin}
                       </Link>

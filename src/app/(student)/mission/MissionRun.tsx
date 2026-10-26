@@ -11,7 +11,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { RoundRunner } from "@/components/typing/RoundRunner";
 import { GrowthHelp } from "@/components/help/HelpContent";
 import { HelpButton } from "@/components/ui/HelpButton";
-import { missionRounds, missionTitle, teacherMission, todayTrack, type MissionRound } from "@/lib/practice/mission";
+import { missionRounds, missionTitle, teacherMission, missionTrack, type MissionRound } from "@/lib/practice/mission";
 import { finishMission } from "@/app/(student)/actions";
 import { safeCall } from "@/lib/practice/call";
 import { dayKey, todayGrowth, usePracticeData, useSetPracticeData, weakKeys, type SaveResult } from "@/lib/practice/store";
@@ -35,7 +35,7 @@ export function MissionRun() {
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "intro" });
   const tm = teacherMission(data.packs);
-  const track = tm?.track ?? todayTrack();
+  const track = tm?.track ?? missionTrack(data);
   const doneToday = data.progress.missionDays.includes(dayKey());
 
   if (phase.name === "intro") {

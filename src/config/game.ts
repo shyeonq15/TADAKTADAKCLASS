@@ -125,6 +125,9 @@ export const STAGE_ACCURACY: Record<Tier, number> = {
   legend: 95,
 };
 
+/** 이 트랙은 단계마다 연결된 파이썬 첫걸음 강을 모두 들어야 그 단계가 열려요 (교사 결정 2026-10-27) */
+export const LESSON_GATED_TRACKS: readonly Track[] = ["code"];
+
 /** 선생님 연습팩 기록의 레벨 값 (성장 점수 기준값을 선생님 연습끼리 비교) */
 export const PACK_LEVEL = -100;
 /** 코드 빈칸 채우기 기록의 레벨 값 */

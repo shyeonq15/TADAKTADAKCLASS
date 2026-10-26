@@ -1,7 +1,7 @@
 // 오늘의 미션 구성 (PRD P3). 선생님이 지정한 미션이 있으면 그게 먼저예요.
 
 import { GROWTH, MISSION, TRACKS, type Track } from "@/config/game";
-import { getStage, stageName } from "./stages";
+import { getStage, missingLessons, stageName } from "./stages";
 import { median } from "@/lib/scoring/growth";
 import type { PracticeData, RoundRequest, TeacherPack } from "./types";
 
@@ -29,7 +29,16 @@ export function missionLevel(data: PracticeData, track: Track) {
     .slice(-3);
   const struggling =
     recent.length >= 3 && recent.every((a) => a.accuracy < GROWTH.minAccuracyForSpeed || a.cpm < goal * 0.6);
-  return struggling && top > 1 ? top - 1 : top;
+  let level = struggling && top > 1 ? top - 1 : top;
+  // 코드 트랙: 연결 강을 아직 안 들은 단계는 건너뛰고 그 아래에서 (하나도 없으면 0)
+  while (level > 0 && missingLessons(track, level, data.progress.cleared).length) level--;
+  return level;
+}
+
+/** 오늘 미션 트랙: 날짜 순서대로, 다만 코드 트랙인데 칠 수 있는 단계가 없으면(첫걸음 1~3강 전) 기호 트랙으로 */
+export function missionTrack(data: PracticeData, now = Date.now()): Track {
+  const track = todayTrack(now);
+  return missionLevel(data, track) > 0 ? track : "symbol";
 }
 
 /** 미션 3판: 선생님 미션이 있으면 그 연습팩 3판, 없으면 내 레벨 2판 + (약한 키가 있으면) 약한 키 맞춤 1판 */
@@ -41,7 +50,7 @@ export function missionRounds(data: PracticeData, hasWeakKeys: boolean, now = Da
       title: `선생님 미션 · ${tm.title}`,
     }));
   }
-  const track = todayTrack(now);
+  const track = missionTrack(data, now);
   const stage = getStage(track, missionLevel(data, track))!;
   return Array.from({ length: MISSION.rounds }, (_, i) =>
     i === MISSION.rounds - 1 && hasWeakKeys

@@ -7,7 +7,7 @@ import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { TierBadge } from "@/components/ui/TierBadge";
-import { missionTitle, sinceStart, teacherMission, todayTrack } from "@/lib/practice/mission";
+import { missionTitle, sinceStart, teacherMission, missionTrack } from "@/lib/practice/mission";
 import {
   dayKey,
   streakDays,
@@ -32,7 +32,7 @@ export function HomeDashboard() {
   const { attempts, progress } = data;
   const tiers = allTiers(progress.unlocked);
   const tm = teacherMission(data.packs);
-  const track = tm?.track ?? todayTrack();
+  const track = tm?.track ?? missionTrack(data);
   const missionDone = progress.missionDays.includes(dayKey());
   const growth = todayGrowth(data);
   const weak = weakKeys(attempts);

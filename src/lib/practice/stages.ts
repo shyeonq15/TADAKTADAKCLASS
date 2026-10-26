@@ -1,6 +1,6 @@
 // 연습 트랙 단계: 티어 6개 × 5단계 = 트랙마다 30단계 (config/game.ts STAGE_PLAN)
 
-import { PLACEMENT, STAGE_ACCURACY, STAGE_PLAN, STEPS_PER_TIER, TIER_LABELS, TIERS, type Tier, type Track } from "@/config/game";
+import { LESSON_GATED_TRACKS, PLACEMENT, STAGE_ACCURACY, STAGE_PLAN, STEPS_PER_TIER, TIER_LABELS, TIERS, type Tier, type Track } from "@/config/game";
 import { getLevel, type Level, type PracticeMode } from "@/data/packs";
 import STAGE_META from "@/data/packs/stage-meta.json";
 
@@ -82,6 +82,12 @@ export function getStage(track: Track, n: number): Stage | undefined {
     lessons: meta?.lessons ?? [],
     roundSize: fromPack && PACK_ROUND_TRACKS.includes(track) ? meta!.roundSize : undefined,
   };
+}
+
+/** 아직 안 들은 연결 강 (코드 트랙: 이 강을 다 들어야 그 단계가 열려요). 빈 목록이면 열림 */
+export function missingLessons(track: Track, n: number, cleared: readonly string[]): number[] {
+  if (!LESSON_GATED_TRACKS.includes(track)) return [];
+  return (getStage(track, n)?.lessons ?? []).filter((l) => !cleared.includes(`lesson-${l}`));
 }
 
 /** 배치 테스트 타수로 시작 단계 정하기: 목표 타수를 넘는 가장 높은 단계 (최대 골드 1단계) */

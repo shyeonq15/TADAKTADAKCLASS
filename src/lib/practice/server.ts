@@ -9,7 +9,7 @@ import { cache } from "react";
 import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel } from "@/data/packs";
-import { contentLevelOf, getStage, STAGE_COUNT, startStage, tierOfStage } from "./stages";
+import { contentLevelOf, getStage, missingLessons, STAGE_COUNT, startStage, tierOfStage } from "./stages";
 import { getStageWithPassages } from "@/lib/practice/packStage";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dailyGrowth } from "@/lib/scoring/growth";
@@ -228,6 +228,9 @@ export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRou
         ? req.level <= contentLevelOf(req.track, data.progress.unlocked[req.track])
         : req.level <= data.progress.unlocked[req.track];
     if (!open) return { error: "아직 열리지 않은 단계예요." };
+    // 코드 트랙: 연결된 파이썬 첫걸음 강을 먼저 들어야 열려요
+    const needLessons = req.kind === "blank" ? [] : missingLessons(req.track, req.level, data.progress.cleared);
+    if (needLessons.length) return { error: `파이썬 첫걸음 ${needLessons.join(", ")}강을 먼저 들어야 열려요.` };
 
     // 기호·코드 트랙 연습팩: 단계 지문에서 한 판 분량을 뽑음 (설명 카드 대신 첫걸음 강 연결)
     if (stage?.fromPack && stage.roundSize) {
