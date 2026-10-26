@@ -245,6 +245,17 @@ img {
   animation: bob 900ms steps(2, jump-none) infinite;
 }
 
+/* 단어 비 배경 빗줄기 (비스듬한 선이 아래로 흘러감) */
+@keyframes rain-fall {
+  from { background-position: 0 0; }
+  to { background-position: -24px 96px; }
+}
+@utility animate-rain {
+  background-image: repeating-linear-gradient(105deg, transparent 0 22px, rgba(255, 255, 255, 0.9) 22px 24px, transparent 24px 48px);
+  background-size: 48px 96px;
+  animation: rain-fall 700ms linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .blink,
   [class*="animate-"] {

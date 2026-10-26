@@ -18,11 +18,14 @@ import {
   type Who,
 } from "@/lib/practice/server";
 import { recentMedian } from "@/lib/practice/derive";
-import { contentLevelOf } from "@/lib/practice/stages";
 import type { Attempt, PracticeData } from "@/lib/practice/types";
 import { rainSequence, replayRain, type RainEvent, type RainResult } from "./rain";
+import { gameSequence } from "./words";
 
-type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: number; h: string; s: number };
+/** v 2: 문장 순서 단어(lv = 학생 단계). v 없음: 예전 낱말 모음(lv = 글 난이도) — 배포 때 진행 중이던 판용 */
+type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: number; h: string; s: number; v?: 2 };
+
+const ticketWords = (t: GameTicket) => (t.v === 2 ? gameSequence(t.track, t.lv, t.seed) : rainSequence(t.track, t.lv, t.seed));
 
 export type IssuedGame = { words: string[]; token: string };
 
@@ -31,10 +34,11 @@ export async function issueGame(who: Who, game: SoloGame, track: Track): Promise
   if (!TRACKS.includes(track)) return { error: "트랙을 찾을 수 없어요." };
   const data = await loadUncached(who.userId);
   const seed = randomInt(1, 2 ** 31);
-  // 지금 단계의 글 난이도까지의 단어
-  const lv = contentLevelOf(track, data.progress.unlocked[track]);
-  const words = rainSequence(track, lv, seed);
-  const ticket: GameTicket = { u: who.userId, g: game, track, lv, seed, h: hashLines(words), s: Date.now() };
+  // 지금 단계 근처 글에서, 문장을 골라 낱말을 순서대로
+  const lv = data.progress.unlocked[track];
+  const words = gameSequence(track, lv, seed);
+  if (!words.length) return { error: "이 트랙에는 아직 게임 단어가 없어요." };
+  const ticket: GameTicket = { u: who.userId, g: game, track, lv, seed, h: hashLines(words), s: Date.now(), v: 2 };
   return { words, token: makeToken(ticket) };
 }
 
@@ -73,7 +77,7 @@ export async function saveGame(
 
   // 단어 순서는 서버가 시드로 다시 만듦 (화면이 보낸 단어를 믿지 않음)
   const before = await loadUncached(who.userId);
-  const words = rainSequence(ticket.track, ticket.lv, ticket.seed);
+  const words = ticketWords(ticket);
   const sameWords = hashLines(words) === ticket.h;
 
   const game = ticket.g;

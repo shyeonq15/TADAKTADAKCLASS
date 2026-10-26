@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent } fro
 import { GAMES } from "@/config/game";
 import { RainHelp } from "@/components/help/HelpContent";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
-import { BUNNY } from "@/components/pixel/sprites";
+import { BUNNY, CLOUD, SPARKLE } from "@/components/pixel/sprites";
 import { fallMs, rainStage, spawnMs, startsLike, type RainEvent } from "@/lib/games/rain";
 import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
 import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
@@ -18,8 +18,21 @@ type Falling = { i: number; text: string; x: number; spawnAt: number; fall: numb
 type Pop = { id: number; text: string; x: number; y: number; at: number };
 
 /** 한 프레임 화면에 그릴 값 */
-type View = { t: number; active: Falling[]; pops: Pop[]; hits: number; misses: number; combo: number; score: number };
-const EMPTY_VIEW: View = { t: 0, active: [], pops: [], hits: 0, misses: 0, combo: 0, score: 0 };
+type View = {
+  t: number;
+  active: Falling[];
+  pops: Pop[];
+  hits: number;
+  misses: number;
+  combo: number;
+  score: number;
+  /** 연출용 시각 (토끼 점프, 놓쳤을 때, 콤보 배너, 단계 UP 배너) */
+  jumpUntil: number;
+  ouchUntil: number;
+  comboAt: number;
+  stageUpAt: number;
+};
+const EMPTY_VIEW: View = { t: 0, active: [], pops: [], hits: 0, misses: 0, combo: 0, score: 0, jumpUntil: 0, ouchUntil: 0, comboAt: -1e9, stageUpAt: -1e9 };
 
 const IGNORED_KEYS = new Set(["Shift", "Control", "Alt", "Meta", "CapsLock", "HangulMode", "Lang1", "Escape", "Tab"]);
 
@@ -48,6 +61,11 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     score: 0,
     ended: false,
     popId: 0,
+    jumpUntil: 0,
+    ouchUntil: 0,
+    comboAt: -1e9,
+    stageUpAt: -1e9,
+    lastStage: 1,
   });
 
   const now = () => performance.now() - g.current.start;
@@ -61,6 +79,10 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     const loop = () => {
       const t = now();
       const stage = rainStage(s.hits);
+      if (stage > s.lastStage) {
+        s.lastStage = stage;
+        s.stageUpAt = t;
+      }
 
       // 새 단어
       if (t - s.lastSpawn >= spawnMs(stage) && s.active.length < RAIN.maxOnScreen && s.next < words.length) {
@@ -77,6 +99,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
           s.events.push({ t: Math.round(t), type: "miss", i: w.i });
           s.misses++;
           s.combo = 0;
+          s.ouchUntil = t + 700;
         }
       }
       s.pops = s.pops.filter((p) => t - p.at < 700);
@@ -87,7 +110,19 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
         onEnd({ events: s.events, durationMs: Math.round(t), keyTimes: s.keyTimes, reason });
         return;
       }
-      setView({ t, active: [...s.active], pops: [...s.pops], hits: s.hits, misses: s.misses, combo: s.combo, score: s.score });
+      setView({
+        t,
+        active: [...s.active],
+        pops: [...s.pops],
+        hits: s.hits,
+        misses: s.misses,
+        combo: s.combo,
+        score: s.score,
+        jumpUntil: s.jumpUntil,
+        ouchUntil: s.ouchUntil,
+        comboAt: s.comboAt,
+        stageUpAt: s.stageUpAt,
+      });
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -119,6 +154,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     s.hits++;
     s.combo++;
     s.score += gained;
+    s.jumpUntil = t + 450;
+    s.comboAt = t;
     const y = ((t - target.spawnAt) / target.fall) * (FIELD_H - GROUND_H - WORD_H);
     s.pops.push({ id: s.popId++, text: `+${gained}`, x: target.x, y, at: t });
   };
@@ -161,7 +198,11 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
         <span className="win-bevel-pressed bg-paper px-3 py-1">
           콤보 <strong>{s.combo}</strong>
         </span>
-        <span className="win-bevel-pressed bg-paper px-3 py-1 text-red-500" aria-label={`하트 ${hearts}개`}>
+        <span
+          key={s.misses}
+          className={`win-bevel-pressed bg-paper px-3 py-1 text-red-500 ${s.misses ? "animate-[shake_200ms_steps(2)_3]" : ""}`}
+          aria-label={`하트 ${hearts}개`}
+        >
           {"♥".repeat(hearts)}
           <span className="text-win-shadow">{"♥".repeat(RAIN.hearts - hearts)}</span>
         </span>
@@ -178,8 +219,15 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
           background: "linear-gradient(to bottom, var(--sky-500) 0 30%, #5cbcf7 30% 60%, #78d3f0 60% 85%, var(--mint-300) 85% 100%)",
         }}
       >
+        {/* 천천히 지나가는 구름과 빗줄기 (장식) */}
+        <PixelSprite sprite={CLOUD} scale={4} className="absolute top-3 opacity-90" style={{ left: `${100 - ((t / 120) % 130)}%` }} />
+        <PixelSprite sprite={CLOUD} scale={3} className="absolute top-16 opacity-70" style={{ left: `${100 - ((t / 80 + 55) % 130)}%` }} />
+        <div aria-hidden className="animate-rain pointer-events-none absolute inset-0 opacity-30" />
+
         {s.active.map((w) => {
           const y = Math.min(1, (t - w.spawnAt) / w.fall) * (FIELD_H - GROUND_H - WORD_H);
+          // 바람에 살랑살랑 (4px 단위로 끊어서)
+          const sway = Math.round((Math.sin(t / 600 + w.i) * 8) / 4) * 4;
           const near = y > (FIELD_H - GROUND_H - WORD_H) * 0.75;
           const match = startsLike(w.text, value, isComposing);
           return (
@@ -188,24 +236,72 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
               className={`absolute whitespace-pre border-3 px-2 font-typing text-heading leading-[34px] ${
                 match ? "border-navy-900 bg-lime-200" : near ? "border-red-500 bg-paper" : "border-navy-900 bg-paper"
               } text-navy-900`}
-              style={{ left: `${w.x * 100}%`, top: y }}
+              style={{ left: `calc(${w.x * 100}% + ${sway}px)`, top: y }}
             >
               {w.text}
             </span>
           );
         })}
-        {s.pops.map((p) => (
-          <span
-            key={p.id}
+        {s.pops.map((p) => {
+          // 터뜨린 자리: 반짝이 4개가 퍼지고, 점수가 위로 떠올라요
+          const k = Math.min(1, (t - p.at) / 700);
+          const spread = Math.round((k * 36) / 4) * 4;
+          return (
+            <span key={p.id} aria-hidden className="pointer-events-none absolute" style={{ left: `${p.x * 100}%`, top: p.y, opacity: 1 - k * 0.8 }}>
+              {[
+                [-1, -1],
+                [1, -1],
+                [-1, 1],
+                [1, 1],
+              ].map(([dx, dy], j) => (
+                <PixelSprite key={j} sprite={SPARKLE} scale={3} className="absolute" style={{ left: 20 + dx * spread, top: 12 + dy * spread }} />
+              ))}
+              <span className="title-lime absolute whitespace-nowrap text-heading" style={{ left: 0, top: -k * 34 }}>
+                {p.text}
+              </span>
+            </span>
+          );
+        })}
+
+        {/* 콤보 배너 (3콤보부터, 맞힐 때마다 잠깐) */}
+        {s.combo >= 3 && t - s.comboAt < 900 && (
+          <p
+            key={s.comboAt}
             aria-hidden
-            className="title-lime pointer-events-none absolute text-heading"
-            style={{ left: `${p.x * 100}%`, top: p.y - ((t - p.at) / 700) * 30 }}
+            className="animate-pop-in pointer-events-none absolute left-1/2 top-24 -translate-x-1/2 title-lime whitespace-nowrap text-title"
           >
-            {p.text}
-          </span>
-        ))}
-        <div className="absolute inset-x-0 bottom-0 flex items-end bg-lime-600" style={{ height: GROUND_H }}>
-          <PixelSprite sprite={BUNNY} scale={2} className="mb-1 ml-4" />
+            {s.combo} 콤보!{s.combo >= 10 ? " 🔥" : ""}
+          </p>
+        )}
+        {/* 단계 UP 배너 */}
+        {stage > 1 && t - s.stageUpAt < 1500 && (
+          <p
+            key={s.stageUpAt}
+            role="status"
+            className="animate-pop-in pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border-3 border-navy-900 bg-yellow-400 px-4 py-2 font-title text-title text-navy-900 shadow-pixel-md"
+          >
+            단계 {stage} UP! 더 빨라져요
+          </p>
+        )}
+
+        {/* 땅: 풀밭 무늬 + 토끼 (맞히면 폴짝, 놓치면 앗!) */}
+        <div
+          className="absolute inset-x-0 bottom-0 flex items-end bg-lime-600"
+          style={{ height: GROUND_H, backgroundImage: "radial-gradient(var(--lime-400) 0 2px, transparent 3px)", backgroundSize: "24px 12px" }}
+        >
+          {(() => {
+            const jumpLeft = s.jumpUntil - t;
+            const jumpY = jumpLeft > 0 ? Math.round((Math.sin((1 - jumpLeft / 450) * Math.PI) * 28) / 4) * 4 : 0;
+            const ouch = s.ouchUntil > t;
+            return (
+              <span className="relative mb-1 ml-4" style={{ translate: `0 ${-jumpY}px` }}>
+                {ouch && (
+                  <span className="absolute -top-8 left-0 whitespace-nowrap border-2 border-navy-900 bg-paper px-1 font-pixel text-small text-red-500">앗!</span>
+                )}
+                <PixelSprite sprite={BUNNY} scale={3} className={ouch ? "opacity-50" : ""} />
+              </span>
+            );
+          })()}
         </div>
       </div>
 
