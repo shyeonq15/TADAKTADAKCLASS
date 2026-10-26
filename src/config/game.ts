@@ -33,6 +33,14 @@ export const GROWTH = {
   classBattlePeriodDays: 14,
 } as const;
 
+/* ── 교사 화면 ── */
+export const TEACHER_VIEW = {
+  /** 반 약한 키 히트맵: 최근 며칠 기록으로 볼지 */
+  heatmapDays: 14,
+  /** 상위 몇 개 키를 목록으로 보여 줄지 */
+  heatmapTop: 10,
+} as const;
+
 /* ── 명예의 전당 (같은 학년, 닉네임만) ── */
 export const HALL = {
   /** 부문마다 몇 명까지 */

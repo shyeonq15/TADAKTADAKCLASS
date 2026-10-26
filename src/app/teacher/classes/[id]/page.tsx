@@ -3,7 +3,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { TRACK_LABELS, TRACKS, type Track } from "@/config/game";
 import { Loading } from "@/components/ui/Loading";
-import { PendingRecords, RoomAdmin } from "./ClassExtras";
+import { ClassWeakKeys, PendingRecords, RoomAdmin } from "./ClassExtras";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { dayKeyKST } from "@/lib/practice/day";
 import { requireTeacher } from "@/lib/auth/viewer";
@@ -132,6 +132,8 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
         classId={id}
         names={new Map(students.map((s) => [s.studentId, `${s.number}번 ${s.real_name ?? s.nickname ?? ""}`]))}
       />
+
+      <ClassWeakKeys classId={id} />
 
       <RoomAdmin classId={id} teacherId={t.userId} />
 
