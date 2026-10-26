@@ -43,7 +43,7 @@ export function BattleBoard({ data, compact = false }: { data: BattleData; compa
               style={r.mine ? { background: "#fff6d6" } : undefined}
             >
               <span className="w-10 shrink-0 text-center font-title text-heading">{MEDAL[r.rank] ?? `${r.rank}위`}</span>
-              <span className="w-16 shrink-0 font-bold">
+              <span className="w-24 shrink-0 whitespace-nowrap font-bold">
                 {r.classNo}반{r.mine && <span className="ml-1 text-small">(우리)</span>}
               </span>
               <div className="h-5 flex-1 border-2 border-navy-900 bg-cream">
