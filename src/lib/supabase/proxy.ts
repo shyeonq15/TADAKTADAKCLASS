@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "./env";
 
 /** 로그인 없이 열 수 있는 주소 */
-const PUBLIC_PATHS = ["/login", "/auth", "/api/health", "/themes", "/privacy"];
+const PUBLIC_PATHS = ["/login", "/auth", "/api/health", "/themes", "/privacy", "/check"];
 
 /** 요청마다 로그인 세션을 갱신하고, 바뀐 쿠키를 응답에 실어 보냅니다. */
 export async function updateSession(request: NextRequest) {
