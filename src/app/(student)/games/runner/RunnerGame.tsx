@@ -161,7 +161,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     if (native.inputType === "insertFromPaste" || native.inputType === "insertFromDrop") return;
     composing.current = native.isComposing ?? composing.current;
     const v = e.target.value;
-    if ((track === "korean" || track === "english") && v.endsWith(" ")) return submit(v);
+    // Space로도 보낼 수 있음 (단어에는 띄어쓰기가 없어요. 기호·코드도 띄어쓰기로 나눈 조각)
+    if (v.endsWith(" ")) return submit(v);
     setValue(v);
   };
 
@@ -297,9 +298,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
       <p className="min-h-6 font-pixel text-small text-navy-900">
         {imeWrong
           ? "한/영 키를 확인하세요!"
-          : track === "korean" || track === "english"
-            ? "Space나 Enter로 점프해요. 토끼에 가장 가까운 장애물부터 넘어요."
-            : "Enter로 점프해요. 띄어쓰기까지 똑같이 쳐야 해요."}
+          : "Space나 Enter로 점프해요. 토끼에 가장 가까운 장애물부터 넘어요."}
       </p>
     </div>
   );

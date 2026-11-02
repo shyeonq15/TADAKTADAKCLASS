@@ -13,8 +13,8 @@ import { seededRandom } from "./rain";
 
 /** 지금 단계에서 몇 단계 아래 글까지 섞을지 */
 const NEARBY_STAGES = 4;
-/** 한 화면에 떨어지기에 너무 긴 코드 줄은 빼요 */
-const MAX_LINE = 28;
+/** 기호·코드: 코드 줄을 띄어쓰기로 나눈 조각이 이보다 길면 빼요 (줄 통째로는 너무 어려웠어요) */
+const MAX_TOKEN = 12;
 
 const cleanWord = (w: string) => w.replace(/^["'“‘(]+|["'”’),.!?…:;]+$/g, "");
 
@@ -26,13 +26,13 @@ function textUnits(text: string): string[][] {
     .filter((words) => words.length > 0);
 }
 
-/** 코드 → 한 프로그램 = 한 덩어리, 줄 순서대로 (너무 긴 줄은 빼요) */
+/** 코드 → 한 프로그램 = 한 덩어리. 줄을 띄어쓰기로 나눈 조각을 순서대로 (너무 긴 조각은 빼요) */
 function codeUnits(text: string): string[][] {
-  const lines = text
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l && l.length <= MAX_LINE);
-  return lines.length ? [lines] : [];
+  const tokens = text
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter((t) => t && t.length <= MAX_TOKEN);
+  return tokens.length ? [tokens] : [];
 }
 
 /** 단어 재료: 문장(또는 프로그램)마다 순서 있는 낱말 목록 */
