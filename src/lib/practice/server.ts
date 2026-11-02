@@ -6,7 +6,7 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, GAME_COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { BLANK_LEVEL, SUBJECT_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, GAME_COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel } from "@/data/packs";
 import { contentLevelOf, getStage, missingLessons, STAGE_COUNT, startStage, tierOfStage } from "./stages";
@@ -18,6 +18,8 @@ import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPackRound, buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
 import { blankMask, codeNote, lesson, LESSON_COUNT } from "@/data/codeNotes";
 import { isTestStudent } from "@/lib/auth/testAccount";
+import { explorePassage, saveExploreStars } from "@/lib/explore/server";
+import { starsFor } from "@/config/subjects";
 import { dayKeyKST } from "./day";
 import { recentMedian, streakDays, weakKeys } from "./derive";
 import {
@@ -206,6 +208,13 @@ export function readToken<T = Ticket>(token: string): T | null {
 /** 한 판 시작: 서버가 지문을 만들고 서명된 표를 함께 줌 */
 export async function issueRound(who: Who, req: RoundRequest): Promise<IssuedRound | { error: string }> {
   if (!TRACKS.includes(req.track)) return { error: "트랙을 찾을 수 없어요." };
+  // 교과 탐험: 이 학생이 볼 수 있는 단원의 지문 하나가 한 판
+  if (req.kind === "subject") {
+    const p = await explorePassage(who.userId, req.passageId);
+    if (!p) return { error: "이 지문을 찾을 수 없어요." };
+    const ticket: Ticket = { u: who.userId, r: { ...req, track: p.track }, h: hashLines(p.lines), s: Date.now(), m: "sentences" };
+    return { lines: p.lines, token: makeToken(ticket) };
+  }
   const data = await loadUncached(who.userId);
   let lines: string[];
 
@@ -410,8 +419,10 @@ export async function saveRound(
   if (keystrokes > 40 && (sub.keyTimes?.length ?? 0) < keystrokes * 0.3) flags.add("too-regular");
   if (cpm > INTEGRITY.maxCpm[track]) flags.add("too-fast");
 
-  const isPack = req.kind === "pack" || (req.kind === "mission" && !!req.packId);
-  const level = isPack
+  const isPack = req.kind === "pack" || (req.kind === "mission" && !!req.packId) || req.kind === "subject";
+  const level = req.kind === "subject"
+    ? SUBJECT_LEVEL
+    : isPack
     ? PACK_LEVEL
     : req.kind === "blank"
       ? BLANK_LEVEL
@@ -432,7 +443,7 @@ export async function saveRound(
           ? "weak"
           : (getStage(track, level)?.level.mode ?? "keys");
   // 연습팩·빈칸 채우기도 기록 종류는 "연습"
-  const kind = req.kind === "pack" || req.kind === "blank" || req.kind === "lesson" ? "practice" : req.kind;
+  const kind = req.kind === "pack" || req.kind === "blank" || req.kind === "lesson" || req.kind === "subject" ? "practice" : req.kind;
   const missedKeys = Object.fromEntries(
     Object.entries(sub.missedKeys ?? {})
       .filter(([k, v]) => k.length <= 2 && Number.isInteger(v) && v > 0)
@@ -512,6 +523,19 @@ export async function saveRound(
     if (!done.error) lessonDone = req.lesson;
   }
 
+  // 교과 탐험: 지문 별 (타수는 내 평소 타수와 비교)
+  let subjectStars: number | null = null;
+  if (req.kind === "subject" && !suspicious) {
+    const recent = before.attempts
+      .filter((a) => a.track === track && !a.suspicious && a.level > 0 && (a.kind === "practice" || a.kind === "mission"))
+      .slice(-10)
+      .map((a) => a.cpm)
+      .sort((a, b) => a - b);
+    const baseline = recent.length >= 3 ? recent[Math.floor(recent.length / 2)] : null;
+    const got = starsFor(accuracy, cpm, baseline);
+    subjectStars = got > 0 ? await saveExploreStars(who.userId, req.passageId, got, cpm, accuracy) : 0;
+  }
+
   // 코인
   let coins = 0;
   if (req.kind === "lesson") {
@@ -540,6 +564,7 @@ export async function saveRound(
     unlockedLevel,
     coins,
     lessonDone,
+    subjectStars,
     // 새 단계가 열리면서 티어가 바뀌었으면 (예: 브론즈 5단계 클리어 → 실버)
     tierUp: unlockedLevel && tierOfStage(unlockedLevel) !== tierOfStage(before.progress.unlocked[track]) ? tierOfStage(unlockedLevel) : null,
   };

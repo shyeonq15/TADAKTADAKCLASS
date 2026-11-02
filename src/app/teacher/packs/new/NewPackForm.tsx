@@ -5,6 +5,7 @@ import { TRACK_LABELS, TRACKS, type Track } from "@/config/game";
 import { PixelButton } from "@/components/ui/PixelButton";
 import { MAX_ROUNDS, splitPassage } from "@/lib/passages/split";
 import { createPack } from "../actions";
+import { SUBJECTS, subjectOf } from "@/config/subjects";
 
 const HINT: Record<Track, string> = {
   korean: "문장 단위로 나누고, 긴 문장은 띄어쓰기에서 줄을 나눠요. 4줄이 한 판이에요.",
@@ -15,7 +16,11 @@ const HINT: Record<Track, string> = {
 
 export function NewPackForm() {
   const [state, action, pending] = useActionState(createPack, null);
-  const [track, setTrack] = useState<Track>("korean");
+  const [trackPick, setTrack] = useState<Track>("korean");
+  // 교과 탐험 단원으로 쓰기: 과목을 고르면 트랙은 과목에 맞게 정해져요 (영어 → 영타, 나머지 → 한글)
+  const [subjectId, setSubjectId] = useState("");
+  const subject = subjectOf(subjectId);
+  const track = subject ? subject.track : trackPick;
   const [text, setText] = useState("");
   const preview = splitPassage(text, track);
 
@@ -31,13 +36,50 @@ export function NewPackForm() {
           <div className="flex gap-1">
             {TRACKS.map((t) => (
               <label key={t} className={`win-bevel flex h-10 cursor-pointer items-center px-3 ${track === t ? "win-bevel-pressed bg-paper font-bold" : ""}`}>
-                <input type="radio" name="track" value={t} checked={track === t} onChange={() => setTrack(t)} className="sr-only" />
+                <input type="radio" name="track" value={t} checked={track === t} onChange={() => setTrack(t)} disabled={!!subject} className="sr-only" />
                 {TRACK_LABELS[t]}
               </label>
             ))}
           </div>
         </fieldset>
       </div>
+
+      <fieldset className="flex flex-col gap-2 border-2 border-dashed border-navy-900 p-3">
+        <legend className="px-1 font-bold">🧭 교과 탐험 단원으로 쓰기 (선택)</legend>
+        <p className="text-small text-text-muted">
+          과목을 고르면 반에 배포하지 않아도 학생 화면의 &ldquo;교과 탐험&rdquo;에 단원으로 나타나요. 나뉜 판 하나가 지문 하나(별 ★3개)가 돼요.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <label className="flex flex-col gap-1">
+            <span className="text-small font-bold">과목</span>
+            <select name="subject" value={subjectId} onChange={(e) => setSubjectId(e.target.value)} className="win-bevel-pressed h-10 bg-paper px-2">
+              <option value="">교과 탐험에 안 씀 (일반 연습팩)</option>
+              {SUBJECTS.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.icon} {s.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {subject && (
+            <>
+              <label className="flex flex-col gap-1">
+                <span className="text-small font-bold">단원 번호</span>
+                <input name="unitNo" type="number" min={1} max={99} defaultValue={1} className="win-bevel-pressed h-10 w-24 bg-paper px-2 outline-none" />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-small font-bold">학년</span>
+                <select name="grade" defaultValue="1" className="win-bevel-pressed h-10 bg-paper px-2">
+                  <option value="">모든 학년</option>
+                  <option value="1">1학년</option>
+                  <option value="2">2학년</option>
+                  <option value="3">3학년</option>
+                </select>
+              </label>
+            </>
+          )}
+        </div>
+      </fieldset>
 
       <label className="flex flex-col gap-1">
         <span className="font-bold">글 붙여 넣기</span>

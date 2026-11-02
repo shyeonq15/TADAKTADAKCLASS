@@ -20,6 +20,12 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
   if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} ${stageName(attempt.level)}를 클리어했다!`);
   if (save.unlockedLevel) messages.push(`${stageName(save.unlockedLevel)}가 열렸다!`);
   if (save.lessonDone) messages.push(`파이썬 첫걸음 ${save.lessonDone}강을 통과했다!`);
+  if (save.subjectStars != null)
+    messages.push(
+      save.subjectStars > 0
+        ? `이 지문 별 ${"★".repeat(save.subjectStars)}${"☆".repeat(3 - save.subjectStars)}를 모았다!`
+        : "정확도 85% 이상이면 별을 받아요. 천천히 다시 해 봐요!",
+    );
   if (save.tierUp) messages.push(`${TRACK_LABELS[attempt.track]} 티어가 ${TIER_LABELS[save.tierUp]}로 올랐다!`);
 
   const missed = Object.entries(attempt.missedKeys)

@@ -78,6 +78,8 @@ export type SaveResult = {
   tierUp: Tier | null;
   /** 이번 판으로 처음 통과한 강의 번호 (파이썬 첫걸음) */
   lessonDone?: number | null;
+  /** 교과 탐험: 이번 판으로 받은 별(지금까지 가장 좋은 별) */
+  subjectStars?: number | null;
 };
 
 /** 한 판을 시작할 때 서버에 보내는 요청 */
@@ -90,7 +92,9 @@ export type RoundRequest =
   | { kind: "blank"; track: Track; level: number }
   /** 파이썬 첫걸음 n강 */
   | { kind: "lesson"; track: Track; lesson: number }
-  | { kind: "placement"; track: Track };
+  | { kind: "placement"; track: Track }
+  /** 교과 탐험 지문 하나 */
+  | { kind: "subject"; track: Track; passageId: string };
 
 /** 서버가 내준 지문 + 서명된 표 (+ 코드면 설명 카드, 빈칸이면 가릴 곳) */
 export type IssuedRound = {

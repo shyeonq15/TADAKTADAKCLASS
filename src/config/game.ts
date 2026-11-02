@@ -144,6 +144,8 @@ export const PACK_LEVEL = -100;
 export const BLANK_LEVEL = -200;
 /** 파이썬 첫걸음 기록의 레벨 값 */
 export const LESSON_LEVEL = -300;
+/** 교과 탐험 기록의 레벨 값 */
+export const SUBJECT_LEVEL = -400;
 /** 강의 통과에 필요한 정확도(%) */
 export const LESSON_PASS_ACCURACY = 80;
 

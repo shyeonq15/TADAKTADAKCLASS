@@ -65,6 +65,7 @@ export const MINIMI_ITEMS: readonly MinimiItem[] = [
   { id: "face-glasses", slot: "face", name: "탐정 외알 안경", price: 80, art: "glasses" },
   { id: "face-shades", slot: "face", name: "선글라스", price: 100, art: "shades", lock: { tier: "silver" } },
   { id: "face-braces", slot: "face", name: "중괄호 안경", price: 120, art: "braces", lock: { track: "symbol", tier: "gold" } },
+  { id: "face-goggles", slot: "face", name: "탐험 고글", price: 80, art: "goggles", lock: { badge: "explorer" } },
   // 목
   { id: "neck-bowtie", slot: "neck", name: "나비넥타이", price: 50, art: "bowtie" },
   { id: "neck-scarf", slot: "neck", name: "빨간 목도리", price: 70, art: "scarf" },

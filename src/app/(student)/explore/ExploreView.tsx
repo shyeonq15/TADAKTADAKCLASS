@@ -1,0 +1,100 @@
+"use client";
+
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { EXPLORE_STARS } from "@/config/subjects";
+import { RetroWindow } from "@/components/ui/RetroWindow";
+import type { ExploreData } from "@/lib/explore/server";
+
+const starText = (n: number) => "★".repeat(n) + "☆".repeat(3 - n);
+
+/** 과목 탭 → 단원 지도 (지문마다 별) */
+export function ExploreView({ data }: { data: ExploreData }) {
+  const params = useSearchParams();
+  const withUnits = data.subjects.filter((s) => s.units.length > 0);
+  const [picked, setPicked] = useState(params.get("subject") ?? withUnits[0]?.id ?? data.subjects[0]?.id);
+  const subject = data.subjects.find((s) => s.id === picked) ?? data.subjects[0];
+
+  if (!data.ready) {
+    return (
+      <RetroWindow title="교과 탐험">
+        <p className="font-pixel text-body">교과 탐험을 준비 중이에요. 선생님께 알려 주세요!</p>
+      </RetroWindow>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap justify-center gap-2" role="tablist" aria-label="과목">
+        {data.subjects.map((s) => {
+          const total = s.units.reduce((n, u) => n + u.passages.length * 3, 0);
+          const got = s.units.reduce((n, u) => n + u.passages.reduce((m, p) => m + p.stars, 0), 0);
+          return (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              aria-selected={s.id === subject.id}
+              onClick={() => setPicked(s.id)}
+              className={`flex h-14 flex-col items-center justify-center px-4 font-pixel text-body text-navy-900 ${
+                s.id === subject.id ? "win-bevel-pressed bg-paper font-bold" : "win-bevel"
+              } ${s.units.length ? "" : "opacity-60"}`}
+            >
+              <span>
+                {s.icon} {s.label}
+              </span>
+              <span className="text-small font-normal">{s.units.length ? `★ ${got}/${total}` : "준비 중"}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <RetroWindow title={`${subject.icon} ${subject.label} 탐험 지도`}>
+        {subject.units.length === 0 ? (
+          <p className="font-pixel text-body">아직 {subject.label} 단원이 없어요. 선생님이 교과서 글을 넣어 주시면 여기에 나타나요!</p>
+        ) : (
+          <ol className="flex flex-col gap-3">
+            {subject.units.map((u) => {
+              const cleared = u.passages.length > 0 && u.passages.every((p) => p.stars >= 1);
+              const next = u.passages.find((p) => p.stars === 0);
+              return (
+                <li key={u.packId} className={`border-3 border-navy-900 px-3 py-2 ${cleared ? "bg-lime-200" : "bg-paper"}`}>
+                  <div className="mb-2 flex flex-wrap items-baseline gap-2 font-pixel text-body text-navy-900">
+                    <strong className="font-title text-heading">{u.unitNo ? `${u.unitNo}단원` : "단원"}</strong>
+                    <span className="flex-1">{u.title}</span>
+                    {cleared && <span className="border-2 border-navy-900 bg-yellow-400 px-2 text-small">🏁 탐험 완료</span>}
+                    {next && (
+                      <Link href={`/explore/play/${next.id}`} className="win-bevel px-3 py-1 text-small font-bold active:win-bevel-pressed">
+                        ▶ 이어서 하기
+                      </Link>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {u.passages.map((p, i) => (
+                      <Link
+                        key={p.id}
+                        href={`/explore/play/${p.id}`}
+                        title={`지문 ${i + 1} · ${starText(p.stars)}`}
+                        className={`flex w-14 flex-col items-center border-2 border-navy-900 py-1 font-pixel text-small hover:bg-sky-100 ${
+                          p.id === next?.id ? "bg-yellow-400 font-bold" : p.stars ? "bg-paper" : "bg-win-gray text-text-muted"
+                        }`}
+                      >
+                        <span>{i + 1}</span>
+                        <span className="tracking-tight text-navy-900">{starText(p.stars)}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+        <p className="mt-3 font-pixel text-small text-text-muted">
+          별: ★ 정확도 {EXPLORE_STARS.one.accuracy}% · ★★ 정확도 {EXPLORE_STARS.two.accuracy}%에 내 평소 타수의 {Math.round(EXPLORE_STARS.two.speed * 100)}% · ★★★ 정확도{" "}
+          {EXPLORE_STARS.three.accuracy}%에 내 평소 타수 이상. 다른 친구가 아니라 &ldquo;평소의 나&rdquo;와 비교해요!
+        </p>
+      </RetroWindow>
+    </div>
+  );
+}

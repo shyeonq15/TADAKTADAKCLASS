@@ -10,6 +10,7 @@ import { dayKeyKST } from "@/lib/practice/day";
 import { allTiers } from "@/lib/scoring/tier";
 import { seasonByNumber, seasonOf } from "@/lib/season";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { exploreTotals } from "@/lib/explore/server";
 
 const DAY = 86400000;
 
@@ -30,7 +31,7 @@ function longestRun(days: string[]) {
 
 export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
   const admin = createAdminClient();
-  const [attempts, missions, lessons, progress, raceWins, feedback, ranks] = await Promise.all([
+  const [attempts, missions, lessons, progress, raceWins, feedback, ranks, explore] = await Promise.all([
     admin
       .from("attempts")
       .select("kind, accuracy, keystrokes, created_at")
@@ -45,6 +46,7 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
     admin.from("coin_transactions").select("id", { count: "exact", head: true }).eq("student_id", studentId).eq("reason", "친구 대결 우승"),
     admin.from("feedback").select("id", { count: "exact", head: true }).eq("student_id", studentId).eq("status", "done"),
     bossRanks([studentId]),
+    exploreTotals(studentId),
   ]);
 
   const rows = (attempts.data ?? []) as { kind: string; accuracy: number | string; keystrokes: number; created_at: string }[];
@@ -78,6 +80,8 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
     raceWins: raceWins.count ?? 0,
     feedbackDone: feedback.error ? 0 : (feedback.count ?? 0),
     seasonsFinished: [...perSeason.values()].filter((s) => s.size >= SEASON_FINISH_DAYS).length,
+    exploreStars: explore.stars,
+    exploreUnits: explore.unitsCleared,
   };
 }
 

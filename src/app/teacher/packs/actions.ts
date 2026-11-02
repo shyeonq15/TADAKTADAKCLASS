@@ -6,6 +6,7 @@ import { TRACKS, type Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
 import { dayKeyKST } from "@/lib/practice/day";
 import { splitPassage } from "@/lib/passages/split";
+import { subjectOf } from "@/config/subjects";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type PackState = { ok: boolean; message: string } | null;
@@ -36,7 +37,11 @@ export async function createPack(_: PackState, formData: FormData): Promise<Pack
   const t = await teacher();
   if (!t) return { ok: false, message: "교사만 할 수 있어요." };
   const title = String(formData.get("title") ?? "").trim().slice(0, 40);
-  const track = String(formData.get("track")) as Track;
+  // 교과 탐험 단원으로 쓸 때: 과목·단원 번호·학년 (과목에 맞는 트랙으로 정해져요)
+  const subject = subjectOf(String(formData.get("subject") ?? ""));
+  const unitNo = Number(formData.get("unitNo")) || null;
+  const grade = Number(formData.get("grade")) || null;
+  const track = (subject ? subject.track : String(formData.get("track"))) as Track;
   const text = String(formData.get("text") ?? "").slice(0, 20000);
   if (!title) return { ok: false, message: "연습팩 이름을 적어 주세요." };
   if (!TRACKS.includes(track)) return { ok: false, message: "트랙을 골라 주세요." };
@@ -47,10 +52,21 @@ export async function createPack(_: PackState, formData: FormData): Promise<Pack
   const admin = createAdminClient();
   const pack = await admin
     .from("packs")
-    .insert({ school_id: t.schoolId, owner_id: t.userId, title, track, visibility: "school" })
+    .insert({
+      school_id: t.schoolId,
+      owner_id: t.userId,
+      title,
+      track,
+      visibility: "school",
+      ...(subject ? { subject: subject.id, unit_no: unitNo, grade } : {}),
+    })
     .select("id")
     .single();
-  if (pack.error) return { ok: false, message: "저장하지 못했어요. 다시 해 주세요." };
+  if (pack.error)
+    return {
+      ok: false,
+      message: subject && pack.error.code === "PGRST204" ? "교과 탐험을 쓰려면 먼저 SQL(20261102000004_explore.sql)을 실행해 주세요." : "저장하지 못했어요. 다시 해 주세요.",
+    };
   const ins = await admin
     .from("passages")
     .insert(rounds.map((lines, i) => ({ pack_id: pack.data.id, mode, body: lines.join("\n"), sort: i })));

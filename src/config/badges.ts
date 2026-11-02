@@ -25,6 +25,9 @@ export type BadgeStats = {
   feedbackDone: number;
   /** 시즌 완주 수 (시즌 안에 FINISH_DAYS 일 이상 연습) */
   seasonsFinished: number;
+  /** 교과 탐험: 모은 별, 모든 지문을 ★1 이상 깬 단원 수 */
+  exploreStars: number;
+  exploreUnits: number;
 };
 
 export type Badge = { id: string; icon: string; name: string; how: string; check: (s: BadgeStats) => boolean };
@@ -51,6 +54,10 @@ export const BADGES: readonly Badge[] = [
   // 배움
   { id: "lesson-10", icon: "📘", name: "파이썬 10강", how: "파이썬 첫걸음 10강 통과", check: (s) => s.lessonsDone >= 10 },
   { id: "lesson-all", icon: "🎓", name: "파이썬 졸업", how: "파이썬 첫걸음 모든 강 통과", check: (s) => s.lessonCount > 0 && s.lessonsDone >= s.lessonCount },
+  // 교과 탐험
+  { id: "explorer", icon: "🧭", name: "교과 탐험가", how: "교과 탐험 한 단원 모든 지문 깨기", check: (s) => s.exploreUnits >= 1 },
+  { id: "explorer-5", icon: "🗺️", name: "탐험 대장", how: "교과 탐험 5단원 깨기", check: (s) => s.exploreUnits >= 5 },
+  { id: "star-30", icon: "🌟", name: "별 30개", how: "교과 탐험 별 30개 모으기", check: (s) => s.exploreStars >= 30 },
   // 티어
   { id: "all-silver", icon: "◆", name: "네 트랙 실버", how: "네 트랙 모두 실버 이상", check: (s) => allAtLeast(s, "silver") },
   { id: "all-gold", icon: "♛", name: "네 트랙 골드", how: "네 트랙 모두 골드 이상", check: (s) => allAtLeast(s, "gold") },

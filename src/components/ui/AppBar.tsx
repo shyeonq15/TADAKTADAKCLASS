@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/practice", label: "연습 트랙" },
   { href: "/mission", label: "오늘의 미션" },
   { href: "/learn", label: "파이썬 첫걸음" },
+  { href: "/explore", label: "교과 탐험" },
   { href: "/games", label: "게임" },
   { href: "/room", label: "우리 반" },
   { href: "/shop", label: "상점" },
