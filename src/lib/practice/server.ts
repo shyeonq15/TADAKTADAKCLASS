@@ -400,7 +400,6 @@ export async function saveRound(
   // 키를 누른 횟수가 친 글자보다 훨씬 적으면 (입력 자동화 의심)
   if (keystrokes > 40 && (sub.keyTimes?.length ?? 0) < keystrokes * 0.3) flags.add("too-regular");
   if (cpm > INTEGRITY.maxCpm[track]) flags.add("too-fast");
-  const suspicious = flags.size > 0;
 
   const isPack = req.kind === "pack" || (req.kind === "mission" && !!req.packId);
   const level = isPack
@@ -432,6 +431,20 @@ export async function saveRound(
   );
 
   const before = await loadUncached(who.userId);
+  // 자리를 바꿔 친구가 대신 치는 것 막기: 평소(같은 트랙 최근 단계 판의 가운데 값)보다 갑자기 훨씬 빠르면 선생님 확인으로
+  if (req.kind !== "placement" && !(await isTestStudent(who.userId))) {
+    const J = INTEGRITY.jump;
+    const recent = before.attempts
+      .filter((a) => a.track === track && !a.suspicious && a.level > 0 && (a.kind === "practice" || a.kind === "mission"))
+      .slice(-J.sample)
+      .map((a) => a.cpm)
+      .sort((a, b) => a - b);
+    if (recent.length >= J.minSamples) {
+      const median = recent[Math.floor(recent.length / 2)];
+      if (cpm >= median * J.ratio && cpm - median >= J.minGap) flags.add("big-jump");
+    }
+  }
+  const suspicious = flags.size > 0;
   const ins = await admin
     .from("attempts")
     .insert({

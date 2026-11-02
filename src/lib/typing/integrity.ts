@@ -3,7 +3,8 @@
 
 import { INTEGRITY, type Track } from "@/config/game";
 
-export type IntegrityFlag = "too-fast" | "too-regular";
+/** big-jump: 평소 내 기록보다 갑자기 훨씬 빠름 (자리를 바꿔 친구가 대신 친 것 같음, 서버에서만 확인) */
+export type IntegrityFlag = "too-fast" | "too-regular" | "big-jump";
 
 export function checkIntegrity(track: Track, cpm: number, keyTimes: readonly number[]): IntegrityFlag[] {
   const flags: IntegrityFlag[] = [];

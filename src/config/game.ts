@@ -145,6 +145,11 @@ export const INTEGRITY = {
   minIntervalVariation: 0.15,
   /** 위 검사를 하려면 최소 이만큼의 키 입력이 필요 */
   minKeysForCheck: 40,
+  /**
+   * 자리를 바꿔 친구가 대신 치는 것 같은 기록: 같은 트랙 최근 단계 판(sample개)의 가운데 값보다
+   * ratio배 이상이면서 minGap타 이상 빠르면 선생님 확인으로 (기록이 minSamples개 이상 있을 때만)
+   */
+  jump: { sample: 10, minSamples: 5, ratio: 1.5, minGap: 40 },
 } as const;
 
 /* ── 배치 테스트 ── */

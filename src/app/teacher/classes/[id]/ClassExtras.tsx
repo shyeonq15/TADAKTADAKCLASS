@@ -11,6 +11,7 @@ import { closeRoomProposal, removeRoomItem, reviewAttempt } from "../../actions"
 const FLAG_LABELS: Record<string, string> = {
   "too-fast": "사람이 치기 어려운 속도",
   "too-regular": "키 누르는 간격이 너무 일정함",
+  "big-jump": "평소 기록보다 갑자기 훨씬 빠름 (대신 쳐 준 것인지 확인)",
 };
 
 const KIND_LABELS: Record<string, string> = {
