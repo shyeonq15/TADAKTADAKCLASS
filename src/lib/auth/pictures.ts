@@ -21,6 +21,24 @@ export const SECRET_LENGTH = 4;
 /** 고른 그림 번호들 → 서버로 보내는 문자열 "0-7-3-11" */
 export const encodeSecret = (picks: readonly number[]) => picks.join("-");
 
+/**
+ * 너무 쉬운 그림 비밀번호: 친구가 몇 번만 눌러 봐도 맞힐 수 있어서 못 쓰게 해요.
+ *  · 같은 그림을 3번 이상 (🐰🐰🐰🐰, 🐰🐰🐰🍎)
+ *  · 두 그림 번갈아 (🐰🍎🐰🍎) 또는 두 그림씩 (🐰🐰🍎🍎)
+ *  · 키패드에서 차례대로 붙은 그림 (토끼→고양이→강아지→곰, 거꾸로도)
+ */
+export function weakSecretReason(s: string): string | null {
+  if (!isValidSecret(s)) return null;
+  const p = s.split("-").map(Number);
+  const counts = new Map<number, number>();
+  for (const x of p) counts.set(x, (counts.get(x) ?? 0) + 1);
+  if (Math.max(...counts.values()) >= 3) return "같은 그림을 3번 이상 쓰면 친구가 쉽게 맞혀요.";
+  if (counts.size === 2 && Math.max(...counts.values()) === 2) return "그림 두 개만 반복하면 친구가 쉽게 맞혀요.";
+  const steps = p.slice(1).map((x, i) => x - p[i]);
+  if (steps.every((d) => d === 1) || steps.every((d) => d === -1)) return "차례대로 붙은 그림은 친구가 쉽게 맞혀요.";
+  return null;
+}
+
 export function isValidSecret(s: string) {
   const parts = s.split("-");
   return parts.length === SECRET_LENGTH && parts.every((p) => /^\d{1,2}$/.test(p) && Number(p) < PICTURES.length);

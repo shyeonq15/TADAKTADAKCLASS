@@ -6,7 +6,7 @@ import { requireSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import { authConfig, isTeacherEmail, schoolYearOf } from "@/lib/auth/config";
 import { requestOrigin } from "@/lib/auth/origin";
-import { isValidSecret, parseStudentNo } from "@/lib/auth/pictures";
+import { isValidSecret, parseStudentNo, weakSecretReason } from "@/lib/auth/pictures";
 import { PIN_LOCK, pinPassword } from "@/lib/auth/pin";
 import { ensureProfile } from "@/lib/auth/viewer";
 import { startStudentSession } from "@/lib/auth/session";
@@ -96,14 +96,21 @@ export async function lookupStudent(_: LookupState, formData: FormData): Promise
   return { step: s.setupOpen ? "setup" : "closed", studentNo, label };
 }
 
-async function lockedOut(enrollmentId: string) {
-  const since = new Date(Date.now() - PIN_LOCK.windowMinutes * 60000).toISOString();
-  const { count } = await createAdminClient()
-    .from("pin_failures")
-    .select("*", { count: "exact", head: true })
-    .eq("enrollment_id", enrollmentId)
-    .gte("failed_at", since);
-  return (count ?? 0) >= PIN_LOCK.maxFailures;
+/** 잠금 상태: 잠깐 잠김(10분) / 오늘 너무 많이 틀려서 선생님이 풀어 줘야 함 */
+async function lockedOut(enrollmentId: string): Promise<"short" | "teacher" | null> {
+  const admin = createAdminClient();
+  const count = async (minutes: number) =>
+    (
+      await admin
+        .from("pin_failures")
+        .select("*", { count: "exact", head: true })
+        .eq("enrollment_id", enrollmentId)
+        .gte("failed_at", new Date(Date.now() - minutes * 60000).toISOString())
+    ).count ?? 0;
+  const [recent, day] = await Promise.all([count(PIN_LOCK.windowMinutes), count(24 * 60)]);
+  if (day >= PIN_LOCK.dailyMax) return "teacher";
+  if (recent >= PIN_LOCK.maxFailures) return "short";
+  return null;
 }
 
 /** 2단계: 그림 비밀번호로 로그인 */
@@ -115,9 +122,9 @@ export async function pictureLogin(_: FormState, formData: FormData): Promise<Fo
   const s = await findStudent(studentNo);
   if (!s || !s.secretSet) return fail;
 
-  if (await lockedOut(s.enrollmentId)) {
-    return { ok: false, message: `여러 번 틀려서 ${PIN_LOCK.windowMinutes}분 동안 잠겼어요. 선생님께 말씀해 주세요.` };
-  }
+  const lock = await lockedOut(s.enrollmentId);
+  if (lock === "teacher") return { ok: false, message: "오늘 너무 많이 틀려서 잠겼어요. 선생님께 잠금을 풀어 달라고 말씀해 주세요." };
+  if (lock === "short") return { ok: false, message: `여러 번 틀려서 ${PIN_LOCK.windowMinutes}분 동안 잠겼어요. 선생님께 말씀해 주세요.` };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email: s.email, password: pinPassword(s.studentId, secret) });
@@ -136,6 +143,8 @@ export async function setupPicture(_: FormState, formData: FormData): Promise<Fo
   const studentNo = String(formData.get("studentNo") ?? "");
   const secret = String(formData.get("secret") ?? "");
   if (!isValidSecret(secret)) return { ok: false, message: "그림 4개를 골라 주세요." };
+  const weak = weakSecretReason(secret);
+  if (weak) return { ok: false, message: `${weak} 다른 그림으로 다시 골라 주세요.` };
   const s = await findStudent(studentNo);
   if (!s) return { ok: false, message: "학번을 다시 확인해 주세요." };
   if (s.secretSet) return { ok: false, message: "이미 비밀번호를 정했어요. 로그인해 주세요." };

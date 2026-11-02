@@ -5,7 +5,11 @@ import { authConfig } from "./config";
 // PIN 로그인: 학생은 4자리 PIN만 기억하고, 실제 비밀번호는 서버 비밀값을 섞어 길게 만듭니다.
 // 그래서 PIN을 알아도 우리 서버를 거치지 않고는 로그인할 수 없고, 서버에서 시도 횟수를 막습니다.
 
-export const PIN_LOCK = { maxFailures: 5, windowMinutes: 10 } as const;
+/**
+ * 잠금: windowMinutes 분 안에 maxFailures 번 틀리면 잠시 잠금,
+ * 하루(24시간)에 dailyMax 번 틀리면 선생님이 풀어 줄 때까지 잠금 (모든 조합을 눌러 보는 것 막기)
+ */
+export const PIN_LOCK = { maxFailures: 5, windowMinutes: 10, dailyMax: 10 } as const;
 
 export function pinPassword(studentId: string, pin: string) {
   const { pinPepper } = authConfig();
