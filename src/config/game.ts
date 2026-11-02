@@ -211,6 +211,14 @@ export const RUNNER = {
   gapSeconds: { start: 2.6, min: 1.1, perStage: 0.25 },
 } as const;
 
+/** 프로필 (민재 아이디어 2026-11-02) */
+export const PROFILE = {
+  /** 한 줄 자기소개 최대 글자 수 (DB 에도 60자 제한) */
+  bioMax: 60,
+  /** 닉네임 변경권: 처음 한 번은 무료, 그다음부터 이만큼 */
+  nicknameChangePrice: 150,
+} as const;
+
 /** 보스전: 선생님 고스트와 레이스 */
 export const BOSS = {
   level: -3,

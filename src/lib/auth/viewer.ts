@@ -76,7 +76,7 @@ export async function ensureProfile(user: User) {
   if (!teacher) await admin.from("wallets").upsert({ student_id: user.id });
 }
 
-async function loadEnrollment(studentId: string): Promise<Enrollment | null> {
+export async function loadEnrollment(studentId: string): Promise<Enrollment | null> {
   const admin = createAdminClient();
   const { data } = await admin
     .from("enrollments")

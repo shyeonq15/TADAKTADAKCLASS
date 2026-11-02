@@ -8,9 +8,10 @@ import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
 import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
-import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
+import { completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
+import { changeNickname, saveBio } from "@/lib/profile/server";
 
 async function who() {
   const v = await getViewer();
@@ -139,4 +140,20 @@ export async function submitFeedback(input: { kind: string; body: string; page?:
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
   return sendFeedback({ userId: v.userId, schoolId: v.schoolId, classId: v.enrollment?.classId ?? null }, input);
+}
+
+/* ───────── 프로필 ───────── */
+
+export async function updateBio(bio: string) {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  return saveBio(v.userId, bio);
+}
+
+export async function renameNickname(nickname: string) {
+  const v = await getViewer();
+  if (!v || v.role !== "student") return NOT_LOGGED_IN;
+  const res = await changeNickname(v, nickname);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(v.userId) };
 }
