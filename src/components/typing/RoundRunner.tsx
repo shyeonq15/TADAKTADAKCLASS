@@ -14,6 +14,8 @@ import type { RoundRequest } from "@/lib/practice/types";
 import type { CodeNote } from "@/data/codeNotes";
 import { CodeExplainCard, CodeHint, CodeQuizCard, quizChoices } from "./CodeCards";
 import { ResultPanel } from "./ResultPanel";
+import { RaceLanes } from "./RaceLanes";
+import { linesKeystrokes } from "@/lib/typing/engine";
 import type { Mask } from "./TypingArea";
 import { TypingSession, type SessionResult } from "./TypingSession";
 
@@ -27,6 +29,8 @@ type Props = {
   autoStart?: boolean;
   /** 결과 화면 대신 바로 다음으로 넘길 때 */
   onSaved?: (save: SaveResult) => void;
+  /** 내 고스트와 레이스: 이 타수(내 최고 기록)로 달리는 고스트를 위에 보여 줘요 */
+  ghostCpm?: number | null;
 };
 
 type Phase =
@@ -40,7 +44,7 @@ type Phase =
   | { name: "error"; message: string };
 
 /** 한 판 진행: 준비(PRESS START) → 서버에서 지문 받기 → 타자 → 서버가 채점·저장 → 결과 */
-export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved }: Props) {
+export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved, ghostCpm }: Props) {
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>(() => (autoStart ? { name: "loading" } : { name: "ready" }));
   const autoStarted = useRef(false);
@@ -135,6 +139,22 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           code={phase.code}
           mask={phase.mask}
           codeHint={phase.note ? (i) => <CodeHint note={phase.note!} lineIndex={i} mask={phase.mask} /> : undefined}
+          header={
+            ghostCpm
+              ? (stats) => {
+                  // 고스트는 내 최고 타수로 일정하게 달려요. 둘 다 "친 타수 ÷ 전체 타수"로 비교
+                  const total = Math.max(1, linesKeystrokes(phase.lines, phase.lines, !!(phase.code ?? track === "code"), phase.lines.length));
+                  return (
+                    <RaceLanes
+                      lanes={[
+                        { id: "ghost", name: `👻 내 최고 ${ghostCpm}타`, progress: (stats.elapsedMs / 60000) * ghostCpm / total, ghost: true },
+                        { id: "me", name: "나", progress: stats.keystrokes / total, me: true },
+                      ]}
+                    />
+                  );
+                }
+              : undefined
+          }
           onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}
         />
       </RetroWindow>

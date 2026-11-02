@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Track } from "@/config/game";
 import { lessonTitle } from "@/data/codeNotes";
@@ -13,8 +14,14 @@ import { usePracticeData } from "@/lib/practice/store";
 
 export function LevelRound({ track, level }: { track: Track; level: number }) {
   const router = useRouter();
-  const { progress } = usePracticeData();
+  const { progress, attempts } = usePracticeData();
+  // 내 고스트: 이 단계에서 단계 정확도를 넘긴 가장 빠른 기록
+  const [ghostOn, setGhostOn] = useState(false);
   const st = getStage(track, level)!;
+  const ghostBest = Math.max(
+    0,
+    ...attempts.filter((a) => a.track === track && a.level === level && !a.suspicious && a.accuracy >= st.minAccuracy).map((a) => a.cpm),
+  );
 
   if (level > progress.unlocked[track]) {
     return (
@@ -78,7 +85,15 @@ export function LevelRound({ track, level }: { track: Track; level: number }) {
           과 연결돼요. 헷갈리면 강의를 다시 봐요!
         </p>
       )}
+      {ghostBest > 0 && (
+        <label className="mx-auto mb-3 flex w-full max-w-4xl cursor-pointer items-center gap-2 font-pixel text-body text-navy-900">
+          <input type="checkbox" checked={ghostOn} onChange={(e) => setGhostOn(e.target.checked)} className="size-4" />
+          👻 내 최고 기록({ghostBest}타) 고스트와 달리기 — 상대는 &ldquo;어제의 나&rdquo;!
+        </label>
+      )}
       <RoundRunner
+        key={ghostOn ? "ghost" : "solo"}
+        ghostCpm={ghostOn ? ghostBest : null}
         request={{ kind: "practice", track, level }}
         title={`${stageName(level)} · ${st.level.title}`}
         subtitle={`${stageName(level)} · ${MODE_LABELS[st.level.mode]} · 목표 ${st.goalCpm}타, 정확도 ${st.minAccuracy}%`}
