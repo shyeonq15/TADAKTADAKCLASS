@@ -20,7 +20,7 @@ type Phase =
   | { name: "intro" }
   | { name: "round"; rounds: MissionRound[]; index: number; saves: SaveResult[] }
   | { name: "between"; rounds: MissionRound[]; index: number; saves: SaveResult[] }
-  | { name: "reward"; saves: SaveResult[]; coins: number; classCoins: number };
+  | { name: "reward"; saves: SaveResult[]; coins: number; classCoins: number; firstToday: boolean };
 
 const GROWTH_LABELS = {
   participation: "미션 참여",
@@ -50,11 +50,11 @@ export function MissionRun() {
           <p className="font-pixel text-body text-sky-100">{TRACK_LABELS[track]} 트랙 · 3판 · 3~5분</p>
           <p className="blink font-title text-hero text-sky-200">PRESS START</p>
           <PixelButton variant="success" autoFocus onClick={begin}>
-            ▶ 미션 시작 (Enter)
+            {doneToday ? "▶ 한 번 더 하기 (Enter)" : "▶ 미션 시작 (Enter)"}
           </PixelButton>
           {doneToday && (
             <p className="font-pixel text-small text-yellow-400">
-              오늘 미션은 이미 완료했어요! 한 번 더 해도 좋아요 (보상은 하루 한 번).
+              오늘 미션은 이미 완료했어요! 한 번 더 하면 연습 코인만 받아요 (미션 보상은 하루 한 번).
             </p>
           )}
         </div>
@@ -83,7 +83,13 @@ export function MissionRun() {
             const reward = await safeCall(() => finishMission());
             if ("data" in reward) setData(reward.data);
             const ok = "firstToday" in reward;
-            setPhase({ name: "reward", saves, coins: ok ? (reward.coins ?? 0) : 0, classCoins: ok ? (reward.classCoins ?? 0) : 0 });
+            setPhase({
+              name: "reward",
+              saves,
+              coins: ok ? (reward.coins ?? 0) : 0,
+              classCoins: ok ? (reward.classCoins ?? 0) : 0,
+              firstToday: ok && !!reward.firstToday,
+            });
           }}
         />
       </div>
@@ -116,7 +122,8 @@ export function MissionRun() {
   const best = phase.saves.reduce((a, s) => (s.attempt.cpm > a.attempt.cpm ? s : a));
   const totalCoins = phase.coins + phase.saves.reduce((n, s) => n + s.coins, 0);
   const text = [
-    `코인 ${totalCoins}개를 획득했다!`,
+    totalCoins > 0 ? `코인 ${totalCoins}개를 획득했다!` : "",
+    phase.firstToday ? "" : "미션 보상은 오늘 이미 받았어요. 내일 또 만나요!",
     phase.classCoins > 0 ? `우리 반 지갑에 코인 ${phase.classCoins}개가 쌓였다!` : "",
     best.personalBest ? "개인 기록을 갱신했다!" : "",
   ]
@@ -127,7 +134,7 @@ export function MissionRun() {
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-5">
       <div className="flex items-end gap-3">
         <PixelSprite sprite={BALLOON} scale={5} />
-        <p className="title-lime text-hero">MISSION CLEAR!</p>
+        <p className="title-lime text-hero">{phase.firstToday ? "MISSION CLEAR!" : "ONE MORE CLEAR!"}</p>
         <PixelSprite sprite={BALLOON} scale={5} className="-scale-x-100" />
       </div>
       <div className="flex gap-2">
@@ -163,8 +170,8 @@ export function MissionRun() {
       </RetroWindow>
 
       <div className="flex gap-3">
-        <PixelLink href="/" variant="success">
-          홈으로
+        <PixelLink href="/" variant="success" autoFocus>
+          홈으로 (Enter)
         </PixelLink>
         <PixelLink href="/practice" variant="ghost">
           자유 연습
