@@ -24,6 +24,14 @@
   src: url("/fonts/D2Coding.woff2") format("woff2");
   font-display: swap;
 }
+/* D2Coding 은 | 를 가운데가 끊긴 막대(¦처럼)로 그려서 학생들이 다른 기호로 착각했어요.
+   | 한 글자만 윈도우 기본 글꼴 Consolas 로 그려요 (폭을 D2Coding 과 같게 줄임). 없으면 원래 D2Coding 으로 */
+@font-face {
+  font-family: "D2Coding";
+  src: local("Consolas");
+  unicode-range: U+007C;
+  size-adjust: 91%;
+}
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/PretendardVariable.woff2") format("woff2");
