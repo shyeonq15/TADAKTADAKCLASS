@@ -1,8 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GAME_COINS, RACE, RACE_MODE_LABELS, TRACK_LABELS, TRACKS, type RaceDifficulty, type RaceMode, type Track } from "@/config/game";
-import { raceCreate, raceInfo, raceJoin, raceLeave, raceQueue, raceQueueLeave, raceStart, raceSubmit } from "@/app/(student)/actions";
+import {
+  raceBlockInvites,
+  raceCreate,
+  raceInfo,
+  raceInvite,
+  raceJoin,
+  raceLeave,
+  raceQueue,
+  raceQueueLeave,
+  raceStart,
+  raceSubmit,
+} from "@/app/(student)/actions";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
@@ -56,7 +67,18 @@ function Countdown({ until, round, onDone }: { until: number; round: number; onD
 /** 카운트다운까지 기다릴 시간 (내 시계가 조금 틀려도 너무 짧거나 길지 않게) */
 const untilOf = (startAt: number) => Date.now() + Math.min(Math.max(startAt - Date.now(), 1000), RACE.countdownMs + RACE.queue.pollMs + 1000);
 
-export function RaceGame({ me, rating }: { me: Me; rating: number }) {
+export function RaceGame({ me: meBase, rating, blockInvites }: { me: Me; rating: number; blockInvites: boolean }) {
+  // "대결 신청 받지 않기": 켜면 들어온 신청을 보여 주지 않고, 친구 화면에도 "신청 안 받음"으로 보여요
+  const [noInvites, setNoInvites] = useState(blockInvites);
+  const [inviteMsg, setInviteMsg] = useState("");
+  const me = useMemo(() => ({ ...meBase, noInvites }), [meBase, noInvites]);
+  const toggleInvites = async () => {
+    const next = !noInvites;
+    const res = await safeCall(() => raceBlockInvites(next));
+    if ("error" in res) return setInviteMsg(res.error ?? "");
+    setNoInvites(next);
+    setInviteMsg(next ? "이제 대결 신청을 받지 않아요." : "다시 대결 신청을 받아요.");
+  };
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "lobby" });
   const [track, setTrack] = useState<Track>("korean");
@@ -250,6 +272,11 @@ export function RaceGame({ me, rating }: { me: Me; rating: number }) {
           <p className="mt-1 font-pixel text-body text-navy-900">
             내 대결 레이팅 <strong className="font-title text-heading">{rating}</strong>
           </p>
+          <label className="mt-2 inline-flex cursor-pointer items-center gap-2 border-2 border-navy-900 bg-paper px-3 py-1 font-pixel text-body text-navy-900">
+            <input type="checkbox" checked={noInvites} onChange={toggleInvites} className="size-4" />
+            대결 신청 받지 않기
+          </label>
+          {inviteMsg && <p className="mt-1 font-pixel text-small text-navy-900">{inviteMsg}</p>}
         </div>
         <div className="font-pixel text-body">{trackPicker}</div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -379,14 +406,18 @@ export function RaceGame({ me, rating }: { me: Me; rating: number }) {
                     <span className="flex-1">{o.nickname}</span>
                     <button
                       type="button"
-                      disabled={invited.includes(o.userId) || inRoom.length >= RACE.maxPlayers}
-                      onClick={() => {
+                      disabled={o.noInvites || invited.includes(o.userId) || inRoom.length >= RACE.maxPlayers}
+                      onClick={async () => {
+                        // 보내기 전에 서버에서 확인 (신청 안 받는 친구, 너무 자주 보내기)
+                        const res = await safeCall(() => raceInvite(o.userId));
+                        if ("error" in res) return setInviteMsg(res.error ?? "");
+                        setInviteMsg("");
                         lobby.sendInvite(phase.matchId, [o.userId], track);
                         setInvited((v) => [...v, o.userId]);
                       }}
                       className="win-bevel h-8 px-3 text-small active:win-bevel-pressed disabled:opacity-50"
                     >
-                      {invited.includes(o.userId) ? "보냄" : "신청"}
+                      {o.noInvites ? "신청 안 받음" : invited.includes(o.userId) ? "보냄" : "신청"}
                     </button>
                   </li>
                 ))}
@@ -394,6 +425,7 @@ export function RaceGame({ me, rating }: { me: Me; rating: number }) {
             ) : (
               <p className="font-pixel text-body">신청할 수 있는 친구가 없어요. 친구가 게임 → 친구 대결 화면을 열면 보여요.</p>
             )}
+            {inviteMsg && <p className="mt-2 font-pixel text-small text-red-500">{inviteMsg}</p>}
           </RetroWindow>
         )}
       </div>

@@ -254,6 +254,8 @@ export const RACE = {
     hard: { korean: 6, english: 6, symbol: 7, code: 6 },
   },
   emojis: ["👍", "😮", "🔥", "👏", "😆", "💪"],
+  /** 대결 신청: windowMinutes 분 동안 전체 maxPerWindow 번, 같은 친구에게 maxSameFriend 번까지 */
+  invites: { windowMinutes: 10, maxPerWindow: 10, maxSameFriend: 3 },
   /** 3판 2선승: 먼저 이만큼 이기면 우승 */
   winsNeeded: 2,
   maxRounds: 3,

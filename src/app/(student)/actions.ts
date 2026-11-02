@@ -11,6 +11,7 @@ import { buyItem, equipItem } from "@/lib/shop/server";
 import { completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
+import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
 
 async function who() {
@@ -132,6 +133,18 @@ export async function roomPropose(itemId: string) {
 export async function roomVote(proposalId: string) {
   const w = await who();
   return w ? voteRoomItem(w, proposalId) : NOT_LOGGED_IN;
+}
+
+/* ───────── 대결 신청 지키기 ───────── */
+
+export async function raceInvite(toId: string) {
+  const w = await who();
+  return w ? checkInvite(w.userId, toId) : NOT_LOGGED_IN;
+}
+
+export async function raceBlockInvites(on: boolean) {
+  const w = await who();
+  return w ? setBlockInvites(w.userId, on) : NOT_LOGGED_IN;
 }
 
 /* ───────── 건의함 ───────── */

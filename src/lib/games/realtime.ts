@@ -10,18 +10,18 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import type { Tier } from "@/config/game";
 import { createClient } from "@/lib/supabase/client";
 
-export type Me = { userId: string; nickname: string; classId: string; tier: Tier };
-export type Online = { userId: string; nickname: string; tier: Tier; busy: boolean };
+export type Me = { userId: string; nickname: string; classId: string; tier: Tier; noInvites?: boolean };
+export type Online = { userId: string; nickname: string; tier: Tier; busy: boolean; noInvites: boolean };
 export type Invite = { matchId: string; from: string; fromId: string; track: string };
 
-type PresenceMeta = { userId: string; nickname: string; tier: Tier; busy?: boolean };
+type PresenceMeta = { userId: string; nickname: string; tier: Tier; busy?: boolean; noInvites?: boolean };
 
 function onlineList(ch: RealtimeChannel, myId: string): Online[] {
   const state = ch.presenceState<PresenceMeta>();
   const seen = new Map<string, Online>();
   for (const metas of Object.values(state)) {
     for (const m of metas) {
-      if (m.userId !== myId) seen.set(m.userId, { userId: m.userId, nickname: m.nickname, tier: m.tier, busy: !!m.busy });
+      if (m.userId !== myId) seen.set(m.userId, { userId: m.userId, nickname: m.nickname, tier: m.tier, busy: !!m.busy, noInvites: !!m.noInvites });
     }
   }
   return [...seen.values()].sort((a, b) => a.nickname.localeCompare(b.nickname));
@@ -33,6 +33,11 @@ export function useLobby(me: Me, busy: boolean) {
   const [invite, setInvite] = useState<Invite | null>(null);
   const [connected, setConnected] = useState(false);
   const chRef = useRef<RealtimeChannel | null>(null);
+  // "대결 신청 받지 않기"를 켜면 들어온 신청을 보여 주지 않아요
+  const noInvitesRef = useRef(!!me.noInvites);
+  useEffect(() => {
+    noInvitesRef.current = !!me.noInvites;
+  }, [me.noInvites]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -41,7 +46,7 @@ export function useLobby(me: Me, busy: boolean) {
     ch.on("presence", { event: "sync" }, () => setOnline(onlineList(ch, me.userId)))
       .on("broadcast", { event: "invite" }, ({ payload }) => {
         const p = payload as Invite & { to: string[] };
-        if (p.to.includes(me.userId)) setInvite({ matchId: p.matchId, from: p.from, fromId: p.fromId, track: p.track });
+        if (p.to.includes(me.userId) && !noInvitesRef.current) setInvite({ matchId: p.matchId, from: p.from, fromId: p.fromId, track: p.track });
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -56,8 +61,9 @@ export function useLobby(me: Me, busy: boolean) {
 
   // 방에 들어가 있으면 "대결 중"으로 표시
   useEffect(() => {
-    if (connected) void chRef.current?.track({ userId: me.userId, nickname: me.nickname, tier: me.tier, busy } satisfies PresenceMeta);
-  }, [busy, connected, me.userId, me.nickname, me.tier]);
+    if (connected)
+      void chRef.current?.track({ userId: me.userId, nickname: me.nickname, tier: me.tier, busy, noInvites: !!me.noInvites } satisfies PresenceMeta);
+  }, [busy, connected, me.userId, me.nickname, me.tier, me.noInvites]);
 
   const sendInvite = (matchId: string, to: string[], track: string) =>
     chRef.current?.send({ type: "broadcast", event: "invite", payload: { matchId, to, from: me.nickname, fromId: me.userId, track } });
