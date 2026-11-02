@@ -9,6 +9,8 @@ import { requireTeacher } from "@/lib/auth/viewer";
 import { loadBattle } from "@/lib/battle/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CreateClassForm } from "./CreateClassForm";
+import { ClassOverview } from "./ClassOverview";
+import { loadClassDashboard } from "@/lib/teacher/dashboard";
 
 async function Classes({ searchParams }: { searchParams: PageProps<"/teacher">["searchParams"] }) {
   await connection(); // 로그인·날짜는 요청마다 새로 확인
@@ -30,7 +32,10 @@ async function Classes({ searchParams }: { searchParams: PageProps<"/teacher">["
 
   // 학년마다 반 대결 순위판
   const grades = [...new Map((classes ?? []).map((c) => [c.grade, c.school_year_id])).entries()];
-  const battles = isCurrent ? await Promise.all(grades.map(([grade, schoolYearId]) => loadBattle({ schoolYearId, grade }))) : [];
+  const [battles, dashes] = await Promise.all([
+    isCurrent ? Promise.all(grades.map(([grade, schoolYearId]) => loadBattle({ schoolYearId, grade }))) : Promise.resolve([]),
+    isCurrent ? Promise.all((classes ?? []).map((c) => loadClassDashboard(c))) : Promise.resolve([]),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -53,6 +58,8 @@ async function Classes({ searchParams }: { searchParams: PageProps<"/teacher">["
           지난 학년도 반이에요. 반 관리에서 학생들을 {current}학년도 반으로 <strong>진급</strong>시킬 수 있어요. 기록은 학생에게 그대로 남아요.
         </p>
       )}
+      <ClassOverview dashes={dashes} />
+
       <RetroWindow title={`${year}학년도 반 목록`}>
         {classes && classes.length > 0 ? (
           <table className="w-full text-body">

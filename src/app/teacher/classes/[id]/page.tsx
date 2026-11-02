@@ -11,6 +11,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { toggleSecretSetup } from "../../actions";
 import { AddStudentsForm, ResetSecretButton } from "./RosterForms";
 import { SetSecretButton, UnlockButton } from "./SecurityForms";
+import { ClassDashboard } from "./ClassDashboard";
+import { loadClassDashboard } from "@/lib/teacher/dashboard";
 import { PIN_LOCK } from "@/lib/auth/pin";
 import { MoveStudentForm, PromoteClassForm, type TargetClass } from "./MoveForms";
 
@@ -57,13 +59,14 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
 
   await connection(); // 오늘 날짜는 요청마다 새로 계산
   const today = dayKeyKST();
-  const [{ data: roster }, { data: done }] = await Promise.all([
+  const [{ data: roster }, { data: done }, dash] = await Promise.all([
     admin
       .from("enrollments")
       .select("id, number, student_id, profiles!inner(real_name, nickname, login_method, secret_set)")
       .eq("class_id", id)
       .order("number"),
     admin.from("mission_completions").select("student_id").eq("class_id", id).eq("day", today),
+    loadClassDashboard({ id: cls.id, grade: cls.grade, class_no: cls.class_no }),
   ]);
   const doneSet = new Set((done ?? []).map((d) => d.student_id));
 
@@ -137,6 +140,8 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
           </span>
         </form>
       </RetroWindow>
+
+      <ClassDashboard dash={dash} today={today} />
 
       <RetroWindow title="학생 명단 (실명은 교사 화면에서만 보여요)">
         {students.length ? (
