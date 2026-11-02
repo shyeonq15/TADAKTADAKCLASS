@@ -302,7 +302,6 @@ export async function addCoins(userId: string, amount: number, reason: string) {
 export const GAME_PLAY_REASONS = {
   rain: "단어 비",
   runner: "토끼 달리기",
-  bits: "비트 해독기",
   boss: "보스전 도전",
   race: "친구 대결 참여",
 } as const;

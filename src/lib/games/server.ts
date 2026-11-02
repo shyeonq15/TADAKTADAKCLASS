@@ -3,8 +3,7 @@ import "server-only";
 // 혼자 하는 게임 저장 (서버 전용). 연습과 같이: 서버가 판을 발급 → 화면이 놀고 → 서버가 점수를 다시 계산해 저장
 
 import { randomInt } from "node:crypto";
-import { GAME_COINS, GAME_LABELS, GAMES, INTEGRITY, QUIZ_GAMES, RUNNER, TRACKS, type SoloGame, type Track } from "@/config/game";
-import { bitsSequence } from "./quiz";
+import { GAME_COINS, GAME_LABELS, GAMES, INTEGRITY, RUNNER, TRACKS, type SoloGame, type Track } from "@/config/game";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import {
@@ -27,25 +26,13 @@ import { gameSequence } from "./words";
 /** v 2: 문장 순서 단어(lv = 학생 단계). v 없음: 예전 낱말 모음(lv = 글 난이도) — 배포 때 진행 중이던 판용 */
 type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: number; h: string; s: number; v?: 2 };
 
-const ticketWords = (t: GameTicket) =>
-  t.g === "bits"
-    ? bitsSequence(t.seed)
-    : t.v === 2
-        ? gameSequence(t.track, t.lv, t.seed)
-        : rainSequence(t.track, t.lv, t.seed);
+const ticketWords = (t: GameTicket) => (t.v === 2 ? gameSequence(t.track, t.lv, t.seed) : rainSequence(t.track, t.lv, t.seed));
 
 export type IssuedGame = { words: string[]; token: string };
 
 export async function issueGame(who: Who, game: SoloGame, track: Track): Promise<IssuedGame | { error: string }> {
   if (!(game in GAME_LABELS)) return { error: "게임을 찾을 수 없어요." };
   const seed = randomInt(1, 2 ** 31);
-  // 문제형 단어 비: 트랙이 정해져 있고, 문제는 시드로 만들어요
-  if (game === "bits") {
-    const qt = QUIZ_GAMES[game].track;
-    const words = bitsSequence(seed);
-    const ticket: GameTicket = { u: who.userId, g: game, track: qt, lv: 0, seed, h: hashLines(words), s: Date.now(), v: 2 };
-    return { words, token: makeToken(ticket) };
-  }
   if (!TRACKS.includes(track)) return { error: "트랙을 찾을 수 없어요." };
   const data = await loadUncached(who.userId);
   // 지금 단계 근처 글에서, 문장을 골라 낱말을 순서대로
@@ -109,7 +96,7 @@ export async function saveGame(
   if (cpm > INTEGRITY.maxCpm[ticket.track]) flags.add("too-fast");
   const suspicious = flags.size > 0;
 
-  const level = game === "rain" ? GAMES.rain.level : game === "runner" ? RUNNER.level : QUIZ_GAMES[game].level;
+  const level = game === "rain" ? GAMES.rain.level : RUNNER.level;
   const ins = await admin
     .from("attempts")
     .insert({

@@ -21,7 +21,6 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     note: "수업에서 배운 내용을 쳐 보며 복습해요",
     games: [
       { href: "/binary", icon: "🔢", title: "이진수 연습실", desc: "자릿값 보며 십진수 쓰기 → 비트 눌러 만들기 (6단계)" },
-      { href: "/games/bits", icon: "💾", title: "비트 비", desc: "떨어지는 4·5비트 이진수를 십진수로! (연습실 다음에)" },
       { href: "/sensors", icon: "🔌", title: "센서·액추에이터 분류", desc: "아날로그 입력? 디지털 출력? 부품을 보고 골라요" },
       { href: "/pixel", icon: "🖼️", title: "0과 1 픽셀 아트", desc: "숫자로 그림을 그려 우리 반 갤러리에 걸어요" },
       { href: "/adc", icon: "〰️", title: "아날로그 → 디지털", desc: "소리 곡선을 숫자로 바꿔 듣기 (표본화·양자화)" },
@@ -32,7 +31,7 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     title: "🤝 함께하기",
     note: "우리 반·우리 학년 모두의 기록",
     games: [
-      { href: "/room#raid", icon: "⚔️", title: "협동 레이드", desc: "우리 반 모두의 타수로 이번 주 보스를 쓰러뜨려요" },
+      { href: "/raid", icon: "⚔️", title: "협동 레이드", desc: "우리 반 모두의 타수로 이번 주 보스를 쓰러뜨려요" },
       { href: "/hall", icon: "🏆", title: "명예의 전당", desc: "우리 학년 부문별 TOP 10 · 성장왕" },
     ],
   },
