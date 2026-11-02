@@ -3,7 +3,8 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { newJoinCode, pinEmail } from "@/lib/auth/pin";
+import { newJoinCode, pinEmail, pinPassword } from "@/lib/auth/pin";
+import { isValidSecret, weakSecretReason } from "@/lib/auth/pictures";
 import { ensureSchoolYear, getViewer } from "@/lib/auth/viewer";
 import { COINS, GAME_COINS } from "@/config/game";
 import { dayKeyKST } from "@/lib/practice/day";
@@ -114,9 +115,56 @@ export async function resetSecret(_: ActionState, formData: FormData): Promise<A
   // 예전 비밀번호로는 못 들어오게 무작위 값으로 바꾸고, "아직 안 정함"으로 표시
   await admin.auth.admin.updateUserById(studentId, { password: randomUUID() });
   await admin.from("profiles").update({ secret_set: false }).eq("id", studentId);
+  await kickSessions(studentId);
   await admin.from("pin_failures").delete().eq("enrollment_id", enr.id);
   revalidatePath(`/teacher/classes/${classId}`);
   return { ok: true, message: "초기화했어요" };
+}
+
+/** 로그인돼 있던 PC를 모두 로그아웃 (자리 표를 새 값으로 바꿔서). 칸이 아직 없으면 그냥 넘어가요 */
+async function kickSessions(studentId: string) {
+  await createAdminClient().from("profiles").update({ session_key: randomUUID() }).eq("id", studentId);
+}
+
+/** 이 반 학생의 반 등록 id (반이 선생님 학교 것인지도 확인) */
+async function enrollmentOf(t: { schoolId: string }, classId: string, studentId: string) {
+  if (!(await ownClass(classId, t.schoolId))) return null;
+  const { data } = await createAdminClient().from("enrollments").select("id").eq("class_id", classId).eq("student_id", studentId).maybeSingle();
+  return data?.id ?? null;
+}
+
+/** 선생님이 그림 비밀번호를 직접 정해 주기: 바로 그 그림으로 로그인할 수 있고, 로그인돼 있던 PC는 로그아웃돼요 */
+export async function setStudentSecret(_: ActionState, formData: FormData): Promise<ActionState> {
+  const t = await teacherOrNull();
+  if (!t) return { ok: false, message: "교사만 할 수 있어요." };
+  const classId = String(formData.get("classId"));
+  const studentId = String(formData.get("studentId"));
+  const secret = String(formData.get("secret") ?? "");
+  if (!isValidSecret(secret)) return { ok: false, message: "그림 4개를 골라 주세요." };
+  const weak = weakSecretReason(secret);
+  if (weak) return { ok: false, message: weak };
+  const enr = await enrollmentOf(t, classId, studentId);
+  if (!enr) return { ok: false, message: "학생을 찾을 수 없어요." };
+
+  const admin = createAdminClient();
+  const upd = await admin.auth.admin.updateUserById(studentId, { password: pinPassword(studentId, secret) });
+  if (upd.error) return { ok: false, message: "바꾸지 못했어요. 다시 해 주세요." };
+  await admin.from("profiles").update({ secret_set: true }).eq("id", studentId);
+  await admin.from("pin_failures").delete().eq("enrollment_id", enr);
+  await kickSessions(studentId);
+  revalidatePath(`/teacher/classes/${classId}`);
+  return { ok: true, message: "바꿨어요. 학생에게 새 그림을 알려 주세요." };
+}
+
+/** 너무 많이 틀려서 잠긴 학생 잠금 풀기 */
+export async function unlockStudent(formData: FormData) {
+  const t = await teacherOrNull();
+  if (!t) return;
+  const classId = String(formData.get("classId"));
+  const enr = await enrollmentOf(t, classId, String(formData.get("studentId")));
+  if (!enr) return;
+  await createAdminClient().from("pin_failures").delete().eq("enrollment_id", enr);
+  revalidatePath(`/teacher/classes/${classId}`);
 }
 
 /** 반마다 "처음 비밀번호 정하기 허용" 켜기·끄기 */

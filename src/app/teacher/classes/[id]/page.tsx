@@ -10,7 +10,37 @@ import { requireTeacher } from "@/lib/auth/viewer";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { toggleSecretSetup } from "../../actions";
 import { AddStudentsForm, ResetSecretButton } from "./RosterForms";
+import { SetSecretButton, UnlockButton } from "./SecurityForms";
+import { PIN_LOCK } from "@/lib/auth/pin";
 import { MoveStudentForm, PromoteClassForm, type TargetClass } from "./MoveForms";
+
+/** 로그인 지키기: 오늘(24시간) 틀린 횟수, 최근 7일 로그인 기록 */
+async function loadLoginGuard(enrIds: string[], rosterIds: string[]) {
+  const admin = createAdminClient();
+  const [{ data: fails }, { data: logins }] = await Promise.all([
+    enrIds.length
+      ? admin.from("pin_failures").select("enrollment_id, failed_at").in("enrollment_id", enrIds).gte("failed_at", new Date(Date.now() - 86400000).toISOString())
+      : Promise.resolve({ data: [] as { enrollment_id: string; failed_at: string }[] }),
+    rosterIds.length
+      ? admin
+          .from("login_events")
+          .select("student_id, device, ip, created_at")
+          .in("student_id", rosterIds)
+          .gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString())
+          .order("created_at", { ascending: false })
+          .limit(1000)
+      : Promise.resolve({ data: [] as { student_id: string; device: string; ip: string | null; created_at: string }[] }),
+  ]);
+  const failCount = new Map<string, { day: number; recent: number }>();
+  const recentSince = Date.now() - PIN_LOCK.windowMinutes * 60000;
+  for (const f of fails ?? []) {
+    const c = failCount.get(f.enrollment_id) ?? { day: 0, recent: 0 };
+    c.day++;
+    if (Date.parse(f.failed_at) >= recentSince) c.recent++;
+    failCount.set(f.enrollment_id, c);
+  }
+  return { failCount, logins: logins ?? [] };
+}
 
 async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id]">["params"] }) {
   const { id } = await params;
@@ -30,12 +60,16 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
   const [{ data: roster }, { data: done }] = await Promise.all([
     admin
       .from("enrollments")
-      .select("number, student_id, profiles!inner(real_name, nickname, login_method, secret_set)")
+      .select("id, number, student_id, profiles!inner(real_name, nickname, login_method, secret_set)")
       .eq("class_id", id)
       .order("number"),
     admin.from("mission_completions").select("student_id").eq("class_id", id).eq("day", today),
   ]);
   const doneSet = new Set((done ?? []).map((d) => d.student_id));
+
+  // 로그인 지키기: 오늘(24시간) 틀린 횟수, 최근 7일 로그인 기록
+  const { failCount, logins } = await loadLoginGuard((roster ?? []).map((r) => r.id), (roster ?? []).map((r) => r.student_id));
+  const loginsOf = (studentId: string) => logins.filter((l) => l.student_id === studentId);
 
   // 배치 테스트 결과 (트랙별 타수)
   const ids = (roster ?? []).map((r) => r.student_id);
@@ -65,6 +99,7 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
     .map(({ c, y }) => ({ id: c.id, label: `${y}학년도 ${c.grade}학년 ${c.class_no}반`, year: y }));
 
   const students = (roster ?? []).map((r) => ({
+    enrollmentId: r.id,
     number: r.number,
     studentId: r.student_id,
     ...(r.profiles as unknown as { real_name: string | null; nickname: string | null; login_method: "google" | "pin"; secret_set: boolean }),
@@ -113,6 +148,7 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
                 <th className="py-2">닉네임</th>
                 <th className="py-2">학번</th>
                 <th className="py-2">비밀번호</th>
+                <th className="py-2">로그인 (7일)</th>
                 <th className="py-2">오늘 미션</th>
                 <th className="py-2 text-right">배치 (한·영·기·코)</th>
                 <th />
@@ -126,12 +162,53 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
                   <td className="py-2">{s.nickname ?? <span className="text-text-muted">아직 안 정함</span>}</td>
                   <td className="py-2 font-typing">{`${cls.grade}${String(cls.class_no).padStart(2, "0")}${String(s.number).padStart(2, "0")}`}</td>
                   <td className="py-2">{s.secret_set ? "정함" : <span className="text-red-500">아직</span>}</td>
+                  <td className="py-2 text-small">
+                    {(() => {
+                      const f = failCount.get(s.enrollmentId);
+                      const locked = !!f && (f.day >= PIN_LOCK.dailyMax || f.recent >= PIN_LOCK.maxFailures);
+                      const ls = loginsOf(s.studentId);
+                      const devices = new Set(ls.map((l) => l.device)).size;
+                      return (
+                        <div className="flex flex-col items-start gap-1">
+                          {locked ? (
+                            <span className="flex items-center gap-1 font-bold text-red-500">
+                              🔒 잠김 (오늘 {f!.day}번 틀림) <UnlockButton classId={id} studentId={s.studentId} />
+                            </span>
+                          ) : f ? (
+                            <span className="text-red-500">오늘 {f.day}번 틀림</span>
+                          ) : null}
+                          {ls.length > 0 ? (
+                            <details>
+                              <summary className="cursor-pointer">
+                                {ls.length}번 · PC {devices}대
+                              </summary>
+                              <ul className="mt-1 font-typing">
+                                {ls.slice(0, 10).map((l, i) => (
+                                  <li key={i}>
+                                    {new Date(l.created_at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Seoul" })} · {l.device}
+                                    {l.ip ? ` · ${l.ip}` : ""}
+                                  </li>
+                                ))}
+                              </ul>
+                            </details>
+                          ) : (
+                            <span className="text-text-muted">기록 없음</span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </td>
                   <td className="py-2">{doneSet.has(s.studentId) ? "✅ 완료" : "—"}</td>
                   <td className="py-2 text-right text-small">
                     {placement.has(s.studentId) ? TRACKS.map((t) => placement.get(s.studentId)?.[t] ?? "-").join(" · ") : <span className="text-text-muted">아직</span>}
                   </td>
                   <td className="py-2 text-right">
-                    {s.login_method === "pin" && s.secret_set && <ResetSecretButton classId={id} studentId={s.studentId} />}
+                    {s.login_method === "pin" && (
+                      <div className="flex flex-col items-end gap-1">
+                        <SetSecretButton classId={id} studentId={s.studentId} name={`${s.number}번 ${s.real_name ?? ""}`} />
+                        {s.secret_set && <ResetSecretButton classId={id} studentId={s.studentId} />}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
