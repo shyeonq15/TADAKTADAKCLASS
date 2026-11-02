@@ -51,8 +51,13 @@ async function Content() {
   }
   return (
     <>
+      <p className="mb-2 text-center">
+        <span className="inline-block border-3 border-navy-900 bg-yellow-400 px-4 py-1 font-title text-heading text-navy-900 shadow-pixel-md">
+          시즌 {hall.season.n} · {hall.season.daysLeft}일 남음
+        </span>
+      </p>
       <p className="mb-5 text-center font-pixel text-body text-navy-900">
-        {hall.grade}학년 전체에서 부문별 최고 기록 TOP 10이에요. 닉네임만 보여요.
+        {hall.grade}학년 전체에서 부문별 TOP 10이에요. 닉네임만 보여요. 성장왕은 시즌(2주)마다 새로 시작해요!
       </p>
       <div className="grid gap-5 md:grid-cols-2">
         {hall.boards.map((b) => (

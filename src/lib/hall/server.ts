@@ -5,13 +5,15 @@ import "server-only";
 
 import { GAME_LABELS, HALL, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
 import { bossRanks } from "@/lib/games/boss";
+import { dayKeyKST } from "@/lib/practice/day";
+import { daysLeft, seasonOf, weekOf, type Season } from "@/lib/season";
 import { classesOf } from "@/lib/battle/server";
 import { STAGE_COUNT, stageName, tierOfStage } from "@/lib/practice/stages";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type HallEntry = { studentId: string; nickname: string; classNo: number; value: string; tier?: Tier; me: boolean };
 export type HallBoard = { id: string; title: string; note: string; entries: HallEntry[] };
-export type HallData = { grade: number; boards: HallBoard[] };
+export type HallData = { grade: number; boards: HallBoard[]; season: Season & { daysLeft: number } };
 
 type Who = { studentId: string; nickname: string; classNo: number };
 
@@ -25,11 +27,33 @@ function topPerStudent<T extends { student_id: string }>(rows: T[], better: (a: 
   return [...best.values()].sort(better).slice(0, HALL.size);
 }
 
+/** 성장 점수 합 (기간 안). 행이 많을 수 있어서 1000개씩 나눠 읽어요 */
+async function growthSums(ids: string[], from: string, to: string) {
+  const admin = createAdminClient();
+  const sums = new Map<string, number>();
+  for (let page = 0; page < 20; page++) {
+    const { data } = await admin
+      .from("growth_scores")
+      .select("student_id, total")
+      .in("student_id", ids)
+      .gte("day", from)
+      .lte("day", to)
+      .order("student_id")
+      .order("day")
+      .range(page * 1000, page * 1000 + 999);
+    for (const r of data ?? []) sums.set(r.student_id, (sums.get(r.student_id) ?? 0) + r.total);
+    if (!data || data.length < 1000) break;
+  }
+  return sums;
+}
+
 export async function loadHall(opts: { schoolYearId: string; grade: number; myId?: string | null }): Promise<HallData> {
   const admin = createAdminClient();
   const classes = await classesOf(opts.schoolYearId, opts.grade);
   const classIds = classes.map((c) => c.id);
-  if (!classIds.length) return { grade: opts.grade, boards: [] };
+  const today = dayKeyKST();
+  const season = { ...seasonOf(today), daysLeft: daysLeft(seasonOf(today), today) };
+  if (!classIds.length) return { grade: opts.grade, boards: [], season };
 
   const { data: enr } = await admin
     .from("enrollments")
@@ -46,7 +70,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
     });
   }
   const ids = [...people.keys()];
-  if (!ids.length) return { grade: opts.grade, boards: [] };
+  if (!ids.length) return { grade: opts.grade, boards: [], season };
 
   // 확인된 기록만: 의심 없음 (pending·rejected 는 suspicious 가 true 로 남아 있어요)
   const base = () =>
@@ -56,7 +80,8 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       .in("student_id", ids)
       .eq("suspicious", false);
 
-  const [speed, symbolAcc, games, progress, topClears, bosses] = await Promise.all([
+  const week = weekOf(today);
+  const [speed, symbolAcc, games, progress, topClears, bosses, weekGrowth, seasonGrowth] = await Promise.all([
     Promise.all(
       TRACKS.map((t) =>
         base()
@@ -83,6 +108,8 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
     // 마지막 단계를 실제로 깼는지 (열기만 한 것과 구분)
     admin.from("level_clears").select("student_id, track").eq("level", STAGE_COUNT).in("student_id", ids),
     bossRanks(ids),
+    growthSums(ids, week.start, week.end),
+    growthSums(ids, season.start, season.end),
   ]);
 
   type Row = { student_id: string; track: Track; mode: string; cpm: number; accuracy: number | string; keystrokes: number; score: number | null };
@@ -94,6 +121,18 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   });
 
   const boards: HallBoard[] = [];
+
+  // 성장왕: 타수가 아니라 "내 평균보다 얼마나 나아졌는지"(성장 점수) 합. 느린 친구도 1등 할 수 있어요
+  const growthBoard = (id: string, title: string, note: string, sums: Map<string, number>) => {
+    const rows = [...sums.entries()]
+      .filter(([, total]) => total > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, HALL.size)
+      .map(([student_id, total]) => ({ student_id, total }));
+    boards.push({ id, title, note, entries: rows.map((r) => entry(r, `${r.total}점`)) });
+  };
+  growthBoard("growth-week", "🌱 이번 주 성장왕", `${week.start.slice(5)} ~ ${week.end.slice(5)} 성장 점수 합 · 빠르기가 아니라 나아진 만큼!`, weekGrowth);
+  growthBoard("growth-season", `🌳 시즌 ${season.n} 성장왕`, `${season.start.slice(5)} ~ ${season.end.slice(5)} 성장 점수 합 · 시즌마다 새로 시작해요`, seasonGrowth);
 
   TRACKS.forEach((t, i) => {
     const rows = topPerStudent((speed[i].data ?? []) as Row[], (a, b) => b.cpm - a.cpm || Number(b.accuracy) - Number(a.accuracy));
@@ -173,7 +212,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
     });
   });
 
-  return { grade: opts.grade, boards };
+  return { grade: opts.grade, boards, season };
 }
 
 /** 학생: 내 학년 명예의 전당 */
