@@ -82,26 +82,37 @@ export function LevelRound({ track, level }: { track: Track; level: number }) {
         request={{ kind: "practice", track, level }}
         title={`${stageName(level)} · ${st.level.title}`}
         subtitle={`${stageName(level)} · ${MODE_LABELS[st.level.mode]} · 목표 ${st.goalCpm}타, 정확도 ${st.minAccuracy}%`}
-        actions={(save, retry) => (
-          <>
-            <PixelButton variant={save.unlockedLevel ? "ghost" : "success"} autoFocus={!save.unlockedLevel} onClick={retry}>
-              ↻ 다시 하기
-            </PixelButton>
-            {save.unlockedLevel && (
-              <PixelButton variant="success" autoFocus onClick={() => router.push(`/practice/${track}/${save.unlockedLevel}`)}>
-                다음 단계 ▶
+        actions={(save, retry) => {
+          // 다음 단계가 이미 열려 있으면 (지난 단계를 다시 친 경우 포함) 언제나 다음 단계 버튼을 보여 줘요
+          const top = Math.max(progress.unlocked[track], save.unlockedLevel ?? 0);
+          const next = top > level ? level + 1 : null;
+          const goNext = !!next && (save.cleared || !!save.unlockedLevel);
+          return (
+            <>
+              <PixelButton variant={goNext ? "ghost" : "success"} autoFocus={!goNext} onClick={retry}>
+                ↻ 다시 하기
               </PixelButton>
-            )}
-            {Object.keys(save.attempt.missedKeys).length > 0 && (
-              <PixelButton variant="reward" onClick={() => router.push(`/practice/weak/${track}`)}>
-                약한 키 맞춤 연습
+              {next && (
+                <PixelButton variant={goNext ? "success" : "ghost"} autoFocus={goNext} onClick={() => router.push(`/practice/${track}/${next}`)}>
+                  다음 단계 ▶
+                </PixelButton>
+              )}
+              {top > level + 1 && (
+                <PixelButton variant="ghost" onClick={() => router.push(`/practice/${track}/${top}`)}>
+                  내 단계로 ({stageName(top)}) ▶▶
+                </PixelButton>
+              )}
+              {Object.keys(save.attempt.missedKeys).length > 0 && (
+                <PixelButton variant="reward" onClick={() => router.push(`/practice/weak/${track}`)}>
+                  약한 키 맞춤 연습
+                </PixelButton>
+              )}
+              <PixelButton variant="ghost" onClick={() => router.push("/practice")}>
+                트랙 맵
               </PixelButton>
-            )}
-            <PixelButton variant="ghost" onClick={() => router.push("/practice")}>
-              트랙 맵
-            </PixelButton>
-          </>
-        )}
+            </>
+          );
+        }}
       />
     </>
   );
