@@ -11,6 +11,8 @@ import { BattleBoard } from "@/components/battle/BattleBoard";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { HomeDashboard } from "./HomeDashboard";
+import { dayKeyKST } from "@/lib/practice/day";
+import { daysLeft, seasonOf } from "@/lib/season";
 
 /** 처음 온 학생은 배치 테스트부터 (한 번만) */
 async function PlacementGate({ children }: { children: React.ReactNode }) {
@@ -25,8 +27,14 @@ async function HomeBattle() {
   const v = await requireStudent();
   const battle = await loadMyBattle(v.userId, v.enrollment);
   if (!battle) return null;
+  const today = dayKeyKST();
+  const season = seasonOf(today);
   return (
     <RetroWindow title="반대결_순위판.exe" className="mb-6">
+      <p className="mb-2 font-pixel text-small text-navy-900">
+        <span className="mr-2 border-2 border-navy-900 bg-yellow-400 px-2 font-bold">시즌 {season.n}</span>
+        {daysLeft(season, today)}일 남았어요 · 시즌마다 성장왕과 완주 기록이 프로필에 남아요!
+      </p>
       <BattleBoard data={battle} compact />
       <div className="mt-2 flex flex-wrap gap-2">
         <PixelLink href="/battle" variant="ghost" size="sm">

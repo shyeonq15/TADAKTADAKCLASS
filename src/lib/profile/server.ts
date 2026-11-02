@@ -16,7 +16,7 @@ import { allTiers, isCodeMaster, profileTier } from "@/lib/scoring/tier";
 import { loadLooks } from "@/lib/shop/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LESSON_COUNT } from "@/data/codeNotes";
-import { loadBadges } from "@/lib/badges/server";
+import { loadBadges, loadSeasonHistory, type SeasonRecord } from "@/lib/badges/server";
 
 export type ProfileData = {
   id: string;
@@ -40,6 +40,8 @@ export type ProfileData = {
   oldNicknames: { nickname: string; at: string }[];
   /** 모은 칭호 id */
   badges: string[];
+  /** 시즌 기록 (최근 시즌부터) */
+  seasons: SeasonRecord[];
   /** 가장 길게 이어서 연습한 날 */
   maxStreak: number;
   /** 내 프로필에서만 */
@@ -78,7 +80,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
   const enrollment = await loadEnrollment(targetId);
   if (!(await canView(viewer, targetId, enrollment?.classId ?? null, p.school_id))) return null;
 
-  const [progress, lessons, attempts, mission, wallet, history, looks, ranks, badges] = await Promise.all([
+  const [progress, lessons, attempts, mission, wallet, history, looks, ranks, badges, seasons] = await Promise.all([
     admin.from("track_progress").select("track, unlocked_level").eq("student_id", targetId),
     admin.from("level_clears").select("level", { count: "exact", head: true }).eq("student_id", targetId).eq("track", "lesson"),
     admin
@@ -94,6 +96,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
     loadLooks([targetId]),
     bossRanks([targetId]),
     loadBadges(targetId),
+    loadSeasonHistory(targetId, enrollment?.classId ?? null),
   ]);
   if (missing(history.error)) ready = false;
 
@@ -141,6 +144,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
     missionToday: !!mission.data,
     oldNicknames,
     badges: badges.earned,
+    seasons,
     maxStreak: badges.stats.maxStreak,
     private: mine
       ? {

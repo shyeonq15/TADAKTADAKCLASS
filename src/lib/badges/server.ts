@@ -8,7 +8,7 @@ import { LESSON_COUNT } from "@/data/codeNotes";
 import { bossRanks } from "@/lib/games/boss";
 import { dayKeyKST } from "@/lib/practice/day";
 import { allTiers } from "@/lib/scoring/tier";
-import { seasonOf } from "@/lib/season";
+import { seasonByNumber, seasonOf } from "@/lib/season";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const DAY = 86400000;
@@ -85,4 +85,49 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
 export async function loadBadges(studentId: string) {
   const stats = await loadBadgeStats(studentId);
   return { stats, earned: earnedBadges(stats) };
+}
+
+export type SeasonRecord = { n: number; start: string; end: string; days: number; finished: boolean; classKing: boolean; current: boolean };
+
+/**
+ * 시즌 기록: 시즌마다 연습한 날 수, 완주했는지, 우리 반 성장 점수 1등이었는지 (같은 점수면 같이 1등).
+ * 지금 진행 중인 시즌은 1등 표시를 하지 않아요 (끝나야 정해져요).
+ */
+export async function loadSeasonHistory(studentId: string, classId: string | null): Promise<SeasonRecord[]> {
+  if (!classId) return [];
+  const admin = createAdminClient();
+  const today = dayKeyKST();
+  const now = seasonOf(today);
+  if (now.n < 1) return [];
+  const first = seasonByNumber(1).start;
+
+  // 우리 반 성장 점수 (1000개씩 나눠 읽기)
+  const rows: { student_id: string; day: string; total: number }[] = [];
+  for (let page = 0; page < 30; page++) {
+    const { data } = await admin
+      .from("growth_scores")
+      .select("student_id, day, total")
+      .eq("class_id", classId)
+      .gte("day", first)
+      .order("day")
+      .order("student_id")
+      .range(page * 1000, page * 1000 + 999);
+    rows.push(...(data ?? []));
+    if (!data || data.length < 1000) break;
+  }
+
+  const out: SeasonRecord[] = [];
+  for (let n = 1; n <= now.n; n++) {
+    const s = seasonByNumber(n);
+    const inSeason = rows.filter((r) => r.day >= s.start && r.day <= s.end);
+    const sums = new Map<string, number>();
+    for (const r of inSeason) sums.set(r.student_id, (sums.get(r.student_id) ?? 0) + r.total);
+    const mine = sums.get(studentId) ?? 0;
+    const top = Math.max(0, ...sums.values());
+    // 성장 점수 행은 연습한 날에만 생겨요
+    const days = inSeason.filter((r) => r.student_id === studentId).length;
+    const current = n === now.n;
+    out.push({ ...s, days, finished: days >= SEASON_FINISH_DAYS, classKing: !current && mine > 0 && mine === top, current });
+  }
+  return out.reverse();
 }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PROFILE, TRACK_LABELS, TRACKS } from "@/config/game";
-import { BADGES } from "@/config/badges";
+import { BADGES, SEASON_FINISH_DAYS } from "@/config/badges";
 import { renameNickname, updateBio } from "@/app/(student)/actions";
 import { Minimi } from "@/components/pixel/Minimi";
 import { DialogBox } from "@/components/ui/DialogBox";
@@ -150,6 +150,28 @@ export function ProfileView({ p, mates }: { p: ProfileData; mates: Mate[] }) {
             칭호는 등수가 아니라 &ldquo;해냈다!&rdquo;를 모아요. 가장 길게 이어서 연습한 날: {p.maxStreak}일
           </p>
         </RetroWindow>
+
+        {p.seasons.length > 0 && (
+          <RetroWindow title="시즌 기록">
+            <ul className="flex flex-col font-pixel text-body text-navy-900">
+              {p.seasons.map((s) => (
+                <li key={s.n} className="flex flex-wrap items-center gap-2 border-b border-win-shadow py-1.5">
+                  <strong className="w-16 shrink-0">시즌 {s.n}</strong>
+                  <span className="text-small text-text-muted">
+                    {s.start.slice(5)} ~ {s.end.slice(5)}
+                  </span>
+                  <span className="text-small">연습한 날 {s.days}일</span>
+                  {s.finished && <span className="border-2 border-navy-900 bg-lime-400 px-2 text-small">🏁 완주</span>}
+                  {s.classKing && <span className="border-2 border-navy-900 bg-yellow-400 px-2 text-small">🌳 우리 반 성장왕</span>}
+                  {s.current && <span className="ml-auto text-small text-text-muted">진행 중</span>}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 font-pixel text-small text-text-muted">
+              시즌은 2주예요. {SEASON_FINISH_DAYS}일 이상 연습하면 완주! 시즌이 끝나면 우리 반에서 성장 점수가 가장 높은 친구가 성장왕이 돼요.
+            </p>
+          </RetroWindow>
+        )}
 
         {p.mine && p.private && <NicknameChange p={p} />}
 
