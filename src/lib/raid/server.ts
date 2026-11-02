@@ -19,6 +19,8 @@ export type RaidData = {
   /** 이번 주에 한 판이라도 친 친구 수 */
   joined: number;
   mine: number;
+  /** 반 친구 모두의 기여 (많이 친 순서). 교사 결정(2026-11-02): 레이드 기여는 순위·숫자 모두 공개 */
+  board: { id: string; nickname: string; keystrokes: number; me: boolean }[];
   defeated: boolean;
   /** SQL 전이면 false (보상 저장 불가, 진행률만 보여요) */
   ready: boolean;
@@ -32,9 +34,10 @@ export async function loadRaid(classId: string, myId: string): Promise<RaidData>
   const weekNo = Math.floor(Date.parse(`${week.start}T00:00:00Z`) / (7 * DAY));
   const boss = RAID.bosses[weekNo % RAID.bosses.length];
 
-  const { data: enr } = await admin.from("enrollments").select("student_id, number, profiles!inner(role)").eq("class_id", classId);
-  type Enr = { student_id: string; number: number; profiles: { role: string } };
-  const ids = ((enr ?? []) as unknown as Enr[]).filter((e) => e.profiles.role === "student" && !isTestNumber(e.number)).map((e) => e.student_id);
+  const { data: enr } = await admin.from("enrollments").select("student_id, number, profiles!inner(role, nickname)").eq("class_id", classId);
+  type Enr = { student_id: string; number: number; profiles: { role: string; nickname: string | null } };
+  const members = ((enr ?? []) as unknown as Enr[]).filter((e) => e.profiles.role === "student" && !isTestNumber(e.number));
+  const ids = members.map((e) => e.student_id);
   const hp = Math.max(1, ids.length) * RAID.hpPerStudent;
 
   // 이번 주 타수 (한국 시간 월요일 0시부터). 행이 많을 수 있어서 1000개씩
@@ -71,5 +74,8 @@ export async function loadRaid(classId: string, myId: string): Promise<RaidData>
     }
   }
 
-  return { week, boss, hp, damage: Math.min(damage, hp), members: ids.length, joined: per.size, mine: per.get(myId) ?? 0, defeated, ready };
+  const board = members
+    .map((m) => ({ id: m.student_id, nickname: m.profiles.nickname ?? "친구", keystrokes: per.get(m.student_id) ?? 0, me: m.student_id === myId }))
+    .sort((a, b) => b.keystrokes - a.keystrokes || a.nickname.localeCompare(b.nickname));
+  return { week, boss, hp, damage: Math.min(damage, hp), members: ids.length, joined: per.size, mine: per.get(myId) ?? 0, board, defeated, ready };
 }
