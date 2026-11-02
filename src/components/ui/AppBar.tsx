@@ -69,6 +69,14 @@ export function AppBar({ nickname, isTeacher }: { nickname: string; isTeacher: b
       >
         📮
       </Link>
+      <Link
+        href="/settings"
+        title="설정 (디지털 눈·효과음·배경음악)"
+        aria-label="설정"
+        className={`flex h-9 items-center px-2 text-body ${pathname.startsWith("/settings") ? "win-bevel-pressed bg-paper" : "win-bevel"}`}
+      >
+        ⚙️
+      </Link>
       <form action={signOut}>
         <button className="win-bevel h-9 px-3 font-pixel text-small text-navy-900 active:win-bevel-pressed">로그아웃</button>
       </form>

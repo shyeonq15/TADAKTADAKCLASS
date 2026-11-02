@@ -7,6 +7,7 @@ import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { BUNNY, CLOUD, SPARKLE } from "@/components/pixel/sprites";
 import { fallMs, rainStage, spawnMs, startsLike, type RainEvent } from "@/lib/games/rain";
 import { quizParts } from "@/lib/games/quiz";
+import { play } from "@/lib/sound";
 import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
 import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
 import { KeyStatus } from "@/components/typing/KeyStatus";
@@ -104,6 +105,7 @@ export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
           s.misses++;
           s.combo = 0;
           s.ouchUntil = t + 700;
+          play("miss");
         }
       }
       s.pops = s.pops.filter((p) => t - p.at < 700);
@@ -149,6 +151,7 @@ export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
       s.events.push({ t: Math.round(t), type: "wrong" });
       s.combo = 0;
       setShake((n) => n + 1);
+      play("error");
       return;
     }
     const mult = 1 + Math.floor(s.combo / RAIN.comboStep) * RAIN.comboBonus;
@@ -160,6 +163,7 @@ export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     s.score += gained;
     s.jumpUntil = t + 450;
     s.comboAt = t;
+    play("pop");
     const y = ((t - target.spawnAt) / target.fall) * (FIELD_H - GROUND_H - WORD_H);
     s.pops.push({ id: s.popId++, text: `+${gained}`, x: target.x, y, at: t });
   };

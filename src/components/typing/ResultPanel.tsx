@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import { play } from "@/lib/sound";
 import { GROWTH, TIER_LABELS, TRACK_LABELS } from "@/config/game";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { getStage, stageName } from "@/lib/practice/stages";
@@ -12,6 +13,11 @@ import type { SaveResult } from "@/lib/practice/store";
 /** 결과 화면: 타수, 정확도, 내 평균 대비 변화, 자주 틀린 키 (PRD P4) */
 export function ResultPanel({ save, actions }: { save: SaveResult; actions: ReactNode }) {
   const { attempt, before } = save;
+  // 단계가 열리거나 티어가 오르면 레벨 업 소리 (설정에서 켠 학생만)
+  const leveled = !!save.tierUp || !!save.unlockedLevel;
+  useEffect(() => {
+    if (leveled) play("levelup");
+  }, [leveled]);
   const level = attempt.level > 0 ? getStage(attempt.track, attempt.level) : undefined;
 
   const messages: string[] = [];

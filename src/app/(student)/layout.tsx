@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { AppBar } from "@/components/ui/AppBar";
+import { BgmPlayer } from "@/components/ui/BgmPlayer";
 import { Loading } from "@/components/ui/Loading";
 import { requireStudent } from "@/lib/auth/viewer";
 import { loadPracticeData } from "@/lib/practice/server";
@@ -13,6 +14,7 @@ async function StudentGate({ children }: { children: React.ReactNode }) {
   const data = await loadPracticeData(v.userId);
   return (
     <PracticeDataProvider initial={data}>
+      <BgmPlayer />
       <AppBar nickname={v.nickname ?? (v.role === "teacher" ? "선생님" : "")} isTeacher={v.role === "teacher"} />
       {children}
     </PracticeDataProvider>

@@ -18,6 +18,8 @@ import {
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { TypingArea, type Mask } from "./TypingArea";
 import { KeyStatus } from "./KeyStatus";
+import { DigitalEye } from "./DigitalEye";
+import { play } from "@/lib/sound";
 
 export type SessionResult = {
   stats: SessionStats;
@@ -72,6 +74,9 @@ export function TypingSession({ lines, track, code: codeProp, timeLimitSec, mask
       const done = next.doneLines.reduce((n, l) => n + l.length, 0) + (isFinished(next) ? 0 : next.typed.length);
       onProgress(done, (next.finishedAt ?? t) - next.startedAt, sessionStats(next, t));
     }
+    // 효과음: 오타가 늘면 삑, 다 치면 빰빠밤 (설정에서 켠 학생만)
+    if (next.totalErrors > ref.current.totalErrors) play("error");
+    if (isFinished(next) && !isFinished(ref.current)) play("clear");
     ref.current = next;
     setSession(next);
     if (isFinished(next)) finish(next);
@@ -123,7 +128,10 @@ export function TypingSession({ lines, track, code: codeProp, timeLimitSec, mask
           update(r.state);
           setNow(Date.now());
         }}
-        onKey={() => update(recordKey(ref.current, Date.now()))}
+        onKey={() => {
+          play("key");
+          update(recordKey(ref.current, Date.now()));
+        }}
         onBlocked={() => {
           setBlockedAt(Date.now());
           setNow(Date.now());
@@ -150,6 +158,7 @@ export function TypingSession({ lines, track, code: codeProp, timeLimitSec, mask
         )}
       </div>
       {!isFinished(session) && <KeyStatus track={track} />}
+      {!isFinished(session) && <DigitalEye ch={[...(session.typed || session.doneLines.at(-1) || "")].at(-1)} />}
     </div>
   );
 }
