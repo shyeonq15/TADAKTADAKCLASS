@@ -107,7 +107,8 @@ async function lockedOut(enrollmentId: string): Promise<"short" | "teacher" | nu
         .eq("enrollment_id", enrollmentId)
         .gte("failed_at", new Date(Date.now() - minutes * 60000).toISOString())
     ).count ?? 0;
-  const [recent, day] = await Promise.all([count(PIN_LOCK.windowMinutes), count(24 * 60)]);
+  // 틀린 기록은 로그인에 성공하거나 선생님이 잠금을 풀 때만 지워져요 → 기간 없이 모두 셈 (= 선생님이 풀 때까지 잠금)
+  const [recent, day] = await Promise.all([count(PIN_LOCK.windowMinutes), count(60 * 24 * 365 * 10)]);
   if (day >= PIN_LOCK.dailyMax) return "teacher";
   if (recent >= PIN_LOCK.maxFailures) return "short";
   return null;
@@ -135,8 +136,7 @@ export async function pictureLogin(_: FormState, formData: FormData): Promise<Fo
     const { count } = await admin
       .from("pin_failures")
       .select("*", { count: "exact", head: true })
-      .eq("enrollment_id", s.enrollmentId)
-      .gte("failed_at", new Date(Date.now() - 24 * 3600000).toISOString());
+      .eq("enrollment_id", s.enrollmentId);
     const left = PIN_LOCK.dailyMax - (count ?? 0);
     return left > 0
       ? { ok: false, message: `그림 비밀번호가 달라요. ${left}번 더 틀리면 잠겨요.` }

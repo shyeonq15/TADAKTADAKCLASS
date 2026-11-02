@@ -19,7 +19,7 @@ async function loadLoginGuard(enrIds: string[], rosterIds: string[]) {
   const admin = createAdminClient();
   const [{ data: fails }, { data: logins }] = await Promise.all([
     enrIds.length
-      ? admin.from("pin_failures").select("enrollment_id, failed_at").in("enrollment_id", enrIds).gte("failed_at", new Date(Date.now() - 86400000).toISOString())
+      ? admin.from("pin_failures").select("enrollment_id, failed_at").in("enrollment_id", enrIds)
       : Promise.resolve({ data: [] as { enrollment_id: string; failed_at: string }[] }),
     rosterIds.length
       ? admin
@@ -172,10 +172,10 @@ async function ClassDetail({ params }: { params: PageProps<"/teacher/classes/[id
                         <div className="flex flex-col items-start gap-1">
                           {locked ? (
                             <span className="flex items-center gap-1 font-bold text-red-500">
-                              🔒 잠김 (오늘 {f!.day}번 틀림) <UnlockButton classId={id} studentId={s.studentId} />
+                              🔒 잠김 ({f!.day}번 틀림) <UnlockButton classId={id} studentId={s.studentId} />
                             </span>
                           ) : f ? (
-                            <span className="text-red-500">오늘 {f.day}번 틀림</span>
+                            <span className="text-red-500">{f.day}번 틀림 (5번이면 잠겨요)</span>
                           ) : null}
                           {ls.length > 0 ? (
                             <details>
