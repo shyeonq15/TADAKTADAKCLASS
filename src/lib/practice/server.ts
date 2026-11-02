@@ -443,14 +443,17 @@ export async function saveRound(
   if (ins.error) return { error: "기록을 저장하지 못했어요. 다시 해 주세요." };
   const attempt = toAttempt(ins.data as AttemptRow);
 
-  // 개인 기록 갱신
+  // 개인 기록 갱신: 연습 트랙 단계 판(오늘의 미션 포함)끼리만 비교해요.
+  // 파이썬 첫걸음·빈칸·연습팩은 글이 짧아 타수가 튀어서 기록 갱신에서 빼요.
+  const stageRound = level > 0;
   const prevBest = Math.max(
     0,
     ...before.attempts
-      .filter((a) => a.track === track && !a.suspicious && a.kind !== "placement" && a.kind !== "game")
+      .filter((a) => a.track === track && !a.suspicious && a.level > 0 && (a.kind === "practice" || a.kind === "mission"))
       .map((a) => a.cpm),
   );
-  const personalBest = !suspicious && req.kind !== "placement" && prevBest > 0 && cpm > prevBest;
+  const personalBest =
+    !suspicious && stageRound && accuracy >= COINS.minAccuracy && prevBest > 0 && cpm > prevBest;
 
   // 레벨 통과 → 다음 레벨 열기
   const lv = level > 0 && (req.kind === "practice" || req.kind === "mission") ? getStage(track, level) : undefined;
@@ -477,7 +480,13 @@ export async function saveRound(
 
   // 코인
   let coins = 0;
-  if (!suspicious && req.kind !== "placement") {
+  if (req.kind === "lesson") {
+    // 파이썬 첫걸음은 강마다 처음 통과할 때 한 번만
+    if (lessonDone) {
+      await addCoins(who.userId, COINS.lessonFirstClear, `파이썬 첫걸음 ${lessonDone}강`);
+      coins += COINS.lessonFirstClear;
+    }
+  } else if (!suspicious && req.kind !== "placement" && accuracy >= COINS.minAccuracy) {
     await addCoins(who.userId, COINS.practiceRound, "연습 완료");
     coins += COINS.practiceRound;
     if (personalBest) {

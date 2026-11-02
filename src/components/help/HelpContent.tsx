@@ -153,7 +153,8 @@ export function CoinHelp() {
       <p>코인은 연습하고 도전할 때마다 모여요. 개인 지갑과 우리 반 지갑이 있어요.</p>
       <Box>
         <ul className="list-disc pl-5">
-          <li>연습 한 판 · {COINS.practiceRound}코인</li>
+          <li>연습 한 판 · {COINS.practiceRound}코인 (정확도 {COINS.minAccuracy}% 이상)</li>
+          <li>파이썬 첫걸음 강 처음 통과 · {COINS.lessonFirstClear}코인</li>
           <li>개인 기록 갱신 · {COINS.personalBest}코인</li>
           <li>
             오늘의 미션 완료({MISSION.rounds}판) · 나에게 {COINS.missionPersonal}코인 + 우리 반 지갑에 {COINS.missionClass}코인

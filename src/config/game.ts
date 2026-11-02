@@ -167,6 +167,10 @@ export const COINS = {
   missionClass: 5,
   personalBest: 10,
   practiceRound: 2,
+  /** 연습 코인·개인 기록 코인은 정확도 이 값(%) 이상일 때만 (아무 키나 눌러 끝낸 판은 코인 없음) */
+  minAccuracy: 80,
+  /** 파이썬 첫걸음 강을 처음 통과했을 때 (다시 들으면 코인 없음) */
+  lessonFirstClear: 5,
 } as const;
 
 /* ── 혼자 하는 게임 ── */
