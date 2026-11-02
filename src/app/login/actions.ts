@@ -9,6 +9,7 @@ import { requestOrigin } from "@/lib/auth/origin";
 import { isValidSecret, parseStudentNo } from "@/lib/auth/pictures";
 import { PIN_LOCK, pinPassword } from "@/lib/auth/pin";
 import { ensureProfile } from "@/lib/auth/viewer";
+import { startStudentSession } from "@/lib/auth/session";
 
 export type FormState = { ok: boolean; message: string } | null;
 
@@ -126,6 +127,7 @@ export async function pictureLogin(_: FormState, formData: FormData): Promise<Fo
     return fail;
   }
   await admin.from("pin_failures").delete().eq("enrollment_id", s.enrollmentId);
+  await startStudentSession(s.studentId);
   redirect("/");
 }
 
@@ -147,6 +149,7 @@ export async function setupPicture(_: FormState, formData: FormData): Promise<Fo
 
   const supabase = await createClient();
   await supabase.auth.signInWithPassword({ email: s.email, password });
+  await startStudentSession(s.studentId);
   redirect("/onboarding");
 }
 

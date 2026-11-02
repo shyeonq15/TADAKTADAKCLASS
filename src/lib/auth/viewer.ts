@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { authConfig, isTeacherEmail, schoolYearOf } from "./config";
+import { sessionMatches } from "./session";
 
 // 지금 로그인한 사람(viewer) 정보를 읽는 곳. 서버 화면·서버 함수는 모두 여기를 거칩니다.
 
@@ -99,24 +100,39 @@ export async function loadEnrollment(studentId: string): Promise<Enrollment | nu
   };
 }
 
-/** 로그인 안 했으면 null. 한 요청 안에서는 한 번만 조회 */
-export const getViewer = cache(async (): Promise<Viewer | null> => {
+type ProfileRow = {
+  role: "student" | "teacher";
+  nickname: string | null;
+  real_name: string | null;
+  school_id: string;
+  login_method: "google" | "pin";
+  email: string | null;
+  session_key?: string | null;
+};
+
+/** 로그인한 사람 + "다른 PC에서 로그인해서 밀려났는지". 한 요청 안에서는 한 번만 조회 */
+const loadViewer = cache(async (): Promise<{ viewer: Viewer | null; kicked: boolean }> => {
   const supabase = await createClient();
   // 로그인 토큰을 서버에서 바로 확인해요 (서명 확인, 인증 서버에 다시 묻지 않아서 빨라요)
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  if (!claims?.sub) return null;
+  if (!claims?.sub) return { viewer: null, kicked: false };
   const userId = claims.sub;
 
-  // 프로필과 반 정보를 동시에 읽어요
+  // 프로필과 반 정보를 동시에 읽어요 (session_key 칸이 아직 없으면 빼고 다시 읽어요)
   const admin = createAdminClient();
-  const [{ data: p }, enrollment] = await Promise.all([
-    admin.from("profiles").select("role, nickname, real_name, school_id, login_method, email").eq("id", userId).maybeSingle(),
-    loadEnrollment(userId),
-  ]);
-  if (!p) return null;
+  const readProfile = async () => {
+    const r = await admin.from("profiles").select("role, nickname, real_name, school_id, login_method, email, session_key").eq("id", userId).maybeSingle();
+    if (!r.error) return r.data as ProfileRow | null;
+    const old = await admin.from("profiles").select("role, nickname, real_name, school_id, login_method, email").eq("id", userId).maybeSingle();
+    return old.data as ProfileRow | null;
+  };
+  const [p, enrollment] = await Promise.all([readProfile(), loadEnrollment(userId)]);
+  if (!p) return { viewer: null, kicked: false };
+  // 한 계정은 한 PC에서만: 다른 PC에서 새로 로그인했으면 이 PC는 로그아웃
+  if (p.role === "student" && !(await sessionMatches(p.session_key))) return { viewer: null, kicked: true };
 
-  return {
+  const viewer: Viewer = {
     userId,
     email: p.email ?? (typeof claims.email === "string" ? claims.email : ""),
     role: p.role,
@@ -126,12 +142,16 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     loginMethod: p.login_method,
     enrollment: p.role === "student" ? enrollment : null,
   };
+  return { viewer, kicked: false };
 });
 
+/** 로그인 안 했으면 null */
+export const getViewer = cache(async (): Promise<Viewer | null> => (await loadViewer()).viewer);
+
 export async function requireViewer() {
-  const v = await getViewer();
-  if (!v) redirect("/login");
-  return v;
+  const { viewer, kicked } = await loadViewer();
+  if (!viewer) redirect(kicked ? "/auth/kicked" : "/login");
+  return viewer;
 }
 
 /** 학생 화면: 반과 닉네임까지 정해져 있어야 함 */
