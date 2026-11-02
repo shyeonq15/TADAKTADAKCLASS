@@ -16,6 +16,7 @@ import { useLobby, useRoom, type Me } from "@/lib/games/realtime";
 import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
 import { toSubmission } from "@/lib/practice/submission";
+import { useOnHide } from "@/lib/games/useOnHide";
 
 const DIFFICULTY_LABELS: Record<RaceDifficulty, string> = { easy: "쉬움 (낱말)", normal: "보통 (문장)", hard: "어려움 (긴 글)" };
 
@@ -77,6 +78,19 @@ export function RaceGame({ me, rating }: { me: Me; rating: number }) {
   }, [ticking]);
 
   const lobby = useLobby(me, phase.name !== "lobby" && phase.name !== "queue");
+
+  // 대결 중에 다른 메뉴로 가면 그 판은 무효 (연결이 끊긴 판과 같아요). 대기방·자동 매치에서는 빠져요
+  useOnHide(() => {
+    if (phase.name === "lobby" || phase.name === "error") return;
+    if (phase.name === "room") void safeCall(() => raceLeave(phase.matchId));
+    if (phase.name === "queue") void safeCall(() => raceQueueLeave());
+    // 시리즈 중간이면 다음 판에서도 빠져요 (친구들이 기다리지 않게)
+    const next = phase.name === "result" ? results?.next?.matchId : undefined;
+    if (next) void safeCall(() => raceLeave(next));
+    setResults(null);
+    setDropped(false);
+    setPhase({ name: "error", message: "대결 중에 다른 화면으로 가서 대결에서 빠졌어요. 다시 시작해 주세요!" });
+  });
 
   /** 판 정보를 받아 카운트다운으로 */
   const goCountdown = useCallback(async (id: string) => {

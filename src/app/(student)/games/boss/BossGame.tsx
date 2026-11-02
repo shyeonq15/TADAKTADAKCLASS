@@ -18,6 +18,7 @@ import type { BossResult, BossSummary } from "@/lib/games/boss";
 import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
 import { toSubmission } from "@/lib/practice/submission";
+import { useOnHide } from "@/lib/games/useOnHide";
 
 type Challenge = {
   bossId: string;
@@ -114,6 +115,11 @@ function Race({
 
 export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: MinimiLook }) {
   const [phase, setPhase] = useState<Phase>({ name: "list" });
+  // 도전 중에 다른 메뉴로 가면 그 판은 무효 (돌아왔을 때 멈춘 판이 다시 움직이지 않게)
+  useOnHide(() => {
+    if (phase.name === "countdown" || phase.name === "racing" || phase.name === "loading")
+      setPhase({ name: "error", message: "보스전 중에 다른 화면으로 가서 이번 도전은 무효가 됐어요. 다시 도전해 주세요!" });
+  });
 
   const challenge = async (b: BossSummary) => {
     setPhase({ name: "loading" });

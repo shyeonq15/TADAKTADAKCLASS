@@ -16,6 +16,7 @@ import type { RainEvent } from "@/lib/games/rain";
 import type { GameSave } from "@/lib/games/server";
 import { safeCall } from "@/lib/practice/call";
 import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
+import { useOnHide } from "@/lib/games/useOnHide";
 
 // 혼자 하는 게임 공통 흐름: 트랙 고르기 → 게임 → 서버가 점수 계산 → 결과
 
@@ -77,6 +78,11 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
     snapshot.current = fn;
   }, []);
   useEndOnLeave(phase.name === "playing" ? phase.token : null, snapshot);
+  // 게임 중에 다른 메뉴로 가면 그 판은 저장되고 끝나요. 돌아왔을 때 멈춘 판이 다시 움직이지 않게 안내 화면으로
+  useOnHide(() => {
+    if (phase.name === "playing" || phase.name === "loading")
+      setPhase({ name: "error", message: "게임 중에 다른 화면으로 가서 그 판은 거기까지 저장했어요. 새 판을 시작해 주세요!" });
+  });
 
   const bestOf = (t: Track) =>
     Math.max(0, ...data.attempts.filter((a) => a.kind === "game" && a.mode === game && a.track === t && !a.suspicious).map((a) => a.score ?? 0));

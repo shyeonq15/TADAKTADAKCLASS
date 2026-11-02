@@ -76,6 +76,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
 
   useEffect(() => {
     const s = g.current;
+    // 이미 끝난 판이 다시 보이면 (다른 메뉴에 갔다 온 경우) 다시 돌리지 않아요
+    if (s.ended) return;
     s.start = performance.now();
     // 게임 중에 화면을 떠나면 지금까지의 기록으로 판을 끝내요 (SoloGameFlow 가 부름)
     onSnapshot?.(() => (s.ended ? null : ((s.ended = true), { events: s.events, durationMs: Math.round(now()), keyTimes: s.keyTimes })));
