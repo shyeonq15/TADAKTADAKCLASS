@@ -8,7 +8,7 @@ export function RaidWindow({ raid }: { raid: RaidData }) {
   const left = Math.max(0, raid.hp - raid.damage);
   return (
     <RetroWindow title="⚔️ 이번 주 협동 레이드">
-      <div id="raid" className="flex flex-col gap-3 font-pixel text-body text-navy-900 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 font-pixel text-body text-navy-900 md:flex-row md:items-center">
         <div className="flex flex-col items-center px-4">
           <span className={`text-[64px] leading-none ${raid.defeated ? "opacity-30 grayscale" : "animate-bob"}`} aria-hidden>
             {raid.boss.icon}
