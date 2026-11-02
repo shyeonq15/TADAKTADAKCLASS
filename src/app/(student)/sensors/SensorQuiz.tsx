@@ -6,6 +6,13 @@ import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelButton } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { play } from "@/lib/sound";
+import { SensorLearn } from "./SensorLearn";
+
+/** 입력/출력 이유 (모든 부품에 같은 설명) */
+const IO_WHY = {
+  input: "바깥 세상의 정보를 알아내서 컴퓨터로 보내는 센서라서 입력이에요.",
+  output: "컴퓨터의 명령을 받아 빛·소리·움직임으로 내보내는 액추에이터라서 출력이에요.",
+};
 
 // 센서·액추에이터 분류: 부품을 보고 아날로그/디지털 × 입력/출력 중에서 골라요 (숫자키 1~4)
 
@@ -27,6 +34,8 @@ const pick = () => {
 };
 
 export function SensorQuiz() {
+  // 처음엔 "알아보기"부터 읽고 문제를 풀어요
+  const [learned, setLearned] = useState(false);
   const [list, setList] = useState<Part[]>(pick);
   const [i, setI] = useState(0);
   const [chosen, setChosen] = useState<IoKind | null>(null);
@@ -50,6 +59,7 @@ export function SensorQuiz() {
   // 숫자키 1~4로 고르고, Enter로 다음
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!learned) return;
       const g = GRID.find((x) => x.key === e.key);
       if (g && !chosen) choose(g.kind);
       // Enter 는 "다음" 버튼이 받아요 (버튼에 포커스가 없을 때만 여기서)
@@ -58,6 +68,8 @@ export function SensorQuiz() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
+  if (!learned) return <SensorLearn onStart={() => setLearned(true)} />;
 
   if (!part) {
     const score = list.length - wrong.length;
@@ -77,6 +89,9 @@ export function SensorQuiz() {
               ))}
             </ul>
           )}
+          <PixelButton variant="ghost" onClick={() => setLearned(false)}>
+            설명 다시 보기
+          </PixelButton>
           <PixelButton
             variant="success"
             autoFocus
@@ -101,6 +116,11 @@ export function SensorQuiz() {
         <p className="font-pixel text-small text-sky-100">
           센서는 입력, 액추에이터(움직이고 빛나고 소리 내는 것)는 출력 · 값이 여러 단계면 아날로그, 0과 1 두 가지면 디지털
         </p>
+      </div>
+      <div className="flex justify-end">
+        <button type="button" onClick={() => setLearned(false)} className="font-pixel text-small text-navy-900 underline underline-offset-4">
+          📖 입력·출력, 아날로그·디지털 설명 다시 보기
+        </button>
       </div>
       <RetroWindow title={`부품 ${i + 1} / ${list.length}`}>
         <div className="flex flex-col items-center gap-1 py-2 text-center">
@@ -141,7 +161,12 @@ export function SensorQuiz() {
         {chosen && (
           <div className={`mt-3 border-3 border-navy-900 px-3 py-2 font-pixel text-body ${chosen === part.kind ? "bg-lime-200" : "bg-paper"}`}>
             <p className="font-bold">{chosen === part.kind ? "정답!" : `아쉬워요! 정답은 ${IO_KIND_LABELS[part.kind]}`}</p>
-            <p>{part.why}</p>
+            <p className="mt-1">
+              <strong>{part.kind === "ai" || part.kind === "di" ? "입력" : "출력"}</strong> · {part.kind === "ai" || part.kind === "di" ? IO_WHY.input : IO_WHY.output}
+            </p>
+            <p>
+              <strong>{part.kind === "ai" || part.kind === "ao" ? "아날로그" : "디지털"}</strong> · {part.why}
+            </p>
             <PixelButton size="sm" variant="success" className="mt-2" autoFocus onClick={next}>
               다음 ▶ (Enter)
             </PixelButton>
