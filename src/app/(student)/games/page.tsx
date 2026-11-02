@@ -7,6 +7,7 @@ const GAMES = [
   { href: "/games/runner", icon: "🐰", title: "토끼 달리기", desc: "장애물 단어를 쳐서 점프! 멀리 달려요", ready: true },
   { href: "/games/bits", icon: "💾", title: "비트 해독기", desc: "떨어지는 이진수를 풀어요 (이진수·ASCII)", ready: true },
   { href: "/games/io", icon: "🖨️", title: "입출력 레이스", desc: "입력 장치는 i, 출력 장치는 o!", ready: true },
+  { href: "/pixel", icon: "🖼️", title: "0과 1 픽셀 아트", desc: "숫자로 그림을 그려 우리 반 갤러리에 걸어요", ready: true },
   { href: "/games/boss", icon: "👾", title: "보스전", desc: "선생님 기록(고스트)과 레이스해요", ready: true },
   { href: "/games/race", icon: "🏁", title: "친구 대결", desc: "반 친구와 실시간 레이스 (최대 4명)", ready: true },
   { href: "/hall", icon: "🏆", title: "명예의 전당", desc: "우리 학년 부문별 최고 기록 TOP 10", ready: true },

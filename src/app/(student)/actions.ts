@@ -18,6 +18,7 @@ import { buyItem, equipItem } from "@/lib/shop/server";
 import { completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
+import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
 
@@ -213,4 +214,18 @@ export async function retireMyBoss(bossId: string) {
   const res = await retireStudentBoss(bossId, { userId: v.userId, schoolId: v.schoolId });
   if ("error" in res) return res;
   return { ...res, data: await loadUncached(v.userId) };
+}
+
+/* ───────── 픽셀 아트 ───────── */
+
+export async function savePixel(input: { title: string; bits: number; rows: string[] }) {
+  const w = await who();
+  return w ? savePixelArt(w, input) : NOT_LOGGED_IN;
+}
+
+export async function deleteMyPixel(id: string) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  await deletePixelArt(id, { studentId: w.userId });
+  return { ok: true as const };
 }

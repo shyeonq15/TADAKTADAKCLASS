@@ -6,6 +6,8 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { requireStudent } from "@/lib/auth/viewer";
 import { loadRoom } from "@/lib/room/server";
 import { loadClassNews } from "@/lib/room/news";
+import { loadClassGallery } from "@/lib/pixel/server";
+import { PixelGallery } from "./PixelGallery";
 import Link from "next/link";
 import { RoomScreen } from "./RoomScreen";
 
@@ -13,7 +15,11 @@ async function Content() {
   await connection();
   const v = await requireStudent();
   const classId = v.enrollment?.classId ?? null;
-  const [room, news] = await Promise.all([loadRoom({ userId: v.userId, classId }), classId ? loadClassNews(classId) : []]);
+  const [room, news, arts] = await Promise.all([
+    loadRoom({ userId: v.userId, classId }),
+    classId ? loadClassNews(classId) : [],
+    classId ? loadClassGallery(classId, v.userId) : [],
+  ]);
   if (!room) {
     return (
       <RetroWindow title="우리 반 미니룸">
@@ -57,6 +63,9 @@ async function Content() {
             ))}
           </ul>
         </RetroWindow>
+      </div>
+      <div className="mt-5">
+        <PixelGallery arts={arts} />
       </div>
     </>
   );
