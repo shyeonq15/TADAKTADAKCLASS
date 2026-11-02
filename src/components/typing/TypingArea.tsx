@@ -16,6 +16,9 @@ const CHAR_CLASS: Record<CharState, string> = {
 
 /** 남은 줄은 몇 줄까지 미리 보여줄지 */
 const LOOKAHEAD = 3;
+/** 코드: 한 번에 보여 줄 줄 수, 그중 지금 줄 위로 남길 줄 수 */
+const CODE_WINDOW = 12;
+const CODE_BEFORE = 4;
 
 /** 빈칸 채우기: 이 줄의 이 칸들은 칠 때까지 "_"로 가림 */
 export type Mask = { line: number; start: number; length: number };
@@ -75,9 +78,11 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
   const composingRef = useRef(false);
 
   const { lines, lineIndex, typed, composing, doneLines } = session;
-  // 코드는 전체 흐름이 보여야 하니 친 줄도 모두 남겨 둠 (코드 지문은 12줄 안쪽)
-  const first = code ? 0 : Math.max(0, lineIndex - 1);
-  const last = code ? lines.length : Math.min(lines.length, lineIndex + 1 + LOOKAHEAD);
+  // 코드는 흐름이 보여야 하니 친 줄도 남겨 둬요. 다만 판이 길면(기호 마스터 이상 등) 창이 끝없이 길어지지 않게
+  // 지금 줄 둘레 CODE_WINDOW 줄만 보여 줘요 (위로 CODE_BEFORE 줄)
+  const codeFirst = Math.max(0, Math.min(lineIndex - CODE_BEFORE, lines.length - CODE_WINDOW));
+  const first = code ? codeFirst : Math.max(0, lineIndex - 1);
+  const last = code ? Math.min(lines.length, codeFirst + CODE_WINDOW) : Math.min(lines.length, lineIndex + 1 + LOOKAHEAD);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const native = e.nativeEvent as InputEvent;
@@ -134,6 +139,7 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
       />
 
       <div className={code ? "text-typing-code" : "text-typing"}>
+        {code && first > 0 && <p className="select-none pl-10 font-pixel text-small text-text-muted">⋮ 위에 {first}줄</p>}
         {lines.slice(first, last).map((text, k) => {
           const i = first + k;
           if (i < lineIndex) {
@@ -161,6 +167,9 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
           }
           return <Line key={i} text={text} states={[...text].map(() => "pending")} code={code} number={i + 1} hide={hideFor(i)} />;
         })}
+        {code && last < lines.length && (
+          <p className="select-none pl-10 font-pixel text-small text-text-muted">⋮ 아래에 {lines.length - last}줄 더</p>
+        )}
       </div>
     </div>
   );
