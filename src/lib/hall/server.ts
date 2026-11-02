@@ -55,7 +55,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       .in("student_id", ids)
       .eq("suspicious", false);
 
-  const [speed, symbolAcc, games, progress] = await Promise.all([
+  const [speed, symbolAcc, games, progress, topClears] = await Promise.all([
     Promise.all(
       TRACKS.map((t) =>
         base()
@@ -79,6 +79,8 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       ),
     ),
     admin.from("track_progress").select("student_id, track, unlocked_level").in("student_id", ids),
+    // 마지막 단계를 실제로 깼는지 (열기만 한 것과 구분)
+    admin.from("level_clears").select("student_id, track").eq("level", STAGE_COUNT).in("student_id", ids),
   ]);
 
   type Row = { student_id: string; track: Track; mode: string; cpm: number; accuracy: number | string; keystrokes: number; score: number | null };
@@ -115,20 +117,32 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   }
 
   {
-    // 가장 높은 단계 (네 트랙 중 최고). 마지막 단계까지 연 학생은 레전드 정복!
-    const best = new Map<string, { student_id: string; stage: number; track: Track }>();
+    // 가장 높은 단계 (네 트랙 중 최고). 마지막 단계를 깨면 "레전드 정상"
+    // 같은 단계면: 그 단계에 오른 트랙이 많은 순 → 네 트랙 단계를 더한 값이 큰 순
+    const done = new Set((topClears.data ?? []).map((c) => `${c.student_id}:${c.track}`));
+    const height = (p: { student_id: string; track: string; unlocked_level: number }) =>
+      p.unlocked_level + (p.unlocked_level >= STAGE_COUNT && done.has(`${p.student_id}:${p.track}`) ? 1 : 0);
+    type Best = { student_id: string; stage: number; track: Track; tracks: number; total: number };
+    const best = new Map<string, Best>();
     for (const p of progress.data ?? []) {
-      const cur = best.get(p.student_id);
-      if (!cur || p.unlocked_level > cur.stage) best.set(p.student_id, { student_id: p.student_id, stage: p.unlocked_level, track: p.track as Track });
+      const h = height(p);
+      const cur = best.get(p.student_id) ?? { student_id: p.student_id, stage: 0, track: p.track as Track, tracks: 0, total: 0 };
+      cur.total += h;
+      if (h > cur.stage) Object.assign(cur, { stage: h, track: p.track as Track, tracks: 1 });
+      else if (h === cur.stage) cur.tracks++;
+      best.set(p.student_id, cur);
     }
-    const rows = [...best.values()].filter((r) => r.stage > 1).sort((a, b) => b.stage - a.stage).slice(0, HALL.size);
+    const rows = [...best.values()]
+      .filter((r) => r.stage > 1)
+      .sort((a, b) => b.stage - a.stage || b.tracks - a.tracks || b.total - a.total)
+      .slice(0, HALL.size);
+    const where = (r: Best) => (r.tracks > 1 ? `${r.tracks}개 트랙` : TRACK_LABELS[r.track]);
+    const label = (r: Best) => (r.stage > STAGE_COUNT ? "레전드 정상" : stageName(r.stage));
     boards.push({
       id: "stage",
       title: "최고 단계 도달",
-      note: "네 트랙 중 가장 높이 올라간 단계",
-      entries: rows.map((r) =>
-        entry(r, `${TRACK_LABELS[r.track]} ${r.stage >= STAGE_COUNT ? "레전드 정상" : stageName(r.stage)}`, tierOfStage(r.stage)),
-      ),
+      note: "네 트랙 중 가장 높이 올라간 단계 · 같으면 그 단계에 오른 트랙이 많은 순",
+      entries: rows.map((r) => entry(r, `${where(r)} ${label(r)}`, tierOfStage(Math.min(r.stage, STAGE_COUNT)))),
     });
   }
 
