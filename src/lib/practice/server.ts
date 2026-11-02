@@ -324,7 +324,7 @@ export async function addGamePlayCoins(userId: string, game: keyof typeof GAME_P
 }
 
 /** 반 지갑에 코인 넣기 (누가 보탰는지 함께 기록) */
-async function addClassCoins(classId: string, userId: string, amount: number, reason: string) {
+export async function addClassCoins(classId: string, userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   if (await isTestStudent(userId)) return; // 선생님 테스트 계정은 반 지갑에 보태지 않아요
   const admin = createAdminClient();

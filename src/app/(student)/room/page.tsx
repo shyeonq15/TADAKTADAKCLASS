@@ -8,6 +8,8 @@ import { loadRoom } from "@/lib/room/server";
 import { loadClassNews } from "@/lib/room/news";
 import { loadClassGallery } from "@/lib/pixel/server";
 import { PixelGallery } from "./PixelGallery";
+import { loadRaid } from "@/lib/raid/server";
+import { RaidWindow } from "@/components/room/RaidWindow";
 import Link from "next/link";
 import { RoomScreen } from "./RoomScreen";
 
@@ -15,10 +17,11 @@ async function Content() {
   await connection();
   const v = await requireStudent();
   const classId = v.enrollment?.classId ?? null;
-  const [room, news, arts] = await Promise.all([
+  const [room, news, arts, raid] = await Promise.all([
     loadRoom({ userId: v.userId, classId }),
     classId ? loadClassNews(classId) : [],
     classId ? loadClassGallery(classId, v.userId) : [],
+    classId ? loadRaid(classId, v.userId) : null,
   ]);
   if (!room) {
     return (
@@ -29,6 +32,11 @@ async function Content() {
   }
   return (
     <>
+      {raid && (
+        <div className="mb-5">
+          <RaidWindow raid={raid} />
+        </div>
+      )}
       <RoomScreen initial={room} />
       <div className="mt-5 grid gap-5 md:grid-cols-[1fr_280px]">
         <RetroWindow title="📢 우리 반 소식">

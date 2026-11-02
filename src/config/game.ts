@@ -268,6 +268,26 @@ export const STUDENT_BOSS = {
   winners: 10,
 } as const;
 
+/**
+ * 우리 반 협동 레이드 (2026-11-02): 한 주(월~일) 동안 반 친구들이 친 타수가 모두 보스 체력을 깎아요.
+ * 체력 = 반 인원 × hpPerStudent. 쓰러뜨리면 반 지갑 classReward, 이번 주 minContribution 타 이상 친 친구는 personalReward.
+ * 공개 화면에는 개인 순위 없이 반 합계와 "내 기여"만 보여요.
+ */
+export const RAID = {
+  hpPerStudent: 4000,
+  classReward: 100,
+  personalReward: 10,
+  minContribution: 500,
+  bosses: [
+    { name: "버그 대왕", icon: "🐛" },
+    { name: "느림보 거북 로봇", icon: "🐢" },
+    { name: "오타 드래곤", icon: "🐉" },
+    { name: "노이즈 유령", icon: "👻" },
+    { name: "렉 걸린 슬라임", icon: "🟢" },
+    { name: "바이러스 문어", icon: "🐙" },
+  ],
+} as const;
+
 /** 친구 대결 (실시간 레이스) */
 export const RACE = {
   level: -4,
