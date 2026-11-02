@@ -7,6 +7,7 @@ import { PixelButton } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { play } from "@/lib/sound";
 import { SensorLearn } from "./SensorLearn";
+import { useOnHide } from "@/lib/games/useOnHide";
 
 /** 입력/출력 이유 (모든 부품에 같은 설명) */
 const IO_WHY = {
@@ -38,32 +39,61 @@ export function SensorQuiz() {
   const [learned, setLearned] = useState(false);
   const [list, setList] = useState<Part[]>(pick);
   const [i, setI] = useState(0);
-  const [chosen, setChosen] = useState<IoKind | null>(null);
+  // 이 문제에서 이미 고른 틀린 답들, 정답을 찾았는지 (틀려도 정답을 바로 보여 주지 않고 다시 골라요)
+  const [tried, setTried] = useState<IoKind[]>([]);
+  const [solved, setSolved] = useState(false);
+  /** 처음에 틀린 부품 (점수는 처음 고른 답으로 매겨요) */
   const [wrong, setWrong] = useState<Part[]>([]);
   const part = list[i];
+  const chosen = solved;
+
+  const reset = () => {
+    setList(pick());
+    setI(0);
+    setWrong([]);
+    setTried([]);
+    setSolved(false);
+  };
+  // 다른 메뉴에 갔다 오면 무조건 설명부터 다시 읽어요
+  useOnHide(() => {
+    setLearned(false);
+    reset();
+  });
 
   const choose = (k: IoKind) => {
-    if (chosen || !part) return;
-    setChosen(k);
-    if (k === part.kind) play("pop");
-    else {
-      play("error");
-      setWrong((w) => [...w, part]);
+    if (solved || !part || tried.includes(k)) return;
+    if (k === part.kind) {
+      play("pop");
+      setSolved(true);
+      return;
     }
+    play("error");
+    if (tried.length === 0) setWrong((w) => [...w, part]);
+    setTried((t) => [...t, k]);
   };
   const next = () => {
-    setChosen(null);
+    setTried([]);
+    setSolved(false);
     setI((n) => n + 1);
   };
+  const isInput = (k: IoKind) => k === "ai" || k === "di";
+  // 마지막에 고른 틀린 답으로 힌트: 입력/출력이 틀렸는지, 아날로그/디지털이 틀렸는지
+  const last = tried.at(-1);
+  const hint =
+    part && last
+      ? isInput(last) !== isInput(part.kind)
+        ? "입력·출력을 다시 생각해 봐요. 이 부품은 무엇을 알아내나요(입력), 아니면 무엇을 하나요(출력)?"
+        : "입력·출력은 맞았어요! 값이 0과 1 두 가지인지(디지털), 여러 단계인지(아날로그) 다시 생각해 봐요."
+      : "";
 
   // 숫자키 1~4로 고르고, Enter로 다음
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!learned) return;
       const g = GRID.find((x) => x.key === e.key);
-      if (g && !chosen) choose(g.kind);
+      if (g && !solved) choose(g.kind);
       // Enter 는 "다음" 버튼이 받아요 (버튼에 포커스가 없을 때만 여기서)
-      else if (e.key === "Enter" && chosen && !(e.target instanceof HTMLButtonElement)) next();
+      else if (e.key === "Enter" && solved && !(e.target instanceof HTMLButtonElement)) next();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -79,7 +109,7 @@ export function SensorQuiz() {
           <p className="title-lime text-hero">
             {score} / {list.length}
           </p>
-          <p>{score === list.length ? "모두 맞혔다! 피지컬 컴퓨팅 박사!" : "다음엔 더! 틀린 부품을 다시 봐요."}</p>
+          <p>{score === list.length ? "모두 한 번에 맞혔다! 피지컬 컴퓨팅 박사!" : "점수는 처음 고른 답으로 매겨요. 헷갈렸던 부품을 다시 봐요."}</p>
           {wrong.length > 0 && (
             <ul className="w-full">
               {wrong.map((p) => (
@@ -95,12 +125,7 @@ export function SensorQuiz() {
           <PixelButton
             variant="success"
             autoFocus
-            onClick={() => {
-              setList(pick());
-              setI(0);
-              setWrong([]);
-              setChosen(null);
-            }}
+            onClick={reset}
           >
             ↻ 다시 하기
           </PixelButton>
@@ -138,13 +163,13 @@ export function SensorQuiz() {
             <div key={row} className="contents">
               <span className="flex items-center text-small font-bold">{row}</span>
               {GRID.slice(r * 2, r * 2 + 2).map((g) => {
-                const isAnswer = chosen && g.kind === part.kind;
-                const isWrongPick = chosen === g.kind && g.kind !== part.kind;
+                const isAnswer = solved && g.kind === part.kind;
+                const isWrongPick = tried.includes(g.kind);
                 return (
                   <button
                     key={g.kind}
                     type="button"
-                    disabled={!!chosen}
+                    disabled={solved || isWrongPick}
                     onClick={() => choose(g.kind)}
                     className={`flex h-16 flex-col items-center justify-center border-3 border-navy-900 ${
                       isAnswer ? "bg-lime-400" : isWrongPick ? "bg-red-500 text-paper" : "win-bevel active:win-bevel-pressed"
@@ -158,9 +183,15 @@ export function SensorQuiz() {
             </div>
           ))}
         </div>
+        {!solved && hint && (
+          <div className="mt-3 border-3 border-navy-900 bg-paper px-3 py-2 font-pixel text-body">
+            <p className="font-bold text-red-500">아니에요! 다른 칸을 골라 봐요.</p>
+            <p>💡 {hint}</p>
+          </div>
+        )}
         {chosen && (
-          <div className={`mt-3 border-3 border-navy-900 px-3 py-2 font-pixel text-body ${chosen === part.kind ? "bg-lime-200" : "bg-paper"}`}>
-            <p className="font-bold">{chosen === part.kind ? "정답!" : `아쉬워요! 정답은 ${IO_KIND_LABELS[part.kind]}`}</p>
+          <div className={`mt-3 border-3 border-navy-900 px-3 py-2 font-pixel text-body ${tried.length === 0 ? "bg-lime-200" : "bg-paper"}`}>
+            <p className="font-bold">{tried.length === 0 ? "정답! 한 번에 맞혔다!" : `찾았다! 정답은 ${IO_KIND_LABELS[part.kind]}`}</p>
             <p className="mt-1">
               <strong>{part.kind === "ai" || part.kind === "di" ? "입력" : "출력"}</strong> · {part.kind === "ai" || part.kind === "di" ? IO_WHY.input : IO_WHY.output}
             </p>
