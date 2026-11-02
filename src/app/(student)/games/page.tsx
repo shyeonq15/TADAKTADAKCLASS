@@ -22,7 +22,7 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     games: [
       { href: "/binary", icon: "🔢", title: "이진수 연습실", desc: "자릿값 보며 십진수 쓰기 → 비트 눌러 만들기 (6단계)" },
       { href: "/games/bits", icon: "💾", title: "비트 비", desc: "떨어지는 4·5비트 이진수를 십진수로! (연습실 다음에)" },
-      { href: "/games/io", icon: "🖨️", title: "입출력 레이스", desc: "입력 장치는 i, 출력 장치는 o!" },
+      { href: "/sensors", icon: "🔌", title: "센서·액추에이터 분류", desc: "아날로그 입력? 디지털 출력? 부품을 보고 골라요" },
       { href: "/pixel", icon: "🖼️", title: "0과 1 픽셀 아트", desc: "숫자로 그림을 그려 우리 반 갤러리에 걸어요" },
       { href: "/adc", icon: "〰️", title: "아날로그 → 디지털", desc: "소리 곡선을 숫자로 바꿔 듣기 (표본화·양자화)" },
       { href: "/dictation", icon: "🎧", title: "영어 받아쓰기", desc: "문장을 듣고 그대로 쳐요 (영타 + 듣기)" },

@@ -4,7 +4,7 @@ import "server-only";
 
 import { randomInt } from "node:crypto";
 import { GAME_COINS, GAME_LABELS, GAMES, INTEGRITY, QUIZ_GAMES, RUNNER, TRACKS, type SoloGame, type Track } from "@/config/game";
-import { bitsSequence, ioSequence } from "./quiz";
+import { bitsSequence } from "./quiz";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import {
@@ -30,9 +30,7 @@ type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: numb
 const ticketWords = (t: GameTicket) =>
   t.g === "bits"
     ? bitsSequence(t.seed)
-    : t.g === "io"
-      ? ioSequence(t.seed)
-      : t.v === 2
+    : t.v === 2
         ? gameSequence(t.track, t.lv, t.seed)
         : rainSequence(t.track, t.lv, t.seed);
 
@@ -42,9 +40,9 @@ export async function issueGame(who: Who, game: SoloGame, track: Track): Promise
   if (!(game in GAME_LABELS)) return { error: "게임을 찾을 수 없어요." };
   const seed = randomInt(1, 2 ** 31);
   // 문제형 단어 비: 트랙이 정해져 있고, 문제는 시드로 만들어요
-  if (game === "bits" || game === "io") {
+  if (game === "bits") {
     const qt = QUIZ_GAMES[game].track;
-    const words = game === "bits" ? bitsSequence(seed) : ioSequence(seed);
+    const words = bitsSequence(seed);
     const ticket: GameTicket = { u: who.userId, g: game, track: qt, lv: 0, seed, h: hashLines(words), s: Date.now(), v: 2 };
     return { words, token: makeToken(ticket) };
   }
