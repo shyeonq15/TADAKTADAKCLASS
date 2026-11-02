@@ -2,6 +2,7 @@
 // 화면과 서버가 같이 쓰는 순수 함수 (단어 순서 만들기, 점수 다시 계산하기).
 
 import { GAMES, type Track } from "@/config/game";
+import { quizParts } from "./quiz";
 import { PACKS } from "@/data/packs";
 import { countKeystrokes } from "@/lib/typing/hangul";
 
@@ -64,7 +65,7 @@ export const rainStage = (hits: number) => 1 + Math.floor(hits / RAIN.hitsPerSta
 /** 이 단계에서 바닥까지 떨어지는 시간(ms). 긴 단어는 조금 더 천천히 */
 export function fallMs(stage: number, word: string) {
   const base = Math.max(RAIN.fallSeconds.min, RAIN.fallSeconds.start - (stage - 1) * RAIN.fallSeconds.perStage);
-  return base * 1000 * (1 + Math.max(0, word.length - 6) / 24);
+  return base * 1000 * (1 + Math.max(0, quizParts(word).show.length - 6) / 24);
 }
 
 export function spawnMs(stage: number) {
@@ -118,7 +119,7 @@ export function replayRain(words: readonly string[], events: readonly RainEvent[
       if (misses >= RAIN.hearts) break;
       continue;
     }
-    const k = countKeystrokes(words[e.i]);
+    const k = countKeystrokes(quizParts(words[e.i]).answer);
     const mult = 1 + Math.floor(combo / RAIN.comboStep) * RAIN.comboBonus;
     score += Math.round(k * 10 * mult);
     keystrokes += k;

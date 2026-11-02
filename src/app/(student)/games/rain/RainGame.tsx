@@ -6,6 +6,7 @@ import { RainHelp } from "@/components/help/HelpContent";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { BUNNY, CLOUD, SPARKLE } from "@/components/pixel/sprites";
 import { fallMs, rainStage, spawnMs, startsLike, type RainEvent } from "@/lib/games/rain";
+import { quizParts } from "@/lib/games/quiz";
 import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
 import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
 import { KeyStatus } from "@/components/typing/KeyStatus";
@@ -39,7 +40,7 @@ const IGNORED_KEYS = new Set(["Shift", "Control", "Alt", "Meta", "CapsLock", "Ha
 
 /* ───────── 게임 판 ───────── */
 
-function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
+export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
   const [view, setView] = useState<View>(EMPTY_VIEW);
   const [value, setValue] = useState("");
   const [shake, setShake] = useState(0);
@@ -142,7 +143,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     const t = now();
     // 같은 단어가 여러 개면 바닥에 가장 가까운 것부터
     const target = s.active
-      .filter((w) => w.text === text)
+      .filter((w) => quizParts(w.text).answer === text)
       .sort((a, b) => (t - b.spawnAt) / b.fall - (t - a.spawnAt) / a.fall)[0];
     if (!target) {
       s.events.push({ t: Math.round(t), type: "wrong" });
@@ -151,7 +152,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
       return;
     }
     const mult = 1 + Math.floor(s.combo / RAIN.comboStep) * RAIN.comboBonus;
-    const gained = Math.round(countKeystrokes(text) * 10 * mult);
+    const gained = Math.round(countKeystrokes(quizParts(target.text).answer) * 10 * mult);
     s.active = s.active.filter((w) => w !== target);
     s.events.push({ t: Math.round(t), type: "hit", i: target.i });
     s.hits++;
@@ -232,7 +233,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
           // 바람에 살랑살랑 (4px 단위로 끊어서)
           const sway = Math.round((Math.sin(t / 600 + w.i) * 8) / 4) * 4;
           const near = y > (FIELD_H - GROUND_H - WORD_H) * 0.75;
-          const match = startsLike(w.text, value, isComposing);
+          const { show, answer } = quizParts(w.text);
+          const match = startsLike(answer, value, isComposing);
           return (
             <span
               key={w.i}
@@ -241,7 +243,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
               } text-navy-900`}
               style={{ left: `calc(${w.x * 100}% + ${sway}px)`, top: y }}
             >
-              {w.text}
+              {show}
             </span>
           );
         })}

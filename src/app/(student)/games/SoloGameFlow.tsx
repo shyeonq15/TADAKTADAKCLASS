@@ -56,6 +56,8 @@ type Props = {
   loadingText: string;
   /** 결과의 "맞힌 것" 이름 (터뜨린 단어, 넘은 장애물) */
   hitLabel: string;
+  /** 트랙을 고르지 않는 게임 (비트 해독기·입출력 레이스): 시작 버튼 하나만 */
+  fixedTrack?: Track;
 };
 
 type Phase =
@@ -68,7 +70,7 @@ type Phase =
 
 /* ───────── 전체 흐름 ───────── */
 
-export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, hitLabel }: Props) {
+export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, hitLabel, fixedTrack }: Props) {
   const data = usePracticeData();
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "select" });
@@ -106,18 +108,18 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
               <li key={i}>{r}</li>
             ))}
           </ul>
-          <div className="grid w-full grid-cols-2 gap-3 md:grid-cols-4">
-            {TRACKS.map((t, i) => (
+          <div className={`grid w-full gap-3 ${fixedTrack ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4"}`}>
+            {(fixedTrack ? [fixedTrack] : TRACKS).map((t, i) => (
               <PixelButton key={t} variant={i === 0 ? "success" : "ghost"} autoFocus={i === 0} onClick={() => start(t)}>
                 <span className="flex flex-col leading-tight">
-                  {TRACK_LABELS[t]}
+                  {fixedTrack ? "▶ 시작" : TRACK_LABELS[t]}
                   <span className="text-small font-normal">최고 {bestOf(t)}점</span>
                 </span>
               </PixelButton>
             ))}
           </div>
           <p className="flex items-center gap-2 font-pixel text-small text-sky-100">
-            지금 단계의 글 난이도까지 단어가 나와요.
+            {fixedTrack ? "맞힐수록 문제가 어려워져요." : "지금 단계의 글 난이도까지 단어가 나와요."}
             {help && <HelpButton title={`${GAME_LABELS[game]} 규칙`}>{help}</HelpButton>}
           </p>
         </div>
@@ -142,7 +144,7 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
   if (phase.name === "playing") {
     const token = phase.token;
     return (
-      <RetroWindow title={`${GAME_LABELS[game]} - ${TRACK_LABELS[track]}`} className="mx-auto w-full max-w-4xl">
+      <RetroWindow title={fixedTrack ? GAME_LABELS[game] : `${GAME_LABELS[game]} - ${TRACK_LABELS[track]}`} className="mx-auto w-full max-w-4xl">
         <Field
           words={phase.words}
           track={track}
