@@ -8,6 +8,7 @@ import "server-only";
 import { CLASS_BATTLE, GROWTH } from "@/config/game";
 import { dayKeyKST } from "@/lib/practice/day";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isTestNumber } from "@/lib/auth/testAccount";
 
 const DAY = 86400000;
 const toMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
@@ -66,14 +67,17 @@ async function scoresFor(classes: ClassRow[], start: string, end: string) {
   const admin = createAdminClient();
   const ids = classes.map((c) => c.id);
   const [enr, growth] = await Promise.all([
-    admin.from("enrollments").select("class_id, student_id, profiles!inner(role)").in("class_id", ids),
+    admin.from("enrollments").select("class_id, student_id, number, profiles!inner(role)").in("class_id", ids),
     admin.from("growth_scores").select("class_id, student_id, total").in("class_id", ids).gte("day", start).lte("day", end),
   ]);
-  type Enr = { class_id: string; student_id: string; profiles: { role: string } };
-  const students = ((enr.data ?? []) as unknown as Enr[]).filter((e) => e.profiles.role === "student");
+  type Enr = { class_id: string; student_id: string; number: number; profiles: { role: string } };
+  const all = (enr.data ?? []) as unknown as Enr[];
+  // 선생님 테스트 계정은 반 인원·성장 점수에서 빼요
+  const testIds = new Set(all.filter((e) => isTestNumber(e.number)).map((e) => e.student_id));
+  const students = all.filter((e) => e.profiles.role === "student" && !testIds.has(e.student_id));
   return classes.map((c) => {
     const members = students.filter((s) => s.class_id === c.id).length;
-    const rows = (growth.data ?? []).filter((g) => g.class_id === c.id);
+    const rows = (growth.data ?? []).filter((g) => g.class_id === c.id && !testIds.has(g.student_id));
     const sum = rows.reduce((n, g) => n + g.total, 0);
     return {
       classId: c.id,

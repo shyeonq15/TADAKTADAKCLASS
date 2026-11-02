@@ -211,6 +211,12 @@ export const RUNNER = {
   gapSeconds: { start: 2.6, min: 1.1, perStage: 0.25 },
 } as const;
 
+/**
+ * 선생님 테스트 계정: 반마다 이 번호로 만든 학생 계정은 테스트용이에요.
+ * 모든 단계·강이 열려 있고 배치 테스트를 건너뛰어요. 성장 점수·반 대결·명예의 전당·우리 반 소식·반 지갑에서는 빠져요.
+ */
+export const TEST_ACCOUNT = { number: 50 } as const;
+
 /** 프로필 (민재 아이디어 2026-11-02) */
 export const PROFILE = {
   /** 한 줄 자기소개 최대 글자 수 (DB 에도 60자 제한) */

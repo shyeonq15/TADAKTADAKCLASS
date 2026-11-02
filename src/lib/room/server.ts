@@ -9,6 +9,7 @@ import { dayKeyKST } from "@/lib/practice/day";
 import type { Who } from "@/lib/practice/server";
 import { cleanLook } from "@/lib/shop/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isTestNumber } from "@/lib/auth/testAccount";
 
 export type RoomMember = { id: string; nickname: string; number: number; look: MinimiLook; doneToday: boolean };
 
@@ -70,7 +71,8 @@ async function loadRaw(classId: string) {
 async function settle({ members, placed, proposals }: Awaited<ReturnType<typeof loadRaw>>): Promise<boolean> {
   if (proposals.error || placed.error) return false;
   let bought = false;
-  const need = votesNeeded((members.data ?? []).length);
+  // 선생님 테스트 계정은 반 인원에서 빼요
+  const need = votesNeeded(((members.data ?? []) as { number: number }[]).filter((m) => !isTestNumber(m.number)).length);
   const ownedSurfaces = (placed.data ?? []).map((p) => p.item_id).filter((id) => roomItem(id)?.kind !== "furniture");
   const admin = createAdminClient();
   for (const p of proposals.data ?? []) {
@@ -143,7 +145,7 @@ export async function loadRoom(who: Who): Promise<RoomData | null> {
           mine: p.proposer_id === who.userId,
         };
       }),
-    need: votesNeeded(rows.length),
+    need: votesNeeded(rows.filter((m) => !isTestNumber(m.number)).length),
     ready: !placed.error && !proposals.error,
   };
 }

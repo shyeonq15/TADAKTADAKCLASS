@@ -16,7 +16,8 @@ import { dailyGrowth } from "@/lib/scoring/growth";
 import { linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPackRound, buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
-import { blankMask, codeNote, lesson } from "@/data/codeNotes";
+import { blankMask, codeNote, lesson, LESSON_COUNT } from "@/data/codeNotes";
+import { isTestStudent } from "@/lib/auth/testAccount";
 import { dayKeyKST } from "./day";
 import { recentMedian, streakDays, weakKeys } from "./derive";
 import {
@@ -71,7 +72,7 @@ export const toAttempt = (r: AttemptRow): Attempt => ({
 /** 학생 한 명의 기록·진행 상황 (저장 직후처럼 새로 읽어야 할 때 직접 부름) */
 export async function loadUncached(userId: string): Promise<PracticeData> {
   const admin = createAdminClient();
-  const [attempts, progress, clears, wallet, coinLog, classCoins, missions, packs] = await Promise.all([
+  const [attempts, progress, clears, wallet, coinLog, classCoins, missions, packs, testAccount] = await Promise.all([
     admin.from("attempts").select("*").eq("student_id", userId).order("created_at", { ascending: false }).limit(300),
     admin.from("track_progress").select("track, unlocked_level, placement_cpm").eq("student_id", userId),
     admin.from("level_clears").select("track, level, cleared_at").eq("student_id", userId),
@@ -86,6 +87,7 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
     admin.from("coin_transactions").select("amount").eq("student_id", userId).not("class_id", "is", null),
     admin.from("mission_completions").select("day").eq("student_id", userId),
     loadPacks(userId),
+    isTestStudent(userId),
   ]);
 
   const unlocked = { ...EMPTY_DATA.progress.unlocked };
@@ -94,13 +96,21 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
     unlocked[p.track as Track] = p.unlocked_level;
     if (p.placement_cpm !== null) placementCpm[p.track as Track] = p.placement_cpm;
   }
-  const placement = TRACKS.every((t) => placementCpm[t] !== undefined) ? (placementCpm as Record<Track, number>) : null;
+  let placement = TRACKS.every((t) => placementCpm[t] !== undefined) ? (placementCpm as Record<Track, number>) : null;
+  const cleared = (clears.data ?? []).map((c) => `${c.track}-${c.level}`);
+
+  // 선생님 테스트 계정: 모든 단계·강을 열고 배치 테스트는 건너뛴 것으로 (저장은 하지 않고 화면·서버 확인에서만)
+  if (testAccount) {
+    for (const t of TRACKS) unlocked[t] = STAGE_COUNT;
+    for (let l = 1; l <= LESSON_COUNT; l++) if (!cleared.includes(`lesson-${l}`)) cleared.push(`lesson-${l}`);
+    placement ??= Object.fromEntries(TRACKS.map((t) => [t, placementCpm[t] ?? 0])) as Record<Track, number>;
+  }
 
   return {
     attempts: ((attempts.data ?? []) as AttemptRow[]).map(toAttempt).reverse(),
     progress: {
       unlocked,
-      cleared: (clears.data ?? []).map((c) => `${c.track}-${c.level}`),
+      cleared,
       clearLog: (clears.data ?? []).map((c) => ({ id: `${c.track}-${c.level}`, at: new Date(c.cleared_at).getTime() })),
       placement,
       coins: wallet.data?.coins ?? 0,
@@ -296,6 +306,7 @@ export async function addGamePlayCoins(userId: string, game: keyof typeof GAME_P
 /** 반 지갑에 코인 넣기 (누가 보탰는지 함께 기록) */
 async function addClassCoins(classId: string, userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
+  if (await isTestStudent(userId)) return; // 선생님 테스트 계정은 반 지갑에 보태지 않아요
   const admin = createAdminClient();
   // 반 친구들이 동시에 보태도 안 꼬이게 한 줄로. 함수가 아직 없으면 예전 방식으로
   const { error } = await admin.rpc("add_class_coins", { p_class: classId, p_amount: amount });
@@ -308,6 +319,7 @@ async function addClassCoins(classId: string, userId: string, amount: number, re
 
 /** 오늘의 성장 점수를 다시 계산해서 저장 */
 export async function refreshGrowth(who: Who) {
+  if (await isTestStudent(who.userId)) return; // 선생님 테스트 계정은 성장 점수를 계산하지 않아요
   const data = await loadUncached(who.userId);
   const today = dayKeyKST();
   const scored = data.attempts.filter((a) => a.kind !== "placement");
@@ -529,7 +541,7 @@ export async function completeMission(who: Who) {
   }
   return {
     coins: firstToday ? COINS.missionPersonal : 0,
-    classCoins: firstToday && who.classId ? COINS.missionClass : 0,
+    classCoins: firstToday && who.classId && !(await isTestStudent(who.userId)) ? COINS.missionClass : 0,
     firstToday,
     data: await loadUncached(who.userId),
   };

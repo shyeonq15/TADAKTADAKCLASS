@@ -5,6 +5,7 @@ import "server-only";
 
 import { BOSS, GAME_COINS, INTEGRITY, TRACKS, type Tier, type Track } from "@/config/game";
 import { cpmTier, higherTier } from "@/lib/scoring/tier";
+import { isTestStudent } from "@/lib/auth/testAccount";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
@@ -267,7 +268,7 @@ export async function saveBossChallenge(
     if (firstWin) {
       await addCoins(who.userId, GAME_COINS.bossWin, `보스 격파: ${boss.title}`);
       coins += GAME_COINS.bossWin;
-      if (who.classId) {
+      if (who.classId && !(await isTestStudent(who.userId))) {
         const { data: c } = await admin.from("classes").select("coins").eq("id", who.classId).single();
         await admin.from("classes").update({ coins: (c?.coins ?? 0) + GAME_COINS.bossClass }).eq("id", who.classId);
         await admin.from("coin_transactions").insert({ class_id: who.classId, student_id: who.userId, amount: GAME_COINS.bossClass, reason: "보스 격파" });

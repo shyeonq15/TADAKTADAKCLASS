@@ -9,6 +9,7 @@ import { STAGE_COUNT } from "@/lib/practice/stages";
 import { cpmTier } from "@/lib/scoring/tier";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { josa, particle } from "@/lib/josa";
+import { isTestNumber } from "@/lib/auth/testAccount";
 
 export type NewsItem = { at: string; icon: string; text: string };
 
@@ -20,11 +21,11 @@ export async function loadClassNews(classId: string): Promise<NewsItem[]> {
   const admin = createAdminClient();
   const { data: enr } = await admin
     .from("enrollments")
-    .select("student_id, profiles!inner(nickname, role)")
+    .select("student_id, number, profiles!inner(nickname, role)")
     .eq("class_id", classId);
-  type Enr = { student_id: string; profiles: { nickname: string | null; role: string } };
+  type Enr = { student_id: string; number: number; profiles: { nickname: string | null; role: string } };
   const people = new Map(
-    ((enr ?? []) as unknown as Enr[]).filter((e) => e.profiles.role === "student").map((e) => [e.student_id, e.profiles.nickname ?? "친구"]),
+    ((enr ?? []) as unknown as Enr[]).filter((e) => e.profiles.role === "student" && !isTestNumber(e.number)).map((e) => [e.student_id, e.profiles.nickname ?? "친구"]),
   );
   const ids = [...people.keys()];
   if (!ids.length) return [];

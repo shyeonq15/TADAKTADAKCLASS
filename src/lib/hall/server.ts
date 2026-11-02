@@ -5,6 +5,7 @@ import "server-only";
 
 import { GAME_LABELS, HALL, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
 import { bossRanks } from "@/lib/games/boss";
+import { isTestNumber } from "@/lib/auth/testAccount";
 import { dayKeyKST } from "@/lib/practice/day";
 import { daysLeft, seasonOf, weekOf, type Season } from "@/lib/season";
 import { classesOf } from "@/lib/battle/server";
@@ -57,12 +58,12 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
 
   const { data: enr } = await admin
     .from("enrollments")
-    .select("student_id, class_id, profiles!inner(nickname, role)")
+    .select("student_id, class_id, number, profiles!inner(nickname, role)")
     .in("class_id", classIds);
-  type Enr = { student_id: string; class_id: string; profiles: { nickname: string | null; role: string } };
+  type Enr = { student_id: string; class_id: string; number: number; profiles: { nickname: string | null; role: string } };
   const people = new Map<string, Who>();
   for (const e of (enr ?? []) as unknown as Enr[]) {
-    if (e.profiles.role !== "student") continue;
+    if (e.profiles.role !== "student" || isTestNumber(e.number)) continue; // 선생님 테스트 계정은 빼요
     people.set(e.student_id, {
       studentId: e.student_id,
       nickname: e.profiles.nickname ?? "친구",
