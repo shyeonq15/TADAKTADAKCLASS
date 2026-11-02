@@ -15,9 +15,11 @@ import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
 import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
-import { completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
+import { addCoins, completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
+import { BINARY_FIRST_CLEAR_COINS, BINARY_STAGES } from "@/config/binary";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { claimWeekly } from "@/lib/weekly/server";
 import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
@@ -239,4 +241,19 @@ export async function claimWeeklyReward(challengeId: string) {
   const res = await claimWeekly(w.userId, challengeId);
   if ("error" in res) return res;
   return { ...res, data: await loadUncached(w.userId) };
+}
+
+/* ───────── 이진수 연습실 ───────── */
+
+/** 단계 통과 기록: 앞 단계를 깼어야 하고, 처음 깰 때만 코인 */
+export async function clearBinaryStage(n: number) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  if (!BINARY_STAGES.some((s) => s.n === n)) return { error: "없는 단계예요." };
+  const data = await loadUncached(w.userId);
+  if (n > 1 && !data.progress.cleared.includes(`binary-${n - 1}`)) return { error: `${n - 1}단계를 먼저 깨 주세요.` };
+  const ins = await createAdminClient().from("level_clears").insert({ student_id: w.userId, track: "binary", level: n });
+  const first = !ins.error;
+  if (first) await addCoins(w.userId, BINARY_FIRST_CLEAR_COINS, `이진수 연습실 ${n}단계`);
+  return { first, coins: first ? BINARY_FIRST_CLEAR_COINS : 0, data: await loadUncached(w.userId) };
 }

@@ -213,7 +213,7 @@ export const GAMES = {
 
 /** 혼자 하는 게임 이름 */
 export type SoloGame = "rain" | "runner" | "bits" | "io";
-export const GAME_LABELS: Record<SoloGame, string> = { rain: "단어 비", runner: "토끼 달리기", bits: "비트 해독기", io: "입출력 레이스" };
+export const GAME_LABELS: Record<SoloGame, string> = { rain: "단어 비", runner: "토끼 달리기", bits: "비트 비", io: "입출력 레이스" };
 /** 문제형 단어 비 (단어 비 규칙 그대로, 문제를 보고 답을 쳐요): 기록용 레벨 값, 정해진 트랙 */
 export const QUIZ_GAMES = {
   bits: { level: -5, track: "symbol" as Track },

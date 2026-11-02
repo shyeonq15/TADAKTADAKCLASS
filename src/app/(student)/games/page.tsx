@@ -20,7 +20,8 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     title: "🔬 정보 실험실",
     note: "수업에서 배운 내용을 쳐 보며 복습해요",
     games: [
-      { href: "/games/bits", icon: "💾", title: "비트 해독기", desc: "떨어지는 이진수를 풀어요 (이진수·ASCII)" },
+      { href: "/binary", icon: "🔢", title: "이진수 연습실", desc: "자릿값 보며 십진수 쓰기 → 비트 눌러 만들기 (6단계)" },
+      { href: "/games/bits", icon: "💾", title: "비트 비", desc: "떨어지는 4·5비트 이진수를 십진수로! (연습실 다음에)" },
       { href: "/games/io", icon: "🖨️", title: "입출력 레이스", desc: "입력 장치는 i, 출력 장치는 o!" },
       { href: "/pixel", icon: "🖼️", title: "0과 1 픽셀 아트", desc: "숫자로 그림을 그려 우리 반 갤러리에 걸어요" },
       { href: "/adc", icon: "〰️", title: "아날로그 → 디지털", desc: "소리 곡선을 숫자로 바꿔 듣기 (표본화·양자화)" },
