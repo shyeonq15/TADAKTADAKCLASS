@@ -50,7 +50,24 @@ export function AppBar({ nickname, isTeacher }: { nickname: string; isTeacher: b
         <PixelSprite sprite={COIN} scale={2} />
         {progress.coins}
       </div>
-      <span className="px-2 font-pixel text-body text-navy-900">{nickname}</span>
+      {/* 닉네임을 누르면 내 프로필 */}
+      <Link
+        href="/profile"
+        aria-current={pathname.startsWith("/profile") ? "page" : undefined}
+        title="내 프로필"
+        className={`flex h-9 items-center px-3 font-pixel text-body text-navy-900 ${pathname.startsWith("/profile") ? "win-bevel-pressed bg-paper font-bold" : "win-bevel"}`}
+      >
+        {nickname}
+      </Link>
+      {/* 건의함: 지금 보던 화면 주소를 같이 넘겨서 버그 찾기 쉽게 */}
+      <Link
+        href={`/feedback?from=${encodeURIComponent(pathname)}`}
+        title="건의함 (버그 제보·아이디어)"
+        aria-label="건의함"
+        className={`flex h-9 items-center px-2 text-body ${pathname.startsWith("/feedback") ? "win-bevel-pressed bg-paper" : "win-bevel"}`}
+      >
+        📮
+      </Link>
       <form action={signOut}>
         <button className="win-bevel h-9 px-3 font-pixel text-small text-navy-900 active:win-bevel-pressed">로그아웃</button>
       </form>

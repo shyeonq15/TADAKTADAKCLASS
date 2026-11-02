@@ -161,7 +161,7 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
                   {code && <span className="w-10 shrink-0" />}
                   <span className="min-h-[1.5em] whitespace-pre text-navy-700">
                     {/* 코드: 내가 친 앞 공백도 점으로 보여 줘서 들여쓰기를 몇 칸 했는지 보이게 */}
-                    {code && <span className="text-sky-400">{"·".repeat(typedIndent)}</span>}
+                    {code && <span className="text-sky-500">{"·".repeat(typedIndent)}</span>}
                     {(composing ? typed.slice(0, -1) : typed).slice(code ? typedIndent : 0)}
                     {composing && <span className="underline decoration-2">{typed.slice(-1)}</span>}
                     <span className="inline-block w-[0.55em] bg-navy-900 align-middle" style={{ height: "1em" }} />

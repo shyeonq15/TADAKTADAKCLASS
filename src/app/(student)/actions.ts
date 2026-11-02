@@ -10,6 +10,7 @@ import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
 import { completeMission, finishPlacement, issueRound, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
+import { sendFeedback } from "@/lib/feedback/server";
 
 async function who() {
   const v = await getViewer();
@@ -130,4 +131,12 @@ export async function roomPropose(itemId: string) {
 export async function roomVote(proposalId: string) {
   const w = await who();
   return w ? voteRoomItem(w, proposalId) : NOT_LOGGED_IN;
+}
+
+/* ───────── 건의함 ───────── */
+
+export async function submitFeedback(input: { kind: string; body: string; page?: string }) {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  return sendFeedback({ userId: v.userId, schoolId: v.schoolId, classId: v.enrollment?.classId ?? null }, input);
 }

@@ -17,6 +17,9 @@ export default function TeacherLayout({ children }: LayoutProps<"/teacher">) {
         <Link href="/teacher/boss" className="win-bevel flex h-9 items-center px-4 font-pixel text-body text-navy-900">
           보스전
         </Link>
+        <Link href="/teacher/feedback" className="win-bevel flex h-9 items-center px-4 font-pixel text-body text-navy-900">
+          건의함
+        </Link>
         <Link href="/" className="win-bevel flex h-9 items-center px-4 font-pixel text-body text-navy-900">
           학생 화면 보기
         </Link>
