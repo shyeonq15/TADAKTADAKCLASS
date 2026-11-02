@@ -234,7 +234,7 @@ export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: M
             : !r.completed
               ? "끝까지 치면 보스와 승부할 수 있어요."
               : r.accuracy < BOSS.minAccuracy
-                ? `정확도 ${BOSS.minAccuracy}% 이상이어야 이겨요. 천천히 정확하게!`
+                ? `${r.durationMs < r.bossDurationMs ? "속도는 보스보다 빨랐어요! " : ""}정확도 ${BOSS.minAccuracy}% 이상이어야 이겨요. 천천히 정확하게!`
                 : `보스와 ${gap.toFixed(1)}초 차이! 조금만 더!`}
         </p>
       </div>
@@ -299,7 +299,11 @@ function BossCompare({ me, boss, win }: { me: number; boss: number; win: boolean
       <p
         className={`mx-auto mt-3 w-fit border-2 border-navy-900 px-4 py-1 text-center font-title text-[32px] leading-tight text-navy-900 ${win ? "bg-lime-400" : "bg-yellow-400"}`}
       >
-        {win ? `${gap.toFixed(1)}초 빨랐다!` : `${gap.toFixed(1)}초만 더 빠르면 승리!`}
+        {win
+          ? `${gap.toFixed(1)}초 빨랐다!`
+          : me < boss
+            ? `${gap.toFixed(1)}초 빨랐지만 정확도가 아쉬웠다!`
+            : `${gap.toFixed(1)}초만 더 빠르면 승리!`}
       </p>
       <div className="mt-4 flex flex-col gap-2" aria-hidden>
         {rows.map((row) => (
