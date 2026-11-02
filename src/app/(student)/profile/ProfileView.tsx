@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PROFILE, TRACK_LABELS, TRACKS } from "@/config/game";
+import { BADGES } from "@/config/badges";
 import { renameNickname, updateBio } from "@/app/(student)/actions";
 import { Minimi } from "@/components/pixel/Minimi";
 import { DialogBox } from "@/components/ui/DialogBox";
@@ -122,6 +123,32 @@ export function ProfileView({ p, mates }: { p: ProfileData; mates: Mate[] }) {
             <StatCard label="오늘의 미션" value={p.missionToday ? "완료!" : "아직"} />
             {p.private && <StatCard label="보유 코인" value={p.private.coins} unit="코인" />}
           </div>
+        </RetroWindow>
+
+        <RetroWindow title={`칭호 모음 (${p.badges.length} / ${BADGES.length})`}>
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+            {BADGES.map((b) => {
+              const got = p.badges.includes(b.id);
+              return (
+                <li
+                  key={b.id}
+                  title={b.how}
+                  className={`flex items-center gap-2 border-2 border-navy-900 px-2 py-1.5 font-pixel text-small ${
+                    got ? "bg-yellow-400 text-navy-900 shadow-pixel-sm" : "bg-win-gray text-text-muted"
+                  }`}
+                >
+                  <span className={`text-heading leading-none ${got ? "" : "opacity-30 grayscale"}`}>{got ? b.icon : "🔒"}</span>
+                  <span className="min-w-0">
+                    <strong className="block truncate">{b.name}</strong>
+                    {!got && <span className="block truncate">{b.how}</span>}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="mt-2 font-pixel text-small text-text-muted">
+            칭호는 등수가 아니라 &ldquo;해냈다!&rdquo;를 모아요. 가장 길게 이어서 연습한 날: {p.maxStreak}일
+          </p>
         </RetroWindow>
 
         {p.mine && p.private && <NicknameChange p={p} />}

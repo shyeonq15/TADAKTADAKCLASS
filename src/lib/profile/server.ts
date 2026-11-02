@@ -16,6 +16,7 @@ import { allTiers, isCodeMaster, profileTier } from "@/lib/scoring/tier";
 import { loadLooks } from "@/lib/shop/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LESSON_COUNT } from "@/data/codeNotes";
+import { loadBadges } from "@/lib/badges/server";
 
 export type ProfileData = {
   id: string;
@@ -37,6 +38,10 @@ export type ProfileData = {
   streak: number;
   missionToday: boolean;
   oldNicknames: { nickname: string; at: string }[];
+  /** 모은 칭호 id */
+  badges: string[];
+  /** 가장 길게 이어서 연습한 날 */
+  maxStreak: number;
   /** 내 프로필에서만 */
   private: null | {
     coins: number;
@@ -73,7 +78,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
   const enrollment = await loadEnrollment(targetId);
   if (!(await canView(viewer, targetId, enrollment?.classId ?? null, p.school_id))) return null;
 
-  const [progress, lessons, attempts, mission, wallet, history, looks, ranks] = await Promise.all([
+  const [progress, lessons, attempts, mission, wallet, history, looks, ranks, badges] = await Promise.all([
     admin.from("track_progress").select("track, unlocked_level").eq("student_id", targetId),
     admin.from("level_clears").select("level", { count: "exact", head: true }).eq("student_id", targetId).eq("track", "lesson"),
     admin
@@ -88,6 +93,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
     admin.from("nickname_history").select("old_nickname, created_at").eq("student_id", targetId).order("created_at", { ascending: false }).limit(20),
     loadLooks([targetId]),
     bossRanks([targetId]),
+    loadBadges(targetId),
   ]);
   if (missing(history.error)) ready = false;
 
@@ -134,6 +140,8 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
     streak,
     missionToday: !!mission.data,
     oldNicknames,
+    badges: badges.earned,
+    maxStreak: badges.stats.maxStreak,
     private: mine
       ? {
           coins: (wallet.data as { coins: number } | null)?.coins ?? 0,
