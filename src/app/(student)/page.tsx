@@ -11,6 +11,8 @@ import { BattleBoard } from "@/components/battle/BattleBoard";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { HomeDashboard } from "./HomeDashboard";
+import { WeeklyBox } from "./WeeklyBox";
+import { loadWeekly } from "@/lib/weekly/server";
 import { dayKeyKST } from "@/lib/practice/day";
 import { daysLeft, seasonOf } from "@/lib/season";
 
@@ -48,6 +50,13 @@ async function HomeBattle() {
   );
 }
 
+/** 이번 주 챌린지 (학생만) */
+async function HomeWeekly() {
+  const v = await requireStudent();
+  if (v.role !== "student") return null;
+  return <WeeklyBox initial={await loadWeekly(v.userId)} />;
+}
+
 // 학생 첫 화면: 맨 위는 반 대결 요약, 아래는 내 연습 현황
 export default function Home() {
   return (
@@ -56,6 +65,7 @@ export default function Home() {
         <Suspense fallback={<Loading />}>
           <PlacementGate>
             <HomeBattle />
+            <HomeWeekly />
             <ClientOnly fallback={<Loading />}>
               <HomeDashboard />
             </ClientOnly>

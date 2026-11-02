@@ -31,7 +31,7 @@ function longestRun(days: string[]) {
 
 export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
   const admin = createAdminClient();
-  const [attempts, missions, lessons, progress, raceWins, feedback, ranks, explore] = await Promise.all([
+  const [attempts, missions, lessons, progress, raceWins, feedback, ranks, explore, weekly] = await Promise.all([
     admin
       .from("attempts")
       .select("kind, accuracy, keystrokes, created_at")
@@ -47,6 +47,7 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
     admin.from("feedback").select("id", { count: "exact", head: true }).eq("student_id", studentId).eq("status", "done"),
     bossRanks([studentId]),
     exploreTotals(studentId),
+    admin.from("weekly_claims").select("challenge_id", { count: "exact", head: true }).eq("student_id", studentId),
   ]);
 
   const rows = (attempts.data ?? []) as { kind: string; accuracy: number | string; keystrokes: number; created_at: string }[];
@@ -82,6 +83,7 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
     seasonsFinished: [...perSeason.values()].filter((s) => s.size >= SEASON_FINISH_DAYS).length,
     exploreStars: explore.stars,
     exploreUnits: explore.unitsCleared,
+    weeklyClaims: weekly.error ? 0 : (weekly.count ?? 0),
   };
 }
 
