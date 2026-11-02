@@ -60,8 +60,11 @@ export const CLASS_BATTLE = {
 } as const;
 
 /* ── 실력 티어 (개인 명예용, 트랙별) ── */
-export const TIERS = ["bronze", "silver", "gold", "diamond", "master", "legend"] as const;
+export const TIERS = ["bronze", "silver", "gold", "diamond", "master", "legend", "grandmaster"] as const;
 export type Tier = (typeof TIERS)[number];
+
+/** 가장 높은 티어 (지금은 그랜드마스터) */
+export const TOP_TIER: Tier = "grandmaster";
 
 export const TIER_LABELS: Record<Tier, string> = {
   bronze: "브론즈",
@@ -70,10 +73,12 @@ export const TIER_LABELS: Record<Tier, string> = {
   diamond: "다이아",
   master: "마스터",
   legend: "레전드",
+  grandmaster: "그랜드마스터",
 };
 
 /* ── 연습 트랙 단계 (티어 6개 × 5단계 = 트랙마다 30단계) ── */
 // 단계를 깨면 다음 단계가 열리고, 한 티어의 5단계를 다 깨면 그 트랙 티어가 올라가요.
+// 그랜드마스터(2026-11-02 추가)는 레전드 위 티어: 레전드와 같은 가장 긴 글로, 목표 타수만 더 높아요.
 // [글 난이도(연습팩 레벨 1~8), 목표 타수] — 시범 2주 뒤 데이터를 보고 숫자만 바꾸면 돼요.
 
 export const STEPS_PER_TIER = 5;
@@ -88,6 +93,7 @@ export const STAGE_PLAN: Record<Track, StagePlan> = {
     [6, 225], [7, 240], [7, 255], [8, 270], [8, 280], // 다이아
     [6, 295], [7, 310], [8, 320], [8, 330], [8, 340], // 마스터
     [7, 355], [8, 370], [8, 380], [8, 390], [8, 400], // 레전드
+    [8, 420], [8, 440], [8, 460], [8, 480], [8, 500], // 그랜드마스터
   ],
   english: [
     [1, 30], [2, 40], [3, 50], [4, 55], [5, 60],
@@ -96,6 +102,7 @@ export const STAGE_PLAN: Record<Track, StagePlan> = {
     [6, 160], [7, 170], [7, 180], [8, 190], [8, 200],
     [6, 210], [7, 220], [8, 230], [8, 240], [8, 250],
     [7, 260], [8, 270], [8, 280], [8, 290], [8, 300],
+    [8, 310], [8, 325], [8, 345], [8, 360], [8, 380],
   ],
   symbol: [
     [1, 25], [2, 30], [3, 35], [4, 40], [5, 45],
@@ -104,6 +111,7 @@ export const STAGE_PLAN: Record<Track, StagePlan> = {
     [6, 110], [7, 115], [7, 120], [8, 125], [8, 130],
     [6, 140], [7, 145], [8, 150], [8, 155], [8, 160],
     [7, 170], [8, 175], [8, 180], [8, 190], [8, 200],
+    [8, 210], [8, 220], [8, 230], [8, 240], [8, 250],
   ],
   code: [
     [1, 25], [1, 30], [2, 35], [2, 40], [3, 45],
@@ -112,6 +120,7 @@ export const STAGE_PLAN: Record<Track, StagePlan> = {
     [6, 100], [7, 105], [8, 110], [8, 115], [8, 120],
     [7, 130], [8, 135], [8, 140], [8, 145], [8, 150],
     [8, 160], [8, 165], [8, 170], [8, 175], [8, 180],
+    [8, 190], [8, 200], [8, 210], [8, 220], [8, 230],
   ],
 };
 
@@ -123,6 +132,7 @@ export const STAGE_ACCURACY: Record<Tier, number> = {
   diamond: 92,
   master: 93,
   legend: 95,
+  grandmaster: 96,
 };
 
 /** 이 트랙은 단계마다 연결된 파이썬 첫걸음 강을 모두 들어야 그 단계가 열려요 (교사 결정 2026-10-27) */

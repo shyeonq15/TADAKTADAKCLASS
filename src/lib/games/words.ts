@@ -8,7 +8,7 @@ import "server-only";
 import type { Track } from "@/config/game";
 import { PACKS } from "@/data/packs";
 import { getTrack } from "@/lib/packs";
-import { STAGE_COUNT, stepOfStage, tierOfStage } from "@/lib/practice/stages";
+import { packTierOf, STAGE_COUNT, stepOfStage, tierOfStage } from "@/lib/practice/stages";
 import { seededRandom } from "./rain";
 
 /** 지금 단계에서 몇 단계 아래 글까지 섞을지 */
@@ -41,7 +41,7 @@ export function gameUnits(track: Track, stage: number): string[][] {
   if (pack) {
     const units: string[][] = [];
     for (let n = Math.max(1, stage - NEARBY_STAGES); n <= Math.min(stage, STAGE_COUNT); n++) {
-      const st = pack.tiers.find((t) => t.id === tierOfStage(n))?.stages.find((s) => s.stage === stepOfStage(n));
+      const st = pack.tiers.find((t) => t.id === packTierOf(tierOfStage(n)))?.stages.find((s) => s.stage === stepOfStage(n));
       for (const p of st?.passages ?? []) units.push(...(track === "korean" ? textUnits(p.text) : codeUnits(p.text)));
     }
     if (units.length) return units;

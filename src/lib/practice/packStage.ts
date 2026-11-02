@@ -4,12 +4,12 @@ import "server-only";
 
 import type { Track } from "@/config/game";
 import { getTrackStage } from "@/lib/packs";
-import { getStage, tierOfStage, stepOfStage, type Stage } from "./stages";
+import { getStage, packTierOf, tierOfStage, stepOfStage, type Stage } from "./stages";
 
 export function getStageWithPassages(track: Track, n: number): Stage | undefined {
   const st = getStage(track, n);
   if (!st?.fromPack) return st;
-  const pack = getTrackStage(track, tierOfStage(n), stepOfStage(n));
+  const pack = getTrackStage(track, packTierOf(tierOfStage(n)), stepOfStage(n));
   if (!pack) return st;
   return { ...st, level: { ...st.level, items: pack.passages.map((p) => p.text) } };
 }

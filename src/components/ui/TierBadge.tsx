@@ -7,6 +7,7 @@ const TIER_STYLE: Record<Tier, { bg: string; icon: string }> = {
   diamond: { bg: "var(--sky-500)", icon: "◇" },
   master: { bg: "var(--pink-400)", icon: "★" },
   legend: { bg: "var(--yellow-400)", icon: "👑" },
+  grandmaster: { bg: "var(--navy-900)", icon: "🌌" },
 };
 
 /** DESIGN.md 6장 TierBadge (임시 글자 아이콘, 정식 픽셀 배지는 나중에) */
@@ -21,8 +22,12 @@ export function TierBadge({ tier, codeMaster = false }: { tier: Tier; codeMaster
   const s = TIER_STYLE[tier];
   return (
     <span
-      className={`inline-flex items-center gap-1 border-3 px-2 font-pixel text-small font-bold text-navy-900 ${
-        tier === "legend" ? "border-ink shadow-[2px_2px_0_var(--pink-400)]" : "border-navy-900"
+      className={`inline-flex items-center gap-1 border-3 px-2 font-pixel text-small font-bold ${tier === "grandmaster" ? "text-yellow-400" : "text-navy-900"} ${
+        tier === "legend"
+          ? "border-ink shadow-[2px_2px_0_var(--pink-400)]"
+          : tier === "grandmaster"
+            ? "border-yellow-400 shadow-[2px_2px_0_var(--pink-400)]"
+            : "border-navy-900"
       }`}
       style={{ background: s.bg }}
     >

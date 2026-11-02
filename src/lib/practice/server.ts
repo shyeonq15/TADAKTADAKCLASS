@@ -99,6 +99,15 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
   let placement = TRACKS.every((t) => placementCpm[t] !== undefined) ? (placementCpm as Record<Track, number>) : null;
   const cleared = (clears.data ?? []).map((c) => `${c.track}-${c.level}`);
 
+  // 지금 단계를 이미 깼는데 다음 단계가 안 열려 있으면 열어 줘요
+  // (그랜드마스터가 생기기 전에 레전드 5단계를 깬 학생 → 그랜드마스터 1단계)
+  for (const t of TRACKS) {
+    if (unlocked[t] < STAGE_COUNT && cleared.includes(`${t}-${unlocked[t]}`)) {
+      unlocked[t] += 1;
+      await admin.from("track_progress").upsert({ student_id: userId, track: t, unlocked_level: unlocked[t] });
+    }
+  }
+
   // 선생님 테스트 계정: 모든 단계·강을 열고 배치 테스트는 건너뛴 것으로 (저장은 하지 않고 화면·서버 확인에서만)
   if (testAccount) {
     for (const t of TRACKS) unlocked[t] = STAGE_COUNT;

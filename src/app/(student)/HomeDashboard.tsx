@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GROWTH, TIER_LABELS, TRACK_LABELS, TRACKS } from "@/config/game";
+import { GROWTH, TIER_LABELS, TOP_TIER, TRACK_LABELS, TRACKS } from "@/config/game";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { PixelProgressBar } from "@/components/ui/PixelProgressBar";
@@ -161,7 +161,7 @@ export function HomeDashboard() {
                       {"○".repeat(tp.need - tp.done)}
                     </span>
                   ) : (
-                    <span className="ml-auto text-lime-800">{tp.allDone ? "레전드 완주!" : `레전드 ${tp.done}/${tp.need}`}</span>
+                    <span className="ml-auto text-lime-800">{tp.allDone ? `${TIER_LABELS[TOP_TIER]} 완주!` : `${TIER_LABELS[TOP_TIER]} ${tp.done}/${tp.need}`}</span>
                   )}
                 </li>
               );

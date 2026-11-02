@@ -1,4 +1,5 @@
-// 연습 트랙 단계: 티어 6개 × 5단계 = 트랙마다 30단계 (config/game.ts STAGE_PLAN)
+// 연습 트랙 단계: 티어 7개 × 5단계 = 트랙마다 35단계 (config/game.ts STAGE_PLAN)
+// 그랜드마스터는 연습팩 지문이 따로 없어서 레전드 같은 단계의 지문을 써요 (목표 타수만 더 높아요)
 
 import { LESSON_GATED_TRACKS, PLACEMENT, STAGE_ACCURACY, STAGE_PLAN, STEPS_PER_TIER, TIER_LABELS, TIERS, type Tier, type Track } from "@/config/game";
 import { getLevel, type Level, type PracticeMode } from "@/data/packs";
@@ -6,8 +7,10 @@ import STAGE_META from "@/data/packs/stage-meta.json";
 
 /** 트랙 연습팩 요약 (scripts/build-stage-meta.mjs 가 만듦). 지문 본문은 서버 전용 packStage.ts 에서 */
 type StageMeta = { title: string; lessons: number[]; passages: number; roundSize: number };
+/** 연습팩에서 찾을 티어 (그랜드마스터 → 레전드 지문) */
+export const packTierOf = (tier: Tier): Tier => (tier === "grandmaster" ? "legend" : tier);
 const metaOf = (track: Track, tier: Tier, step: number): StageMeta | undefined =>
-  (STAGE_META as unknown as Partial<Record<Track, { stages: Record<string, StageMeta> }>>)[track]?.stages[`${tier}-${step}`];
+  (STAGE_META as unknown as Partial<Record<Track, { stages: Record<string, StageMeta> }>>)[track]?.stages[`${packTierOf(tier)}-${step}`];
 
 export type Stage = {
   /** 1~30 */
@@ -43,12 +46,13 @@ const TEXT_MODE: Record<Tier, PracticeMode> = {
   diamond: "sentences",
   master: "paragraph",
   legend: "paragraph",
+  grandmaster: "paragraph",
 };
 const TIER_MODE: Partial<Record<Track, Record<Tier, PracticeMode>>> = {
   korean: TEXT_MODE,
   // 기호: 한 줄짜리는 줄 단위, 마스터·레전드는 여러 줄 코드 (줄바꿈·들여쓰기 유지)
-  symbol: { ...TEXT_MODE, master: "code", legend: "code" },
-  code: { bronze: "code", silver: "code", gold: "code", diamond: "code", master: "code", legend: "code" },
+  symbol: { ...TEXT_MODE, master: "code", legend: "code", grandmaster: "code" },
+  code: { bronze: "code", silver: "code", gold: "code", diamond: "code", master: "code", legend: "code", grandmaster: "code" },
 };
 /** 한 판 분량을 연습팩 round 값으로 정하는 트랙 (한글은 예전 방식 그대로) */
 const PACK_ROUND_TRACKS: readonly Track[] = ["symbol", "code"];

@@ -3,7 +3,7 @@ import "server-only";
 // 명예의 전당 (서버 전용). CLAUDE.md 6장: 공개 화면에 개인 타수 순위는 금지, 명예의 전당만 예외.
 // 같은 학년 안에서 부문별 상위 N명을 닉네임으로만 보여 줘요. (선생님 확인 대기·무효 기록은 빼요)
 
-import { GAME_LABELS, HALL, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
+import { GAME_LABELS, HALL, TIER_LABELS, TIERS, TOP_TIER, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
 import { bossRanks } from "@/lib/games/boss";
 import { isTestNumber } from "@/lib/auth/testAccount";
 import { dayKeyKST } from "@/lib/practice/day";
@@ -159,7 +159,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   }
 
   {
-    // 가장 높은 단계 (네 트랙 중 최고). 마지막 단계를 깨면 "레전드 정상"
+    // 가장 높은 단계 (네 트랙 중 최고). 마지막 단계를 깨면 "그랜드마스터 정상"
     // 같은 단계면: 그 단계에 오른 트랙이 많은 순 → 네 트랙 단계를 더한 값이 큰 순
     const done = new Set((topClears.data ?? []).map((c) => `${c.student_id}:${c.track}`));
     const height = (p: { student_id: string; track: string; unlocked_level: number }) =>
@@ -179,7 +179,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       .sort((a, b) => b.stage - a.stage || b.tracks - a.tracks || b.total - a.total)
       .slice(0, HALL.size);
     const where = (r: Best) => (r.tracks > 1 ? `${r.tracks}개 트랙` : TRACK_LABELS[r.track]);
-    const label = (r: Best) => (r.stage > STAGE_COUNT ? "레전드 정상" : stageName(r.stage));
+    const label = (r: Best) => (r.stage > STAGE_COUNT ? `${TIER_LABELS[TOP_TIER]} 정상` : stageName(r.stage));
     boards.push({
       id: "stage",
       title: "최고 단계 도달",

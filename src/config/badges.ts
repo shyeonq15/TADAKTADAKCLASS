@@ -55,6 +55,7 @@ export const BADGES: readonly Badge[] = [
   { id: "all-silver", icon: "◆", name: "네 트랙 실버", how: "네 트랙 모두 실버 이상", check: (s) => allAtLeast(s, "silver") },
   { id: "all-gold", icon: "♛", name: "네 트랙 골드", how: "네 트랙 모두 골드 이상", check: (s) => allAtLeast(s, "gold") },
   { id: "all-legend", icon: "👑", name: "올 레전드", how: "네 트랙 모두 레전드", check: (s) => allAtLeast(s, "legend") },
+  { id: "grandmaster", icon: "🌌", name: "그랜드마스터", how: "한 트랙이라도 그랜드마스터", check: (s) => Object.values(s.tiers).some((t) => atLeast(t, "grandmaster")) },
   // 게임·보스·대결
   { id: "gamer-20", icon: "🎮", name: "게이머", how: "게임 20판 하기", check: (s) => s.games >= 20 },
   { id: "boss-1", icon: "👾", name: "보스 사냥꾼", how: "보스 1마리 격파", check: (s) => s.bossDefeated >= 1 },

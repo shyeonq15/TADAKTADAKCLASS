@@ -3,7 +3,7 @@ import "server-only";
 // 우리 반 소식 (서버 전용): 최근 며칠 동안 반 친구들이 해낸 일을 모아 보여 줘요.
 // 따로 표를 두지 않고 기록(단계 통과·보스 격파·강의 통과·미션)에서 만들어요. 타수 숫자는 넣지 않아요.
 
-import { STEPS_PER_TIER, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Track } from "@/config/game";
+import { STEPS_PER_TIER, TIER_LABELS, TIERS, TOP_TIER, TRACK_LABELS, TRACKS, type Track } from "@/config/game";
 import { LESSON_COUNT } from "@/data/codeNotes";
 import { STAGE_COUNT } from "@/lib/practice/stages";
 import { cpmTier } from "@/lib/scoring/tier";
@@ -50,7 +50,7 @@ export async function loadClassNews(classId: string): Promise<NewsItem[]> {
         icon: c.level >= STAGE_COUNT ? "👑" : "⬆️",
         text:
           c.level >= STAGE_COUNT
-            ? `${josa(nick, "이", "가")} ${TRACK_LABELS[c.track as Track]} 레전드 정상에 올랐다!`
+            ? `${josa(nick, "이", "가")} ${TRACK_LABELS[c.track as Track]} ${TIER_LABELS[TOP_TIER]} 정상에 올랐다!`
             : `${josa(nick, "이", "가")} ${TRACK_LABELS[c.track as Track]} ${TIER_LABELS[next]} 티어로 승급했다!`,
       });
     } else if (c.track === "lesson" && c.level === LESSON_COUNT) {

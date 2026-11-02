@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { STEPS_PER_TIER, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Track } from "@/config/game";
+import { STEPS_PER_TIER, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Track, TOP_TIER } from "@/config/game";
 import { MODE_LABELS } from "@/data/packs";
 import { LevelHelp, TierHelp } from "@/components/help/HelpContent";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
@@ -33,8 +33,8 @@ function Ladder({ track }: { track: Track }) {
           {tp.next
             ? `${TIER_LABELS[tp.current]} ${tp.need}단계 중 ${tp.done}단계 클리어 · 다 깨면 ${TIER_LABELS[tp.next]}!`
             : tp.allDone
-              ? "레전드까지 모두 깼어요! 대단해요!"
-              : `마지막 레전드 ${tp.done} / ${tp.need}`}
+              ? `${TIER_LABELS[TOP_TIER]}까지 모두 깼어요! 대단해요!`
+              : `마지막 ${TIER_LABELS[TOP_TIER]} ${tp.done} / ${tp.need}`}
         </span>
       </div>
 

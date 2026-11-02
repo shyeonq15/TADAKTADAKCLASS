@@ -95,7 +95,7 @@ export function ProfileView({ p, mates }: { p: ProfileData; mates: Mate[] }) {
                     <td className="py-1.5">
                       <TierBadge tier={p.tiers[t]} />
                     </td>
-                    <td className="py-1.5">{p.stages[t] >= STAGE_COUNT ? "레전드 5단계 (마지막)" : stageName(p.stages[t])}</td>
+                    <td className="py-1.5">{p.stages[t] >= STAGE_COUNT ? `${stageName(STAGE_COUNT)} (마지막)` : stageName(p.stages[t])}</td>
                     {p.private && (
                       <td className="py-1.5 text-right">{best ? `${best.cpm}타 · ${best.accuracy}%` : <span className="text-text-muted">-</span>}</td>
                     )}
