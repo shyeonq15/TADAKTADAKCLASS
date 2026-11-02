@@ -7,12 +7,17 @@ import { loadUncached, type Who } from "@/lib/practice/server";
 import type { PracticeData } from "@/lib/practice/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lockOpen } from "./lock";
+import type { Tier } from "@/config/game";
+import { loadBadges } from "@/lib/badges/server";
 
 export type ShopData = {
   owned: string[];
   look: MinimiLook;
   /** 데이터베이스 표가 아직 없으면 false (선생님이 SQL을 실행해야 함) */
   ready: boolean;
+  /** 한정 아이템 잠금 확인용: 보스 티어, 모은 칭호 */
+  bossTier: Tier | null;
+  badges: string[];
 };
 
 /** 저장된 모양에서 없는 아이템·다른 칸 아이템은 빼고 돌려줌 */
@@ -28,14 +33,17 @@ export function cleanLook(raw: unknown): MinimiLook {
 
 export async function loadShop(userId: string): Promise<ShopData> {
   const admin = createAdminClient();
-  const [items, look] = await Promise.all([
+  const [items, look, badges] = await Promise.all([
     admin.from("student_items").select("item_id").eq("student_id", userId),
     admin.from("minimi_looks").select("look").eq("student_id", userId).maybeSingle(),
+    loadBadges(userId),
   ]);
   return {
     owned: [...FREE_ITEMS, ...(items.data ?? []).map((i) => i.item_id)],
     look: cleanLook(look.data?.look),
     ready: !items.error && !look.error,
+    bossTier: badges.stats.bossTier,
+    badges: badges.earned,
   };
 }
 
@@ -58,8 +66,11 @@ async function saveLook(userId: string, look: MinimiLook) {
 export async function buyItem(who: Who, itemId: string): Promise<ShopResult> {
   const item = minimiItem(itemId);
   if (!item) return { error: "없는 아이템이에요." };
-  const before = await loadUncached(who.userId);
-  if (!lockOpen(item.lock, before.progress.unlocked)) return { error: "아직 잠겨 있는 아이템이에요." };
+  if (item.lock) {
+    const [before, badges] = await Promise.all([loadUncached(who.userId), loadBadges(who.userId)]);
+    const ctx = { unlocked: before.progress.unlocked, bossTier: badges.stats.bossTier, badges: badges.earned };
+    if (!lockOpen(item.lock, ctx)) return { error: "아직 잠겨 있는 아이템이에요." };
+  }
 
   const { data: res, error } = await createAdminClient().rpc("buy_student_item", {
     p_student: who.userId,

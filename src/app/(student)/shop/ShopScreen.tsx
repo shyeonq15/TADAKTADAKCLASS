@@ -19,6 +19,7 @@ export function ShopScreen({ initial }: { initial: ShopData }) {
   const { progress } = usePracticeData();
   const setData = useSetPracticeData();
   const [shop, setShop] = useState(initial);
+  const lockCtx = { unlocked: progress.unlocked, bossTier: shop.bossTier, badges: shop.badges };
   const [slot, setSlot] = useState<MinimiSlot>("hat");
   const [picked, setPicked] = useState<MinimiItem | null>(null);
   const [confirming, setConfirming] = useState(false);
@@ -95,7 +96,7 @@ export function ShopScreen({ initial }: { initial: ShopData }) {
         </div>
         <ul className="grid grid-cols-2 gap-2 border-t-2 border-win-shadow pt-3 sm:grid-cols-3 lg:grid-cols-4">
           {MINIMI_ITEMS.filter((i) => i.slot === slot).map((item) => {
-            const open = lockOpen(item.lock, progress.unlocked);
+            const open = lockOpen(item.lock, lockCtx);
             const isPicked = picked?.id === item.id;
             return (
               <li key={item.id}>
@@ -131,7 +132,7 @@ export function ShopScreen({ initial }: { initial: ShopData }) {
               item={picked}
               owned={owned(picked.id)}
               worn={worn(picked)}
-              open={lockOpen(picked.lock, progress.unlocked)}
+              open={lockOpen(picked.lock, lockCtx)}
               coins={progress.coins}
               busy={busy || !shop.ready}
               confirming={confirming}
