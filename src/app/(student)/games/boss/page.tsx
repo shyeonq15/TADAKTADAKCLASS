@@ -4,14 +4,14 @@ import { DesktopBackground } from "@/components/ui/DesktopBackground";
 import { Loading } from "@/components/ui/Loading";
 import { requireStudent } from "@/lib/auth/viewer";
 import { bossRanks, listBosses } from "@/lib/games/boss";
-import { loadShop } from "@/lib/shop/server";
+import { loadLooks } from "@/lib/shop/server";
 import { BossGame } from "./BossGame";
 
 async function Content() {
   await connection();
   const v = await requireStudent();
-  const [bosses, shop, ranks] = await Promise.all([listBosses(v.userId, v.schoolId, false, v.enrollment ? { schoolYearId: v.enrollment.schoolYearId, grade: v.enrollment.grade } : null), loadShop(v.userId), bossRanks([v.userId])]);
-  return <BossGame bosses={bosses} myLook={shop.look} myTier={ranks.get(v.userId)?.tier ?? null} />;
+  const [bosses, shop, ranks] = await Promise.all([listBosses(v.userId, v.schoolId, false, v.enrollment ? { schoolYearId: v.enrollment.schoolYearId, grade: v.enrollment.grade } : null), loadLooks([v.userId]), bossRanks([v.userId])]);
+  return <BossGame bosses={bosses} myLook={shop[v.userId]} myTier={ranks.get(v.userId)?.tier ?? null} />;
 }
 
 export default function BossPage() {

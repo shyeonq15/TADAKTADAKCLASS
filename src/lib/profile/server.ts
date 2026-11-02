@@ -69,6 +69,8 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
   const admin = createAdminClient();
   const mine = viewer.userId === targetId;
 
+  // 프로필과 반 정보를 동시에 읽어요 (차례로 읽으면 느려요)
+  const enrollmentP = loadEnrollment(targetId);
   let prof = await admin.from("profiles").select("nickname, bio, school_id, role").eq("id", targetId).maybeSingle();
   let ready = true;
   if (missing(prof.error)) {
@@ -77,7 +79,7 @@ export async function loadProfile(viewer: Viewer, targetId: string): Promise<Pro
   }
   const p = prof.data as { nickname: string | null; bio?: string | null; school_id: string | null; role: string } | null;
   if (!p || p.role !== "student") return null;
-  const enrollment = await loadEnrollment(targetId);
+  const enrollment = await enrollmentP;
   if (!(await canView(viewer, targetId, enrollment?.classId ?? null, p.school_id))) return null;
 
   const [progress, lessons, attempts, mission, wallet, history, looks, ranks, badges, seasons] = await Promise.all([
