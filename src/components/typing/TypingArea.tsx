@@ -58,11 +58,13 @@ function Line({
           const state = states[i];
           const spaceError = ch === " " && state === "error";
           const hidden = hide && i >= hide[0] && i < hide[1] && (state === "pending" || state === "current" || state === "composing");
-          // 들여쓰기 칸: 4칸마다 연한 점선 가이드
-          const guide = i < indent && i % 4 === 0 ? "border-l-2 border-dotted border-sky-300" : "";
+          // 들여쓰기 칸: 4칸마다 연한 점선 가이드 + 칸마다 연한 점(·)을 찍어 몇 칸인지 셀 수 있게
+          const inIndent = i < indent;
+          const guide = inIndent && i % 4 === 0 ? "border-l-2 border-dotted border-sky-300" : "";
+          const dot = inIndent && !spaceError && state !== "current" ? "text-sky-300" : "";
           return (
-            <span key={i} className={`${CHAR_CLASS[state]} ${guide} ${spaceError ? "bg-[var(--typing-space-error)]" : ""}`}>
-              {hidden ? "_" : spaceError ? "·" : ch}
+            <span key={i} className={`${CHAR_CLASS[state]} ${guide} ${dot} ${spaceError ? "bg-[var(--typing-space-error)]" : ""}`}>
+              {hidden ? "_" : spaceError || inIndent ? "·" : ch}
             </span>
           );
         })}
@@ -78,6 +80,7 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
   const composingRef = useRef(false);
 
   const { lines, lineIndex, typed, composing, doneLines } = session;
+  const typedIndent = typed.match(/^ */)?.[0].length ?? 0;
   // 코드는 흐름이 보여야 하니 친 줄도 남겨 둬요. 다만 판이 길면(기호 마스터 이상 등) 창이 끝없이 길어지지 않게
   // 지금 줄 둘레 CODE_WINDOW 줄만 보여 줘요 (위로 CODE_BEFORE 줄)
   const codeFirst = Math.max(0, Math.min(lineIndex - CODE_BEFORE, lines.length - CODE_WINDOW));
@@ -157,7 +160,9 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
                 <div className="flex border-b-2 border-dashed border-sky-300">
                   {code && <span className="w-10 shrink-0" />}
                   <span className="min-h-[1.5em] whitespace-pre text-navy-700">
-                    {composing ? typed.slice(0, -1) : typed}
+                    {/* 코드: 내가 친 앞 공백도 점으로 보여 줘서 들여쓰기를 몇 칸 했는지 보이게 */}
+                    {code && <span className="text-sky-400">{"·".repeat(typedIndent)}</span>}
+                    {(composing ? typed.slice(0, -1) : typed).slice(code ? typedIndent : 0)}
                     {composing && <span className="underline decoration-2">{typed.slice(-1)}</span>}
                     <span className="inline-block w-[0.55em] bg-navy-900 align-middle" style={{ height: "1em" }} />
                   </span>
