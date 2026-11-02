@@ -31,7 +31,7 @@ export function RaceLanes({ lanes }: { lanes: Lane[] }) {
         const p = Math.max(0, Math.min(1, l.progress));
         return (
           <div key={l.id} className={`flex items-center gap-2 ${l.me ? "font-bold" : ""}`}>
-            <span className="w-24 shrink-0 truncate font-pixel text-small text-navy-900">
+            <span className="w-28 shrink-0 break-all font-pixel text-small leading-tight text-navy-900">
               {l.me ? "▶ " : ""}
               {l.name}
             </span>

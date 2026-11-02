@@ -24,12 +24,17 @@ function Board({ board }: { board: HallBoard }) {
               style={e.me ? { background: "#fff6d6" } : undefined}
             >
               <span className="w-8 shrink-0 text-center">{MEDAL[i + 1] ?? `${i + 1}`}</span>
-              <span className="min-w-0 flex-1 truncate">
-                {e.nickname} <span className="text-small text-text-muted">{e.classNo}반</span>
-                {e.me && <span className="ml-1 text-small">(나)</span>}
+              {/* 닉네임이 잘리지 않게: 윗줄 닉네임, 아랫줄 티어·기록 */}
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="break-all">
+                  {e.nickname} <span className="text-small text-text-muted">{e.classNo}반</span>
+                  {e.me && <span className="ml-1 text-small">(나)</span>}
+                </span>
+                <span className="flex flex-wrap items-center gap-1 text-small">
+                  {e.tier && <TierBadge tier={e.tier} />}
+                  <span>{e.value}</span>
+                </span>
               </span>
-              {e.tier && <TierBadge tier={e.tier} />}
-              <span className="shrink-0 text-right">{e.value}</span>
             </li>
           ))}
         </ol>
