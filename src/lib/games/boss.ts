@@ -3,7 +3,8 @@ import "server-only";
 // 보스전 (서버 전용): 선생님이 친 기록을 "보스 고스트"로 저장하고, 학생은 그 기록과 레이스해요.
 // 연습과 같이 서버가 지문을 내주고(서명된 표), 결과를 받아 타수·정확도·시간을 다시 계산해요.
 
-import { BOSS, GAME_COINS, INTEGRITY, TRACKS, type Track } from "@/config/game";
+import { BOSS, GAME_COINS, INTEGRITY, TRACKS, type Tier, type Track } from "@/config/game";
+import { cpmTier, higherTier } from "@/lib/scoring/tier";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { linesKeystrokes } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
@@ -36,6 +37,8 @@ export type BossSummary = {
   lineCount: number;
   defeated: boolean;
   active: boolean;
+  /** 보스 난이도: 선생님 기록 타수로 매긴 티어 */
+  tier: Tier;
 };
 
 export type BossSubmission = {
@@ -141,7 +144,28 @@ export async function listBosses(userId: string, schoolId: string, includeInacti
     lineCount: (b.lines as string[]).length,
     defeated: won.has(b.id),
     active: b.active,
+    tier: cpmTier(b.track as Track, b.cpm),
   }));
+}
+
+export type BossRank = { tier: Tier | null; defeated: number };
+
+/** 학생들의 보스 티어: 격파한 보스 중 가장 높은 티어 + 격파한 보스 수 */
+export async function bossRanks(studentIds: string[]): Promise<Map<string, BossRank>> {
+  const out = new Map<string, BossRank>();
+  if (!studentIds.length) return out;
+  const { data } = await createAdminClient()
+    .from("boss_defeats")
+    .select("student_id, boss_records!inner(track, cpm)")
+    .in("student_id", studentIds);
+  type Row = { student_id: string; boss_records: { track: string; cpm: number } | { track: string; cpm: number }[] };
+  for (const d of (data ?? []) as unknown as Row[]) {
+    const b = Array.isArray(d.boss_records) ? d.boss_records[0] : d.boss_records;
+    if (!b) continue;
+    const cur = out.get(d.student_id) ?? { tier: null, defeated: 0 };
+    out.set(d.student_id, { tier: higherTier(cur.tier, cpmTier(b.track as Track, b.cpm)), defeated: cur.defeated + 1 });
+  }
+  return out;
 }
 
 async function bossFor(bossId: string, schoolId: string) {

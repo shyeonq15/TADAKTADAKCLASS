@@ -6,6 +6,7 @@ import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { requireTeacher } from "@/lib/auth/viewer";
 import { listBosses } from "@/lib/games/boss";
+import { TierBadge } from "@/components/ui/TierBadge";
 import { deleteBoss, toggleBoss } from "./actions";
 
 async function Bosses() {
@@ -24,6 +25,7 @@ async function Bosses() {
       <RetroWindow title="우리 학교 보스">
         <p className="mb-3 text-small text-text-muted">
           선생님이 직접 친 기록이 &ldquo;보스 고스트&rdquo;가 돼요. 학생은 같은 글로 고스트와 레이스해서, 더 빨리 끝내고 정확도 90% 이상이면 보스를 이겨요.
+          보스 티어는 기록 타수로 정해져요 (연습 트랙 단계 목표 타수 기준). 일부러 천천히 친 기록으로 낮은 티어 보스도 만들 수 있어요. 학생은 격파한 보스 중 가장 높은 티어를 &ldquo;보스 티어&rdquo;로 얻어요.
         </p>
         {bosses.length ? (
           <table className="w-full text-body">
@@ -31,6 +33,7 @@ async function Bosses() {
               <tr className="border-b-2 border-navy-900 text-left">
                 <th className="py-2">이름</th>
                 <th className="py-2">트랙</th>
+                <th className="py-2">보스 티어</th>
                 <th className="py-2 text-right">기록</th>
                 <th className="py-2 text-right">시간</th>
                 <th className="py-2">상태</th>
@@ -42,6 +45,9 @@ async function Bosses() {
                 <tr key={b.id} className="border-b border-win-shadow">
                   <td className="py-2 font-bold">{b.title}</td>
                   <td className="py-2">{TRACK_LABELS[b.track]}</td>
+                  <td className="py-2">
+                    <TierBadge tier={b.tier} />
+                  </td>
                   <td className="py-2 text-right">
                     {b.cpm}타 · {b.accuracy}%
                   </td>

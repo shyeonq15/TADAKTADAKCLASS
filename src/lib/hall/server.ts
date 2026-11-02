@@ -3,7 +3,8 @@ import "server-only";
 // 명예의 전당 (서버 전용). CLAUDE.md 6장: 공개 화면에 개인 타수 순위는 금지, 명예의 전당만 예외.
 // 같은 학년 안에서 부문별 상위 N명을 닉네임으로만 보여 줘요. (선생님 확인 대기·무효 기록은 빼요)
 
-import { GAME_LABELS, HALL, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
+import { GAME_LABELS, HALL, TIER_LABELS, TIERS, TRACK_LABELS, TRACKS, type Tier, type Track } from "@/config/game";
+import { bossRanks } from "@/lib/games/boss";
 import { classesOf } from "@/lib/battle/server";
 import { STAGE_COUNT, stageName, tierOfStage } from "@/lib/practice/stages";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -55,7 +56,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       .in("student_id", ids)
       .eq("suspicious", false);
 
-  const [speed, symbolAcc, games, progress, topClears] = await Promise.all([
+  const [speed, symbolAcc, games, progress, topClears, bosses] = await Promise.all([
     Promise.all(
       TRACKS.map((t) =>
         base()
@@ -81,6 +82,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
     admin.from("track_progress").select("student_id, track, unlocked_level").in("student_id", ids),
     // 마지막 단계를 실제로 깼는지 (열기만 한 것과 구분)
     admin.from("level_clears").select("student_id, track").eq("level", STAGE_COUNT).in("student_id", ids),
+    bossRanks(ids),
   ]);
 
   type Row = { student_id: string; track: Track; mode: string; cpm: number; accuracy: number | string; keystrokes: number; score: number | null };
@@ -143,6 +145,21 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       title: "최고 단계 도달",
       note: "네 트랙 중 가장 높이 올라간 단계 · 같으면 그 단계에 오른 트랙이 많은 순",
       entries: rows.map((r) => entry(r, `${where(r)} ${label(r)}`, tierOfStage(Math.min(r.stage, STAGE_COUNT)))),
+    });
+  }
+
+  {
+    // 보스 헌터: 격파한 보스 중 가장 높은 티어 → 같으면 격파한 보스 수
+    const rows = [...bosses.entries()]
+      .filter(([, r]) => r.tier !== null)
+      .map(([student_id, r]) => ({ student_id, tier: r.tier as Tier, defeated: r.defeated }))
+      .sort((a, b) => TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || b.defeated - a.defeated)
+      .slice(0, HALL.size);
+    boards.push({
+      id: "boss",
+      title: "보스 헌터",
+      note: "격파한 보스 중 가장 높은 티어 · 같으면 격파한 보스 수",
+      entries: rows.map((r) => entry(r, `${TIER_LABELS[r.tier]} 보스 · ${r.defeated}마리 격파`, r.tier)),
     });
   }
 

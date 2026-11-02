@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BOSS, GAME_COINS, TRACK_LABELS, type Track } from "@/config/game";
+import { BOSS, GAME_COINS, TRACK_LABELS, type Tier, type Track } from "@/config/game";
+import { TierBadge } from "@/components/ui/TierBadge";
 import { startBoss, submitBoss } from "@/app/(student)/actions";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
 import { COIN } from "@/components/pixel/sprites";
@@ -113,7 +114,7 @@ function Race({
   );
 }
 
-export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: MinimiLook }) {
+export function BossGame({ bosses, myLook, myTier }: { bosses: BossSummary[]; myLook?: MinimiLook; myTier: Tier | null }) {
   const [phase, setPhase] = useState<Phase>({ name: "list" });
   // 도전 중에 다른 메뉴로 가면 그 판은 무효 (돌아왔을 때 멈춘 판이 다시 움직이지 않게)
   useOnHide(() => {
@@ -143,6 +144,14 @@ export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: M
               {GAME_COINS.bossClass}개.
             </p>
           </div>
+          {/* 내 보스 티어: 격파한 보스 중 가장 높은 티어 */}
+          <div className="flex flex-wrap items-center justify-center gap-2 font-pixel text-body text-navy-900">
+            내 보스 티어
+            {myTier ? <TierBadge tier={myTier} /> : <span className="text-text-muted">아직 없어요</span>}
+            <span className="text-small text-text-muted">
+              · 격파 {bosses.filter((b) => b.defeated).length} / {bosses.length} · 보스 티어는 선생님 기록 타수로 정해져요. 높은 티어 보스를 이기면 내 보스 티어가 올라가요!
+            </span>
+          </div>
           {bosses.length ? (
             <ul className="grid gap-2 md:grid-cols-2">
               {bosses.map((b, i) => (
@@ -155,7 +164,7 @@ export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: M
                   >
                     <span className="text-[36px] leading-none">{b.defeated ? "🏆" : "👾"}</span>
                     <span className="flex-1 font-pixel text-body">
-                      <strong>{b.title}</strong>
+                      <strong>{b.title}</strong> <TierBadge tier={b.tier} />
                       <br />
                       <span className="text-small text-text-muted">
                         {TRACK_LABELS[b.track]} · {b.lineCount}줄 · 보스 {Math.round(b.durationMs / 1000)}초

@@ -1,7 +1,7 @@
 // 실력 티어: 연습 트랙 단계와 같아요. 지금 도전 중인 단계의 티어가 그 트랙의 티어예요.
 // (브론즈 5단계를 다 깨면 실버 1단계가 열리고 → 티어가 실버)
 
-import { STEPS_PER_TIER, TIERS, TRACKS, type Tier, type Track } from "@/config/game";
+import { STAGE_PLAN, STEPS_PER_TIER, TIERS, TRACKS, type Tier, type Track } from "@/config/game";
 import { STAGE_COUNT, tierOfStage } from "@/lib/practice/stages";
 
 type Unlocked = Record<Track, number>;
@@ -30,3 +30,14 @@ export function tierProgress(unlocked: Unlocked, cleared: readonly string[], tra
   const allDone = stage >= STAGE_COUNT && cleared.includes(`${track}-${STAGE_COUNT}`);
   return { current, next, done, need: STEPS_PER_TIER, allDone };
 }
+
+/** 타수로 티어 매기기: 이 트랙에서 목표 타수를 넘는 가장 높은 단계의 티어 (보스 난이도에 써요) */
+export function cpmTier(track: Track, cpm: number): Tier {
+  let stage = 1;
+  for (let n = 1; n <= STAGE_COUNT; n++) if (cpm >= STAGE_PLAN[track][n - 1][1]) stage = n;
+  return tierOfStage(stage);
+}
+
+/** 더 높은 티어 (없으면 null 이 아닌 쪽) */
+export const higherTier = (a: Tier | null, b: Tier | null): Tier | null =>
+  a === null ? b : b === null ? a : TIERS.indexOf(b) > TIERS.indexOf(a) ? b : a;
