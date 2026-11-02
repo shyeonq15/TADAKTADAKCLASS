@@ -8,6 +8,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import {
   addCoins,
+  addGamePlayCoins,
   hashLines,
   loadUncached,
   makeToken,
@@ -128,8 +129,7 @@ export async function saveGame(
 
   let coins = 0;
   if (!suspicious && result.hits > 0) {
-    await addCoins(who.userId, GAME_COINS.play, GAME_LABELS[game]);
-    coins += GAME_COINS.play;
+    coins += await addGamePlayCoins(who.userId, game);
     if (newBest) {
       await addCoins(who.userId, GAME_COINS.best, `${GAME_LABELS[game]} 최고 점수`);
       coins += GAME_COINS.best;

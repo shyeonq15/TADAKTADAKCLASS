@@ -10,7 +10,7 @@ import { randomUUID } from "node:crypto";
 import { GAME_COINS, RACE, TRACKS, type RaceDifficulty, type RaceMode, type Track } from "@/config/game";
 import type { MinimiLook } from "@/config/shop";
 import { getLevel } from "@/data/packs";
-import { addCoins, hashLines, loadUncached, makeToken, readToken, refreshGrowth, type Who } from "@/lib/practice/server";
+import { addCoins, addGamePlayCoins, hashLines, loadUncached, makeToken, readToken, refreshGrowth, type Who } from "@/lib/practice/server";
 import type { PracticeData } from "@/lib/practice/types";
 import { median } from "@/lib/scoring/growth";
 import { loadLooks } from "@/lib/shop/server";
@@ -413,8 +413,8 @@ export async function submitRace(
 
   let coins = 0;
   if (r.flags.length === 0) {
-    await addCoins(who.userId, GAME_COINS.play, "친구 대결 참여");
-    coins += GAME_COINS.play;
+    // 참여 코인은 끝까지 제대로 쳤을 때만
+    if (r.completed && r.accuracy >= GAME_COINS.playMinAccuracy) coins += await addGamePlayCoins(who.userId, "race");
     await refreshGrowth(who);
   }
 

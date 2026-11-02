@@ -12,6 +12,7 @@ import { stageName } from "@/lib/practice/stages";
 import { getStageWithPassages } from "@/lib/practice/packStage";
 import {
   addCoins,
+  addGamePlayCoins,
   hashLines,
   loadUncached,
   makeToken,
@@ -232,9 +233,9 @@ export async function saveBossChallenge(
   let coins = 0;
   let classCoins = 0;
   let firstWin = false;
-  if (!suspicious) {
-    await addCoins(who.userId, GAME_COINS.play, "보스전 도전");
-    coins += GAME_COINS.play;
+  // 참여 코인은 끝까지 제대로 쳤을 때만 (스페이스만 눌러 빨리 끝내는 판은 코인 없음)
+  if (!suspicious && r.completed && r.accuracy >= GAME_COINS.playMinAccuracy) {
+    coins += await addGamePlayCoins(who.userId, "boss");
   }
   if (win) {
     const d = await admin.from("boss_defeats").insert({ student_id: who.userId, boss_id: boss.id });

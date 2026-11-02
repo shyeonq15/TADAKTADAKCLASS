@@ -6,7 +6,7 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { BLANK_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, GAME_COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel } from "@/data/packs";
 import { contentLevelOf, getStage, missingLessons, STAGE_COUNT, startStage, tierOfStage } from "./stages";
@@ -268,6 +268,29 @@ export async function addCoins(userId: string, amount: number, reason: string) {
     await admin.from("wallets").upsert({ student_id: userId, coins: (data?.coins ?? 0) + amount });
   }
   await admin.from("coin_transactions").insert({ student_id: userId, amount, reason });
+}
+
+/** 게임 참여 코인 내역에 쓰는 이유 문구 (하루 상한을 셀 때 이 문구들만 더해요) */
+export const GAME_PLAY_REASONS = {
+  rain: "단어 비",
+  runner: "토끼 달리기",
+  boss: "보스전 도전",
+  race: "친구 대결 참여",
+} as const;
+
+/** 게임 참여 코인: 오늘 받은 참여 코인이 하루 상한을 넘지 않을 만큼만 넣어요. 실제로 넣은 코인 수를 돌려줘요 */
+export async function addGamePlayCoins(userId: string, game: keyof typeof GAME_PLAY_REASONS) {
+  const since = new Date(`${dayKeyKST()}T00:00:00+09:00`).toISOString();
+  const { data } = await createAdminClient()
+    .from("coin_transactions")
+    .select("amount")
+    .eq("student_id", userId)
+    .in("reason", Object.values(GAME_PLAY_REASONS))
+    .gte("created_at", since);
+  const today = (data ?? []).reduce((n, r) => n + r.amount, 0);
+  const amount = Math.min(GAME_COINS.play, Math.max(0, GAME_COINS.playDailyMax - today));
+  await addCoins(userId, amount, GAME_PLAY_REASONS[game]);
+  return amount;
 }
 
 /** 반 지갑에 코인 넣기 (누가 보탰는지 함께 기록) */

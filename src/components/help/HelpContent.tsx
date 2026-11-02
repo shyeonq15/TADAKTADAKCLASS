@@ -165,6 +165,12 @@ export function CoinHelp() {
             친구 대결 · 참여 {GAME_COINS.play}코인, 1등 {GAME_COINS.raceWin}코인 더
           </li>
           <li>
+            보스전 도전 · {GAME_COINS.play}코인 (끝까지, 정확도 {GAME_COINS.playMinAccuracy}% 이상)
+          </li>
+          <li>
+            게임·친구 대결·보스전 참여 코인은 하루에 {GAME_COINS.playDailyMax}코인까지
+          </li>
+          <li>
             보스 처음 격파 · 나에게 {GAME_COINS.bossWin}코인 + 우리 반 지갑에 {GAME_COINS.bossClass}코인
           </li>
           <li>
@@ -255,7 +261,7 @@ export function RaceHelp() {
         </ul>
       </Box>
       <p>
-        판마다 참여 코인 {GAME_COINS.play}개, 시리즈 우승은 {GAME_COINS.raceWin}개 더! 채팅은 없고 이모티콘으로만 응원해요.
+        판마다 참여 코인 {GAME_COINS.play}개(끝까지, 정확도 {GAME_COINS.playMinAccuracy}% 이상), 시리즈 우승은 {GAME_COINS.raceWin}개 더! 채팅은 없고 이모티콘으로만 응원해요.
       </p>
     </>
   );

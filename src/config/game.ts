@@ -255,6 +255,10 @@ export const GAME_COINS = {
   bossClass: 5,
   /** 게임 한 판 */
   play: 3,
+  /** 게임 참여 코인은 하루에 이만큼까지 (단어 비·토끼 달리기·보스전·친구 대결 합쳐서) */
+  playDailyMax: 30,
+  /** 보스전·친구 대결 참여 코인: 끝까지 치고 정확도 이 값(%) 이상일 때만 */
+  playMinAccuracy: 80,
   /** 게임 최고 점수 갱신 */
   best: 10,
 } as const;

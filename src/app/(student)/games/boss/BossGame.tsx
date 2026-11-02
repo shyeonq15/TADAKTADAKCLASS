@@ -208,7 +208,11 @@ export function BossGame({ bosses, myLook }: { bosses: BossSummary[]; myLook?: M
   const { r, c } = phase;
   const messages = [
     r.suspicious ? "이번 기록은 선생님 확인 후에 반영돼요." : "",
-    r.coins > 0 ? `코인 ${r.coins}개를 획득했다!` : "",
+    r.coins > 0
+      ? `코인 ${r.coins}개를 획득했다!`
+      : r.suspicious
+        ? ""
+        : `참여 코인은 끝까지, 정확도 ${GAME_COINS.playMinAccuracy}% 이상으로 치면 받아요. (게임 참여 코인은 하루 ${GAME_COINS.playDailyMax}개까지)`,
     r.classCoins > 0 ? `우리 반 지갑에 코인 ${r.classCoins}개가 쌓였다!` : "",
     r.firstWin ? `${c.title}를 처음으로 격파했다!` : "",
   ].filter(Boolean);
