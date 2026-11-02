@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BOSS, GAME_COINS, TRACK_LABELS, type Tier, type Track } from "@/config/game";
+import { BOSS, GAME_COINS, STUDENT_BOSS, TIER_LABELS, TRACK_LABELS, type Tier, type Track } from "@/config/game";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { startBoss, submitBoss } from "@/app/(student)/actions";
 import { PixelSprite } from "@/components/pixel/PixelSprite";
@@ -20,6 +20,8 @@ import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
 import { toSubmission } from "@/lib/practice/submission";
 import { useOnHide } from "@/lib/games/useOnHide";
+import { useRouter } from "next/navigation";
+import { retireMyBoss } from "@/app/(student)/actions";
 
 type Challenge = {
   bossId: string;
@@ -122,6 +124,55 @@ export function BossGame({ bosses, myLook, myTier }: { bosses: BossSummary[]; my
       setPhase({ name: "error", message: "보스전 중에 다른 화면으로 가서 이번 도전은 무효가 됐어요. 다시 도전해 주세요!" });
   });
 
+  const router = useRouter();
+  const setData = useSetPracticeData();
+  const [retireMsg, setRetireMsg] = useState("");
+  const teacherBosses = bosses.filter((b) => !b.maker);
+  const studentBosses = bosses.filter((b) => b.maker);
+
+  /** 내 보스 내리기: 남은 상금을 돌려받아요 */
+  const retire = async (b: BossSummary) => {
+    if (!window.confirm(`"${b.title}" 보스를 내릴까요? 남은 상금은 돌려받아요.`)) return;
+    const res = await safeCall(() => retireMyBoss(b.id));
+    if ("error" in res) return setRetireMsg(res.error ?? "");
+    if ("data" in res && res.data) setData(res.data);
+    setRetireMsg(res.refund > 0 ? `보스를 내리고 상금 ${res.refund}코인을 돌려받았다!` : "보스를 내렸다!");
+    router.refresh();
+  };
+
+  const bossItem = (b: BossSummary, focus: boolean) => (
+    <li key={b.id}>
+      <div className="win-bevel flex w-full items-center gap-3 px-3 py-3 text-left">
+        <span className="text-[36px] leading-none">{b.mine ? "🧑‍🎤" : b.defeated ? "🏆" : "👾"}</span>
+        <span className="flex-1 font-pixel text-body">
+          <strong>{b.title}</strong> <TierBadge tier={b.tier} />
+          <br />
+          <span className="text-small text-text-muted">
+            {b.maker ? `${b.maker} · ` : ""}
+            {TRACK_LABELS[b.track]} · {b.lineCount}줄 · 보스 {Math.round(b.durationMs / 1000)}초
+          </span>
+          {b.maker && (
+            <span className="block text-small text-navy-900">
+              💰 상금 {b.prizeEach}코인 · 남은 자리 {b.prizeLeft}/{STUDENT_BOSS.winners}명
+            </span>
+          )}
+        </span>
+        {b.mine ? (
+          <button type="button" onClick={() => retire(b)} className="win-bevel h-8 px-2 font-pixel text-small active:win-bevel-pressed">
+            내리기
+          </button>
+        ) : (
+          <div className="flex flex-col items-end gap-1">
+            {b.defeated && <span className="bg-lime-400 px-2 font-pixel text-small">격파!</span>}
+            <PixelButton size="sm" variant="success" autoFocus={focus} onClick={() => challenge(b)}>
+              도전
+            </PixelButton>
+          </div>
+        )}
+      </div>
+    </li>
+  );
+
   const challenge = async (b: BossSummary) => {
     setPhase({ name: "loading" });
     const res = await safeCall(() => startBoss(b.id));
@@ -149,35 +200,33 @@ export function BossGame({ bosses, myLook, myTier }: { bosses: BossSummary[]; my
             내 보스 티어
             {myTier ? <TierBadge tier={myTier} /> : <span className="text-text-muted">아직 없어요</span>}
             <span className="text-small text-text-muted">
-              · 격파 {bosses.filter((b) => b.defeated).length} / {bosses.length} · 보스 티어는 선생님 기록 타수로 정해져요. 높은 티어 보스를 이기면 내 보스 티어가 올라가요!
+              · 격파 {teacherBosses.filter((b) => b.defeated).length} / {teacherBosses.length} · 보스 티어는 선생님 기록 타수로 정해져요. 높은 티어 선생님 보스를 이기면 내 보스 티어가 올라가요!
             </span>
           </div>
-          {bosses.length ? (
-            <ul className="grid gap-2 md:grid-cols-2">
-              {bosses.map((b, i) => (
-                <li key={b.id}>
-                  <button
-                    type="button"
-                    autoFocus={i === 0}
-                    onClick={() => challenge(b)}
-                    className="win-bevel flex w-full items-center gap-3 px-3 py-3 text-left active:win-bevel-pressed"
-                  >
-                    <span className="text-[36px] leading-none">{b.defeated ? "🏆" : "👾"}</span>
-                    <span className="flex-1 font-pixel text-body">
-                      <strong>{b.title}</strong> <TierBadge tier={b.tier} />
-                      <br />
-                      <span className="text-small text-text-muted">
-                        {TRACK_LABELS[b.track]} · {b.lineCount}줄 · 보스 {Math.round(b.durationMs / 1000)}초
-                      </span>
-                    </span>
-                    {b.defeated && <span className="bg-lime-400 px-2 font-pixel text-small">격파!</span>}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          {teacherBosses.length ? (
+            <ul className="grid gap-2 md:grid-cols-2">{teacherBosses.map((b, i) => bossItem(b, i === 0))}</ul>
           ) : (
-            <p className="font-pixel text-body">아직 보스가 없어요. 선생님이 보스를 만들면 여기에 나타나요!</p>
+            <p className="font-pixel text-body">아직 선생님 보스가 없어요. 선생님이 보스를 만들면 여기에 나타나요!</p>
           )}
+
+          {/* 친구 보스: 레전드 이상 친구가 만든 보스. 상금은 만든 친구가 걸었어요 (보스 티어에는 안 들어가요) */}
+          <div className="border-t-3 border-dashed border-navy-900 pt-3">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <p className="font-title text-heading text-navy-900">👤 친구 보스</p>
+              <span className="font-pixel text-small text-text-muted">
+                같은 학년 친구가 만든 보스예요. 처음 이긴 {STUDENT_BOSS.winners}명이 상금을 나눠 가져요!
+              </span>
+              <PixelLink href="/games/boss/make" size="sm" variant="reward" className="ml-auto">
+                + 내 보스 만들기
+              </PixelLink>
+            </div>
+            {studentBosses.length ? (
+              <ul className="grid gap-2 md:grid-cols-2">{studentBosses.map((b) => bossItem(b, false))}</ul>
+            ) : (
+              <p className="font-pixel text-body">아직 친구 보스가 없어요. {TIER_LABELS[STUDENT_BOSS.minTier]} 이상이면 첫 보스를 만들어 봐요!</p>
+            )}
+            {retireMsg && <p className="mt-2 font-pixel text-small text-navy-900">{retireMsg}</p>}
+          </div>
         </div>
       </RetroWindow>
     );

@@ -44,7 +44,10 @@ async function Bosses() {
               {bosses.map((b) => (
                 <tr key={b.id} className="border-b border-win-shadow">
                   <td className="py-2 font-bold">{b.title}</td>
-                  <td className="py-2">{TRACK_LABELS[b.track]}</td>
+                  <td className="py-2">
+                    {TRACK_LABELS[b.track]}
+                    {b.maker && <span className="block text-small text-text-muted">👤 학생 보스: {b.maker} (상금 {b.prizeEach}코인 × 남은 {b.prizeLeft}명)</span>}
+                  </td>
                   <td className="py-2">
                     <TierBadge tier={b.tier} />
                   </td>

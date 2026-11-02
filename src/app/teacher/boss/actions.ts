@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
-import { issueBossRecording, saveBossRecording, type BossSubmission } from "@/lib/games/boss";
+import { issueBossRecording, retireStudentBoss, saveBossRecording, type BossSubmission } from "@/lib/games/boss";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 async function teacher() {
@@ -33,6 +33,8 @@ export async function toggleBoss(formData: FormData) {
   if (!t) return;
   const id = String(formData.get("id"));
   const active = formData.get("active") === "true";
+  // 학생 보스를 숨기면 내린 것과 같아요 (남은 상금은 만든 학생에게 돌려줘요)
+  if (!active && (await retireStudentBoss(id, { schoolId: t.schoolId })).ok) return revalidatePath("/teacher/boss");
   await createAdminClient().from("boss_records").update({ active }).eq("id", id).eq("school_id", t.schoolId);
   revalidatePath("/teacher/boss");
 }
@@ -40,6 +42,8 @@ export async function toggleBoss(formData: FormData) {
 export async function deleteBoss(formData: FormData) {
   const t = await teacher();
   if (!t) return;
-  await createAdminClient().from("boss_records").delete().eq("id", String(formData.get("id"))).eq("school_id", t.schoolId);
+  const id = String(formData.get("id"));
+  await retireStudentBoss(id, { schoolId: t.schoolId }); // 학생 보스면 남은 상금을 먼저 돌려줘요
+  await createAdminClient().from("boss_records").delete().eq("id", id).eq("school_id", t.schoolId);
   revalidatePath("/teacher/boss");
 }

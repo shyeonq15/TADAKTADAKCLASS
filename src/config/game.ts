@@ -247,6 +247,20 @@ export const BOSS = {
   minAccuracy: 90,
 } as const;
 
+/**
+ * 학생 보스 (2026-11-02): 그 트랙 minTier 이상 학생이 자기 기록을 보스로 등록하고 상금을 걸어요.
+ * 상금은 만든 학생 코인에서 빠지고, 처음 이긴 선착순 winners 명이 상금 ÷ winners 씩 받아요. 트랙마다 1마리.
+ * 학생 보스를 이겨도 보스 티어는 오르지 않아요.
+ */
+export const STUDENT_BOSS = {
+  minTier: "legend" as Tier,
+  minAccuracy: 95,
+  minPrize: 20,
+  maxPrize: 500,
+  prizeStep: 10,
+  winners: 10,
+} as const;
+
 /** 친구 대결 (실시간 레이스) */
 export const RACE = {
   level: -4,

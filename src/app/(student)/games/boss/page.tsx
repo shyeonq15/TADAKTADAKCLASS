@@ -10,7 +10,7 @@ import { BossGame } from "./BossGame";
 async function Content() {
   await connection();
   const v = await requireStudent();
-  const [bosses, shop, ranks] = await Promise.all([listBosses(v.userId, v.schoolId), loadShop(v.userId), bossRanks([v.userId])]);
+  const [bosses, shop, ranks] = await Promise.all([listBosses(v.userId, v.schoolId, false, v.enrollment ? { schoolYearId: v.enrollment.schoolYearId, grade: v.enrollment.grade } : null), loadShop(v.userId), bossRanks([v.userId])]);
   return <BossGame bosses={bosses} myLook={shop.look} myTier={ranks.get(v.userId)?.tier ?? null} />;
 }
 

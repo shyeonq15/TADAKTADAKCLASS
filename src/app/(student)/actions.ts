@@ -2,7 +2,14 @@
 
 import type { RaceDifficulty, RaceMode, SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
-import { issueBossChallenge, saveBossChallenge, type BossSubmission } from "@/lib/games/boss";
+import {
+  issueBossChallenge,
+  issueStudentBoss,
+  retireStudentBoss,
+  saveBossChallenge,
+  saveStudentBoss,
+  type BossSubmission,
+} from "@/lib/games/boss";
 import { createMatch, getMatch, joinMatch, leaveMatch, leaveQueue, queueMatch, startMatch, submitRace } from "@/lib/games/race";
 import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
@@ -167,6 +174,43 @@ export async function renameNickname(nickname: string) {
   const v = await getViewer();
   if (!v || v.role !== "student") return NOT_LOGGED_IN;
   const res = await changeNickname(v, nickname);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(v.userId) };
+}
+
+/* ───────── 학생 보스 ───────── */
+
+async function bossMaker() {
+  const v = await getViewer();
+  if (!v || v.role !== "student" || !v.enrollment) return null;
+  const data = await loadUncached(v.userId);
+  return {
+    userId: v.userId,
+    schoolId: v.schoolId,
+    schoolYearId: v.enrollment.schoolYearId,
+    grade: v.enrollment.grade,
+    unlocked: data.progress.unlocked,
+    coins: data.progress.coins,
+  };
+}
+
+export async function startStudentBoss(track: Track, stage: number, title: string, prize: number) {
+  const m = await bossMaker();
+  return m ? issueStudentBoss(m, track, stage, title, prize) : NOT_LOGGED_IN;
+}
+
+export async function saveMyBoss(sub: BossSubmission & { timeline: [number, number][] }) {
+  const m = await bossMaker();
+  if (!m) return NOT_LOGGED_IN;
+  const res = await saveStudentBoss(m, sub);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(m.userId) };
+}
+
+export async function retireMyBoss(bossId: string) {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  const res = await retireStudentBoss(bossId, { userId: v.userId, schoolId: v.schoolId });
   if ("error" in res) return res;
   return { ...res, data: await loadUncached(v.userId) };
 }
