@@ -87,7 +87,16 @@ export function getStage(track: Track, n: number): Stage | undefined {
 /** 아직 안 들은 연결 강 (코드 트랙: 이 강을 다 들어야 그 단계가 열려요). 빈 목록이면 열림 */
 export function missingLessons(track: Track, n: number, cleared: readonly string[]): number[] {
   if (!LESSON_GATED_TRACKS.includes(track)) return [];
-  return (getStage(track, n)?.lessons ?? []).filter((l) => !cleared.includes(`lesson-${l}`));
+  // 강은 1강부터 순서대로만 들을 수 있어서, 이 단계 강까지의 앞 강도 모두 확인해요 (작은 번호부터)
+  const ls = getStage(track, n)?.lessons ?? [];
+  if (!ls.length) return [];
+  return Array.from({ length: Math.max(...ls) }, (_, i) => i + 1).filter((l) => !cleared.includes(`lesson-${l}`));
+}
+
+/** 다음에 들을 강 (아직 안 들은 강 중 가장 앞 번호). 다 들었으면 null */
+export function nextLesson(cleared: readonly string[], count: number): number | null {
+  for (let l = 1; l <= count; l++) if (!cleared.includes(`lesson-${l}`)) return l;
+  return null;
 }
 
 /** 배치 테스트 타수로 시작 단계 정하기: 목표 타수를 넘는 가장 높은 단계 (최대 골드 1단계) */

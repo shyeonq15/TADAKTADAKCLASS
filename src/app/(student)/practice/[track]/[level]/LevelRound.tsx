@@ -40,10 +40,11 @@ export function LevelRound({ track, level }: { track: Track; level: number }) {
     return (
       <RetroWindow title="강의를 먼저 들어요" className="mx-auto w-full max-w-md">
         <p className="font-pixel text-body">
-          📘 이 단계는 파이썬 첫걸음 <strong>{needs.map((n) => `${n}강`).join(", ")}</strong>을 들으면 열려요. 배운 걸 바로 쳐 보는 단계예요!
+          📘 이 단계는 파이썬 첫걸음 <strong>{needs[needs.length - 1]}강</strong>까지 들으면 열려요. 배운 걸 바로 쳐 보는 단계예요!
+          {needs.length > 1 && <> 강은 앞에서부터 차례대로 들어요. (남은 강 {needs.length}개)</>}
         </p>
         <ul className="mt-3 flex flex-col gap-1 font-pixel text-body">
-          {needs.map((n) => (
+          {needs.slice(0, 5).map((n) => (
             <li key={n}>
               <Link href={`/learn/${n}`} className="underline underline-offset-4">
                 {n}강 · {lessonTitle(n)} ▶

@@ -87,8 +87,8 @@ function Ladder({ track }: { track: Track }) {
                       <Link
                         href={`/learn/${needs[0]}`}
                         className="w-full"
-                        aria-label={`${TIER_LABELS[tier]} ${i + 1}단계는 파이썬 첫걸음 ${needs.join(", ")}강을 들으면 열려요`}
-                        title={`파이썬 첫걸음 ${needs.join(", ")}강을 들으면 열려요`}
+                        aria-label={`${TIER_LABELS[tier]} ${i + 1}단계는 파이썬 첫걸음 ${needs[needs.length - 1]}강까지 들으면 열려요`}
+                        title={`파이썬 첫걸음 ${needs[needs.length - 1]}강까지 들으면 열려요 (다음 강: ${needs[0]}강)`}
                       >
                         {pin}
                       </Link>
