@@ -8,6 +8,7 @@ import { BUNNY, CLOUD, SPARKLE } from "@/components/pixel/sprites";
 import { fallMs, rainStage, spawnMs, startsLike, type RainEvent } from "@/lib/games/rain";
 import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
 import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
+import { KeyStatus } from "@/components/typing/KeyStatus";
 
 const RAIN = GAMES.rain;
 const FIELD_H = 420;
@@ -335,6 +336,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
         placeholder="떨어지는 단어를 치고 Enter"
         className={`h-14 w-full border-3 border-navy-900 bg-surface px-4 font-typing text-typing outline-none ${shake ? "animate-[shake_200ms_steps(2)]" : ""}`}
       />
+      <KeyStatus track={track} />
       <p className="min-h-6 font-pixel text-small text-navy-900">
         {imeWrong
           ? "한/영 키를 확인하세요!"

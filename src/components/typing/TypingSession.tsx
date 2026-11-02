@@ -17,6 +17,7 @@ import {
 } from "@/lib/typing/engine";
 import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { TypingArea, type Mask } from "./TypingArea";
+import { KeyStatus } from "./KeyStatus";
 
 export type SessionResult = {
   stats: SessionStats;
@@ -148,6 +149,7 @@ export function TypingSession({ lines, track, code: codeProp, timeLimitSec, mask
           </p>
         )}
       </div>
+      {!isFinished(session) && <KeyStatus track={track} />}
     </div>
   );
 }

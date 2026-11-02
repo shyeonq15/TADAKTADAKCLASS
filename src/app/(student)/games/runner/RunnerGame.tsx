@@ -7,6 +7,7 @@ import { BUNNY, CLOUD } from "@/components/pixel/sprites";
 import { startsLike, type RainEvent } from "@/lib/games/rain";
 import { countKeystrokes, isHangul } from "@/lib/typing/hangul";
 import { SoloGameFlow, type FieldProps } from "../SoloGameFlow";
+import { KeyStatus } from "@/components/typing/KeyStatus";
 
 // 토끼 달리기: 오른쪽에서 다가오는 장애물 단어를 쳐서 점프! 놓치면 부딪혀서 하트가 줄어요.
 // 점수 계산(맞힌 단어의 자모 수 × 콤보)은 단어 비와 같아서 서버가 같은 방법으로 다시 계산해요.
@@ -295,6 +296,7 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
         placeholder="다가오는 단어를 치고 Enter → 점프!"
         className={`h-14 w-full border-3 border-navy-900 bg-surface px-4 font-typing text-typing outline-none ${shake ? "animate-[shake_200ms_steps(2)]" : ""}`}
       />
+      <KeyStatus track={track} />
       <p className="min-h-6 font-pixel text-small text-navy-900">
         {imeWrong
           ? "한/영 키를 확인하세요!"
