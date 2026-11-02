@@ -123,7 +123,7 @@ export async function pictureLogin(_: FormState, formData: FormData): Promise<Fo
   if (!s || !s.secretSet) return fail;
 
   const lock = await lockedOut(s.enrollmentId);
-  if (lock === "teacher") return { ok: false, message: "오늘 너무 많이 틀려서 잠겼어요. 선생님께 잠금을 풀어 달라고 말씀해 주세요." };
+  if (lock === "teacher") return { ok: false, message: `${PIN_LOCK.dailyMax}번 틀려서 잠겼어요. 선생님께 잠금을 풀어 달라고 말씀해 주세요.` };
   if (lock === "short") return { ok: false, message: `여러 번 틀려서 ${PIN_LOCK.windowMinutes}분 동안 잠겼어요. 선생님께 말씀해 주세요.` };
 
   const supabase = await createClient();
@@ -131,7 +131,16 @@ export async function pictureLogin(_: FormState, formData: FormData): Promise<Fo
   const admin = createAdminClient();
   if (error) {
     await admin.from("pin_failures").insert({ enrollment_id: s.enrollmentId });
-    return fail;
+    // 몇 번 남았는지 알려 줘요
+    const { count } = await admin
+      .from("pin_failures")
+      .select("*", { count: "exact", head: true })
+      .eq("enrollment_id", s.enrollmentId)
+      .gte("failed_at", new Date(Date.now() - 24 * 3600000).toISOString());
+    const left = PIN_LOCK.dailyMax - (count ?? 0);
+    return left > 0
+      ? { ok: false, message: `그림 비밀번호가 달라요. ${left}번 더 틀리면 잠겨요.` }
+      : { ok: false, message: `${PIN_LOCK.dailyMax}번 틀려서 잠겼어요. 선생님께 잠금을 풀어 달라고 말씀해 주세요.` };
   }
   await admin.from("pin_failures").delete().eq("enrollment_id", s.enrollmentId);
   await startStudentSession(s.studentId);

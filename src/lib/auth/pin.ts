@@ -6,10 +6,10 @@ import { authConfig } from "./config";
 // 그래서 PIN을 알아도 우리 서버를 거치지 않고는 로그인할 수 없고, 서버에서 시도 횟수를 막습니다.
 
 /**
- * 잠금: windowMinutes 분 안에 maxFailures 번 틀리면 잠시 잠금,
- * 하루(24시간)에 dailyMax 번 틀리면 선생님이 풀어 줄 때까지 잠금 (모든 조합을 눌러 보는 것 막기)
+ * 잠금: 24시간 안에 dailyMax 번 틀리면 선생님이 풀어 줄 때까지 잠금 (교사 결정 2026-11-02: 5번)
+ * (windowMinutes·maxFailures 는 잠깐 잠금 기준인데, dailyMax 와 같은 5번이라 지금은 바로 선생님 잠금이 돼요)
  */
-export const PIN_LOCK = { maxFailures: 5, windowMinutes: 10, dailyMax: 10 } as const;
+export const PIN_LOCK = { maxFailures: 5, windowMinutes: 10, dailyMax: 5 } as const;
 
 export function pinPassword(studentId: string, pin: string) {
   const { pinPepper } = authConfig();
