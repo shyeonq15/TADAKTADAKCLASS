@@ -22,20 +22,13 @@ export const SECRET_LENGTH = 4;
 export const encodeSecret = (picks: readonly number[]) => picks.join("-");
 
 /**
- * 너무 쉬운 그림 비밀번호: 친구가 몇 번만 눌러 봐도 맞힐 수 있어서 못 쓰게 해요.
- *  · 같은 그림을 3번 이상 (🐰🐰🐰🐰, 🐰🐰🐰🍎)
- *  · 두 그림 번갈아 (🐰🍎🐰🍎) 또는 두 그림씩 (🐰🐰🍎🍎)
- *  · 키패드에서 차례대로 붙은 그림 (토끼→고양이→강아지→곰, 거꾸로도)
+ * 너무 쉬운 그림 비밀번호: 같은 그림 4개(🐰🐰🐰🐰)만 막아요.
+ * (2026-11-03 교사 요청으로 완화. 5번 틀리면 잠기니까 친구가 마구 눌러서 맞히기는 어려워요)
  */
 export function weakSecretReason(s: string): string | null {
   if (!isValidSecret(s)) return null;
-  const p = s.split("-").map(Number);
-  const counts = new Map<number, number>();
-  for (const x of p) counts.set(x, (counts.get(x) ?? 0) + 1);
-  if (Math.max(...counts.values()) >= 3) return "같은 그림을 3번 이상 쓰면 친구가 쉽게 맞혀요.";
-  if (counts.size === 2 && Math.max(...counts.values()) === 2) return "그림 두 개만 반복하면 친구가 쉽게 맞혀요.";
-  const steps = p.slice(1).map((x, i) => x - p[i]);
-  if (steps.every((d) => d === 1) || steps.every((d) => d === -1)) return "차례대로 붙은 그림은 친구가 쉽게 맞혀요.";
+  const p = s.split("-");
+  if (p.every((x) => x === p[0])) return "같은 그림 4개는 친구가 쉽게 맞혀요.";
   return null;
 }
 
