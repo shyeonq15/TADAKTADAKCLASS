@@ -158,7 +158,7 @@ export function ExploreView({ data }: { data: ExploreData }) {
         )}
         <p className="mt-3 font-pixel text-small text-text-muted">
           별: ★ 정확도 {EXPLORE_STARS.one.accuracy}% · ★★ 정확도 {EXPLORE_STARS.two.accuracy}%에 내 평소 타수의 {Math.round(EXPLORE_STARS.two.speed * 100)}% · ★★★ 정확도{" "}
-          {EXPLORE_STARS.three.accuracy}%에 내 평소 타수 이상. 다른 친구가 아니라 &ldquo;평소의 나&rdquo;와 비교해요!
+          {EXPLORE_STARS.three.accuracy}%에 내 평소 타수의 {Math.round(EXPLORE_STARS.three.speed * 100)}%. ★★★는 여러 번 연습해야 받을 수 있어요! 다른 친구가 아니라 &ldquo;평소의 나&rdquo;와 비교해요!
         </p>
       </RetroWindow>
 

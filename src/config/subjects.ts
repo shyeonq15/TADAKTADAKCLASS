@@ -19,17 +19,18 @@ export const subjectOf = (id: string | null | undefined) => SUBJECTS.find((s) =>
 
 /**
  * 지문 별 기준: 타수는 "내 평소 타수"(같은 트랙 최근 단계 판의 가운데 값)와 비교해서, 느린 친구도 ★3을 받을 수 있어요.
- * 평소 기록이 아직 없으면 정확도만 봐요.
+ * 평소 기록이 아직 없으면 정확도만 보고, ★★★는 평소 기록이 생긴 뒤에만 받을 수 있어요.
+ * (2026-11-04 교사 결정: ★★★는 여러 번 연습해야 받을 만큼 어렵게)
  */
 export const EXPLORE_STARS = {
   one: { accuracy: 85 },
-  two: { accuracy: 90, speed: 0.9 },
-  three: { accuracy: 95, speed: 1.0 },
+  two: { accuracy: 95, speed: 1.0 },
+  three: { accuracy: 98, speed: 1.15 },
 } as const;
 
 export function starsFor(accuracy: number, cpm: number, baseline: number | null): number {
   const fast = (ratio: number) => baseline === null || cpm >= baseline * ratio;
-  if (accuracy >= EXPLORE_STARS.three.accuracy && fast(EXPLORE_STARS.three.speed)) return 3;
+  if (baseline !== null && accuracy >= EXPLORE_STARS.three.accuracy && fast(EXPLORE_STARS.three.speed)) return 3;
   if (accuracy >= EXPLORE_STARS.two.accuracy && fast(EXPLORE_STARS.two.speed)) return 2;
   if (accuracy >= EXPLORE_STARS.one.accuracy) return 1;
   return 0;
