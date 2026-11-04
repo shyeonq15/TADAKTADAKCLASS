@@ -7,6 +7,10 @@ export const VOCAB = {
   blankHideRatio: 0.45,
   /** 묶음 하나를 처음 끝냈을 때 코인 (빈칸·듣고 쓰기 따로) */
   clearCoins: 5,
+  /** 단어장 따라 치기를 묶음마다 처음 끝냈을 때 코인 */
+  studyCoins: 2,
+  /** 영단어 랭킹 인원 (같은 학년 닉네임만. 교사 결정 2026-11-04) */
+  rankSize: 10,
   /** 듣고 쓰기: 한 단어에 들을 수 있는 횟수, 읽는 빠르기 */
   listen: { maxPlays: 3, rate: 0.85 },
   /** 이번 주 단어: 첫 주와, 그 주에 나오는 묶음 번호. 그 뒤로 한 주에 한 묶음씩 */
@@ -16,4 +20,4 @@ export const VOCAB = {
 } as const;
 
 /** 활동 이름 (level_clears 의 track 값) */
-export const VOCAB_CLEAR = { blank: "vocab-blank", listen: "vocab-listen", week: "vocab-week" } as const;
+export const VOCAB_CLEAR = { study: "vocab-study", blank: "vocab-blank", listen: "vocab-listen", week: "vocab-week" } as const;

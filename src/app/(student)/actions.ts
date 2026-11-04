@@ -25,7 +25,7 @@ import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
 import { finishConceptQuiz } from "@/lib/explore/server";
-import { claimVocabWeek, clearPart, loadNotebook, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
+import { claimVocabWeek, clearPart, loadNotebook, loadVocabRanks, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
 
 async function who() {
   const v = await getViewer();
@@ -266,8 +266,8 @@ export async function clearBinaryStage(n: number) {
 export async function vocabStatus() {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
-  const [week, notebook] = await Promise.all([loadVocabWeek(w.userId), loadNotebook(w.userId)]);
-  return { week, notebook };
+  const [week, notebook, ranks] = await Promise.all([loadVocabWeek(w.userId), loadNotebook(w.userId), loadVocabRanks(w.userId)]);
+  return { week, notebook, ranks };
 }
 
 /** 빈칸 채우기·듣고 쓰기·단어장 복습의 답 (틀린 단어장에 넣고 빼기) */

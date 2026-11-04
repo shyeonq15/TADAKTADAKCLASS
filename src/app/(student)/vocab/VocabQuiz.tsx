@@ -11,13 +11,14 @@ import { play } from "@/lib/sound";
 import { isHangul } from "@/lib/typing/hangul";
 import { blankMask, sameWord, shuffled, type VocabWord } from "@/lib/vocab/words";
 
-// 단어 하나씩 치는 퀴즈: 빈칸 채우기 · 듣고 쓰기 · 틀린 단어장 복습.
+// 단어 하나씩 치는 퀴즈: 단어장 따라 치기 · 빈칸 채우기 · 듣고 쓰기 · 틀린 단어장 복습.
+// 따라 치기는 단어를 보고 그대로 쳐요 (익히는 단계라 틀린 단어장에는 넣지 않아요).
 // 틀린 단어는 맨 뒤로 다시 와서, 모두 맞혀야 끝나요. 처음에 맞혔는지가 점수예요.
 
-export type QuizMode = "blank" | "listen" | "review";
+export type QuizMode = "study" | "blank" | "listen" | "review";
 export type QuizResult = { total: number; firstTry: number; missed: VocabWord[] };
 
-const TITLES: Record<QuizMode, string> = { blank: "빈칸 채우기", listen: "듣고 쓰기", review: "틀린 단어 복습" };
+const TITLES: Record<QuizMode, string> = { study: "단어장 따라 치기", blank: "빈칸 채우기", listen: "듣고 쓰기", review: "틀린 단어 복습" };
 /** 답을 몇 개 모아서 서버에 보낼지 (끝까지 안 해도 틀린 단어가 남게) */
 const FLUSH_EVERY = 5;
 
@@ -40,7 +41,8 @@ function BlankWord({ en }: { en: string }) {
 }
 
 export function VocabQuiz({ mode, words, onDone, onQuit }: { mode: QuizMode; words: VocabWord[]; onDone: (r: QuizResult) => void; onQuit: () => void }) {
-  const [queue, setQueue] = useState(() => shuffled(words));
+  // 따라 치기는 단어장 순서 그대로, 나머지는 섞어서
+  const [queue, setQueue] = useState(() => (mode === "study" ? [...words] : shuffled(words)));
   const [done, setDone] = useState(0);
   const [typed, setTyped] = useState("");
   const [checked, setChecked] = useState<null | { ok: boolean }>(null);
@@ -81,9 +83,9 @@ export function VocabQuiz({ mode, words, onDone, onQuit }: { mode: QuizMode; wor
     input.current?.focus();
   };
 
-  // 듣고 쓰기: 새 단어가 나오면 한 번 읽어 줘요 (버튼·Enter 를 누른 뒤라 브라우저가 소리를 허락해요)
+  // 듣고 쓰기·따라 치기: 새 단어가 나오면 한 번 읽어 줘요 (버튼·Enter 를 누른 뒤라 브라우저가 소리를 허락해요)
   useEffect(() => {
-    if (mode !== "listen" || !word) return;
+    if ((mode !== "listen" && mode !== "study") || !word) return;
     speak(word.en);
   }, [mode, word]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -111,13 +113,13 @@ export function VocabQuiz({ mode, words, onDone, onQuit }: { mode: QuizMode; wor
       tried.current.add(word.en);
       if (ok) firstTry.current++;
       else missed.current.push(word);
-      pending.current.push({ en: word.en, ok });
+      if (mode !== "study") pending.current.push({ en: word.en, ok });
       if (pending.current.length >= FLUSH_EVERY) flush();
     }
     if (ok) setDone((n) => n + 1);
     setChecked({ ok });
     play(ok ? "pop" : "error");
-    if (mode !== "listen") speak(word.en);
+    if (mode !== "listen" && mode !== "study") speak(word.en);
   };
 
   const imeWrong = [...typed].some((ch) => isHangul(ch));
@@ -132,7 +134,15 @@ export function VocabQuiz({ mode, words, onDone, onQuit }: { mode: QuizMode; wor
 
         {/* 문제 */}
         <div className="flex flex-col items-center gap-3 border-3 border-navy-900 bg-paper px-4 py-6 text-center">
-          {mode === "listen" ? (
+          {mode === "study" ? (
+            <>
+              <p className="font-typing text-hero">{word.en}</p>
+              <p className="font-title text-title">{word.ko}</p>
+              <PixelButton size="sm" variant="reward" onClick={() => speak(word.en)} disabled={!voiceOk}>
+                🔊 발음 듣기
+              </PixelButton>
+            </>
+          ) : mode === "listen" ? (
             <>
               <PixelButton variant="reward" onClick={listen} disabled={plays >= VOCAB.listen.maxPlays || !!checked || !voiceOk}>
                 🔊 다시 듣기 ({Math.max(0, VOCAB.listen.maxPlays - plays)}번 남음)
@@ -174,7 +184,7 @@ export function VocabQuiz({ mode, words, onDone, onQuit }: { mode: QuizMode; wor
           autoComplete="off"
           readOnly={!!checked}
           aria-label="영어 단어를 치고 Enter"
-          placeholder={mode === "blank" ? "빈칸까지 채운 단어 전체를 치고 Enter" : "영어 단어를 치고 Enter"}
+          placeholder={mode === "blank" ? "빈칸까지 채운 단어 전체를 치고 Enter" : mode === "study" ? "위의 단어를 그대로 치고 Enter" : "영어 단어를 치고 Enter"}
           className="win-bevel-pressed h-14 bg-surface px-3 font-typing text-typing outline-none"
         />
         <p className="min-h-6 text-small">{imeWrong ? "한/영 키를 확인하세요!" : ""}</p>
