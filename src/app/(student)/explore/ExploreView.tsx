@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { EXPLORE_STARS } from "@/config/subjects";
+import { activitiesOf, EXPLORE_STARS } from "@/config/subjects";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import type { ExploreData } from "@/lib/explore/server";
 
 const starText = (n: number) => "★".repeat(n) + "☆".repeat(3 - n);
 
-/** 과목 탭 → 단원 지도 (지문마다 별) */
+/** 과목 탭 → 그 과목 활동(이진수 연습실·영단어 연구소 …) + 단원 지도 (지문마다 별) */
 export function ExploreView({ data }: { data: ExploreData }) {
   const params = useSearchParams();
-  const withUnits = data.subjects.filter((s) => s.units.length > 0);
+  const withUnits = data.subjects.filter((s) => s.units.length > 0 || activitiesOf(s.id).length > 0);
   const [picked, setPicked] = useState(params.get("subject") ?? withUnits[0]?.id ?? data.subjects[0]?.id);
   const subject = data.subjects.find((s) => s.id === picked) ?? data.subjects[0];
 
@@ -39,16 +39,38 @@ export function ExploreView({ data }: { data: ExploreData }) {
               onClick={() => setPicked(s.id)}
               className={`flex h-14 flex-col items-center justify-center px-4 font-pixel text-body text-navy-900 ${
                 s.id === subject.id ? "win-bevel-pressed bg-paper font-bold" : "win-bevel"
-              } ${s.units.length ? "" : "opacity-60"}`}
+              } ${s.units.length || activitiesOf(s.id).length ? "" : "opacity-60"}`}
             >
               <span>
                 {s.icon} {s.label}
               </span>
-              <span className="text-small font-normal">{s.units.length ? `★ ${got}/${total}` : "준비 중"}</span>
+              <span className="text-small font-normal">
+                {s.units.length ? `★ ${got}/${total}` : activitiesOf(s.id).length ? `활동 ${activitiesOf(s.id).length}개` : "준비 중"}
+              </span>
             </button>
           );
         })}
       </div>
+
+      {activitiesOf(subject.id).length > 0 && (
+        <RetroWindow title={`${subject.icon} ${subject.label} 활동`}>
+          <ul className="grid gap-3 md:grid-cols-2">
+            {activitiesOf(subject.id).map((a) => (
+              <li key={a.href}>
+                <Link href={a.href} className="win-bevel flex items-center gap-3 bg-paper px-3 py-2 hover:bg-sky-100 active:win-bevel-pressed">
+                  <span className="text-[40px] leading-none" aria-hidden>
+                    {a.icon}
+                  </span>
+                  <span className="flex flex-col">
+                    <span className="font-title text-heading text-navy-900">{a.title}</span>
+                    <span className="font-pixel text-small text-text-muted">{a.desc}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </RetroWindow>
+      )}
 
       <RetroWindow title={`${subject.icon} ${subject.label} 탐험 지도`}>
         {subject.units.length === 0 ? (

@@ -4,7 +4,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 
 type Game = { href: string; icon: string; title: string; desc: string };
 
-/** 게임 목록: 타자 게임 / 정보 실험실(배운 내용 복습) / 함께하기 */
+/** 게임 목록: 타자 게임 / 교과 활동(교과 탐험 바로가기) / 함께하기. 정보·영어 활동 목록은 config/subjects.ts SUBJECT_ACTIVITIES */
 const SECTIONS: { title: string; note: string; games: Game[] }[] = [
   {
     title: "⌨️ 타자 게임",
@@ -17,22 +17,11 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     ],
   },
   {
-    title: "🔤 영단어 연구소",
-    note: "영어 선생님 단어 목록(301~1000번)으로 익혀요",
+    title: "📚 교과 활동",
+    note: "정보·영어 활동은 교과 탐험으로 옮겼어요",
     games: [
-      { href: "/vocab", icon: "🌧️", title: "뜻 비", desc: "떨어지는 뜻을 보고 영어 단어를 쳐서 터뜨려요" },
-      { href: "/vocab", icon: "✏️", title: "빈칸 · 듣고 쓰기", desc: "d_s_rt 빈칸 채우기, 소리 듣고 철자 쓰기, 틀린 단어장" },
-    ],
-  },
-  {
-    title: "🔬 정보 실험실",
-    note: "수업에서 배운 내용을 쳐 보며 복습해요",
-    games: [
-      { href: "/binary", icon: "🔢", title: "이진수 연습실", desc: "자릿값 보며 십진수 쓰기 → 비트 눌러 만들기 (6단계)" },
-      { href: "/sensors", icon: "🔌", title: "센서·액추에이터 분류", desc: "아날로그 입력? 디지털 출력? 부품을 보고 골라요" },
-      { href: "/pixel", icon: "🖼️", title: "0과 1 픽셀 아트", desc: "숫자로 그림을 그려 우리 반 갤러리에 걸어요" },
-      { href: "/adc", icon: "〰️", title: "아날로그 → 디지털", desc: "소리 곡선을 숫자로 바꿔 듣기 (표본화·양자화)" },
-      { href: "/dictation", icon: "🎧", title: "영어 받아쓰기", desc: "문장을 듣고 그대로 쳐요 (영타 + 듣기)" },
+      { href: "/explore?subject=info", icon: "💻", title: "정보", desc: "이진수 연습실 · 센서 분류 · 픽셀 아트 · 아날로그→디지털" },
+      { href: "/explore?subject=english", icon: "🔤", title: "영어", desc: "영단어 연구소(뜻 비·빈칸·듣고 쓰기) · 영어 받아쓰기" },
     ],
   },
   {
