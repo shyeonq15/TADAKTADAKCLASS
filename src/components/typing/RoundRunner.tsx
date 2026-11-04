@@ -38,14 +38,28 @@ type Props = {
   context?: { before: string[]; after: string[]; step?: { n: number; total: number } };
 };
 
-/** 이어 읽기: 앞뒤 글 (작고 흐리게) */
-function ContextLines({ lines, label }: { lines: string[]; label: string }) {
-  if (!lines.length) return null;
+/** 글자 수로 자르기 (앞 내용은 끝부분, 다음 내용은 앞부분) */
+const CONTEXT_CHARS = 48;
+const tail = (s: string) => (s.length > CONTEXT_CHARS ? `…${s.slice(-CONTEXT_CHARS)}` : s);
+const head = (s: string) => (s.length > CONTEXT_CHARS ? `${s.slice(0, CONTEXT_CHARS)}…` : s);
+
+/**
+ * 이어 읽기: 타자 칸 아래 "글의 흐름" 상자 하나에 앞 내용 끝과 다음 내용 시작을 한 줄씩.
+ * 타자 글씨(D2Coding)가 아닌 보통 글씨로 써서, 쳐야 하는 글과 헷갈리지 않게 해요.
+ */
+function ContextBox({ before, after }: { before: string[]; after: string[] }) {
+  if (!before.length && !after.length) return null;
+  const row = (label: string, text: string) => (
+    <p className="flex gap-2">
+      <span className="shrink-0 border-2 border-navy-900 bg-paper px-1 font-bold text-navy-900">{label}</span>
+      <span className="truncate">{text}</span>
+    </p>
+  );
   return (
-    <div className="px-4 font-typing text-body leading-relaxed text-text-muted opacity-70" aria-label={label}>
-      {lines.map((l, i) => (
-        <p key={i}>{l}</p>
-      ))}
+    <div className="mt-3 border-2 border-dashed border-navy-900 bg-surface px-3 py-2 font-pixel text-small text-text-muted">
+      <p className="mb-1 font-bold text-navy-900">📖 글의 흐름 (치지 않아도 돼요)</p>
+      {before.length > 0 && row("◀ 앞 내용", tail(before.join(" ")))}
+      {after.length > 0 && row("다음 ▶", head(after.join(" ")))}
     </div>
   );
 }
@@ -159,7 +173,6 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
             </div>
           </div>
         )}
-        {context && <ContextLines lines={context.before} label="앞 내용" />}
         <TypingSession
           key={phase.token}
           lines={phase.lines}
@@ -185,7 +198,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           }
           onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}
         />
-        {context && <ContextLines lines={context.after} label="다음 내용" />}
+        {context && <ContextBox before={context.before} after={context.after} />}
       </RetroWindow>
     );
   }
