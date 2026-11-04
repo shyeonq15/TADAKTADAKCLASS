@@ -58,6 +58,12 @@ type Props = {
   hitLabel: string;
   /** 트랙을 고르지 않는 게임 (비트 해독기·입출력 레이스): 시작 버튼 하나만 */
   fixedTrack?: Track;
+  /** 서버에 판을 받을 때 함께 보낼 값 (뜻 비: 단어 묶음) */
+  startOpts?: { part?: number };
+  /** 결과 화면의 "목록으로" 버튼 (기본: 게임 목록) */
+  back?: { label: string; href?: string; onClick?: () => void };
+  /** 시작 화면에 덧붙일 내용 */
+  extra?: ReactNode;
 };
 
 type Phase =
@@ -70,7 +76,7 @@ type Phase =
 
 /* ───────── 전체 흐름 ───────── */
 
-export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, hitLabel, fixedTrack }: Props) {
+export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, hitLabel, fixedTrack, startOpts, back, extra }: Props) {
   const data = usePracticeData();
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>({ name: "select" });
@@ -92,7 +98,7 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
   const start = async (t: Track) => {
     setTrack(t);
     setPhase({ name: "loading" });
-    const res = await safeCall(() => startGame(game, t));
+    const res = await safeCall(() => startGame(game, t, startOpts));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     setPhase({ name: "playing", words: res.words, token: res.token });
   };
@@ -103,6 +109,7 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
         <div className="flex flex-col items-center gap-4 bg-navy-900 px-6 py-8 text-center">
           <p className="title-lime text-hero">{GAME_LABELS[game]}</p>
           <MissionLabel keyword="MISSION">{mission}</MissionLabel>
+          {extra}
           <ul className="font-pixel text-small leading-6 text-sky-100">
             {rules.map((r, i) => (
               <li key={i}>{r}</li>
@@ -212,11 +219,17 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
           ↻ 한 판 더
         </PixelButton>
         <PixelButton variant="ghost" onClick={() => setPhase({ name: "select" })}>
-          트랙 바꾸기
+          {fixedTrack ? "처음 화면" : "트랙 바꾸기"}
         </PixelButton>
-        <PixelLink href="/games" variant="ghost">
-          게임 목록
-        </PixelLink>
+        {back?.onClick ? (
+          <PixelButton variant="ghost" onClick={back.onClick}>
+            {back.label}
+          </PixelButton>
+        ) : (
+          <PixelLink href={back?.href ?? "/games"} variant="ghost">
+            {back?.label ?? "게임 목록"}
+          </PixelLink>
+        )}
       </div>
     </div>
   );

@@ -15,6 +15,8 @@ export type WeekCounts = {
   mission: number;
   rain: number;
   runner: number;
+  /** 뜻 비 (영단어 연구소) */
+  vocab: number;
   boss: number;
   race: number;
   explore: number;
@@ -51,7 +53,7 @@ export type ClassDash = {
   };
 };
 
-const EMPTY_WEEK = (): WeekCounts => ({ practice: 0, mission: 0, rain: 0, runner: 0, boss: 0, race: 0, explore: 0, keystrokes: 0 });
+const EMPTY_WEEK = (): WeekCounts => ({ practice: 0, mission: 0, rain: 0, runner: 0, vocab: 0, boss: 0, race: 0, explore: 0, keystrokes: 0 });
 
 export async function loadClassDashboard(cls: { id: string; grade: number; class_no: number }): Promise<ClassDash> {
   const admin = createAdminClient();
@@ -107,7 +109,7 @@ export async function loadClassDashboard(cls: { id: string; grade: number; class
       if (Date.parse(a.created_at) < weekSince) continue;
       w.keystrokes += a.keystrokes;
       if (a.kind === "game") {
-        if (a.mode === "rain" || a.mode === "runner" || a.mode === "boss" || a.mode === "race") w[a.mode]++;
+        if (a.mode === "rain" || a.mode === "runner" || a.mode === "vocab" || a.mode === "boss" || a.mode === "race") w[a.mode]++;
       } else if (a.level === SUBJECT_LEVEL) w.explore++;
       else if (a.kind === "mission") w.mission++;
       else w.practice++;

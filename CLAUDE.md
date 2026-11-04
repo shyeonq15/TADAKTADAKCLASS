@@ -38,6 +38,8 @@
 | 그래픽 | 이번 주말은 무료 CC0 에셋 + 간단한 픽셀 도형. 정식 그래픽은 나중에 |
 | 교사 연습문 | 붙여넣기 → 자동 분할. 코드 모드(들여쓰기 유지). 교과서 PDF 원본은 저장하지 않음 |
 | 초기 연습문 | 교과서에서 발췌한 연습팩을 JSON으로 준비해 넣음 |
+| 영타 지문 | 중1 영어 7과·8과 본문 (`src/data/packs/english.json`, 2026-11-04) |
+| 영단어 연구소 | `/vocab`: 영어 선생님 단어 목록 301~1000번(`scripts/vocab-words.txt` → `node scripts/build-vocab.mjs` → `src/data/vocab.json`). 뜻 비·빈칸 채우기·듣고 쓰기·틀린 단어장·이번 주 단어. 수치는 `src/config/vocab.ts`, 틀린 단어장 표는 `supabase/migrations/20261104000001_vocab.sql` |
 
 ---
 

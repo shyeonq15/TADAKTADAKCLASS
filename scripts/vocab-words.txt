@@ -1,0 +1,752 @@
+# 교육부 지정 중고등 기초 영단어 4탄~10탄 (301~1000번)
+# 번호|영어|뜻   (번호 앞 ! = 학생 활동에서 숨김, * = 원본 뜻을 고침)
+# 고친 뒤에는 node scripts/build-vocab.mjs 로 src/data/vocab.json 을 다시 만들어요
+301|desert|사막
+302|deserve|~을 받을 만하다
+303|desire|바라다, 욕구
+304|desperate|자포자기한
+305|despite|~에도 불구하고
+306|destroy|파괴하다
+307|detail|세부 사항
+308|detect|발견하다
+309|determine|결심하다, 알아내다
+310|develop|발전시키다
+311|diary|일기
+312|dictionary|사전
+313|diet|식사
+314|dig|파다
+315|direct|직접적인
+316|dirt|먼지, 때
+316|dirty|더러운
+317|disappoint|실망시키다
+318|disk|원반, 음반
+319|discipline|훈련
+320|disgust|혐오감, 역겹게 하다
+321|dish|접시, 요리
+322|display|전시하다
+323|distance|거리
+324|district|구역
+325|disturb|방해하다
+326|dive|뛰어들다
+327|divide|나누다
+!328|divorce|이혼
+329|document|서류, 문서
+330|dolphin|돌고래
+331|domestic|국내의
+332|donate|기부하다
+333|doubt|의심, 의심하다
+334|dozen|12개짜리 한 묶음
+335|drag|끌다
+336|drama|드라마
+!337|drug|약물
+338|due|~하기로 되어 있는
+339|dump|버리다
+340|dust|먼지
+341|duty|의무
+342|each|각각의
+343|earn|돈을 벌다
+344|ease|쉬움, 편안함
+344|disease|질병
+344|easy|쉬운
+345|economy|경제
+346|edge|가장자리
+347|edit|수정하다
+348|educate|교육하다
+349|effect|영향, 결과, 효과
+349|effective|효과적인
+350|effort|노력
+351|either|둘 중 어느 하나의
+352|elect|선출하다
+353|electric|전기의
+354|element|요소, 성분
+354|elementary|초급의
+355|else|그 밖의 다른
+356|embarrass|당황스럽게 만들다
+357|emotion|감정
+358|emphasize|강조하다
+359|empire|제국
+360|employ|고용하다
+361|empty|비어 있는
+362|enemy|적
+363|engage|~에 종사하게 하다
+364|engine|엔진
+365|engineer|기사, 엔지니어
+366|enormous|거대한
+367|entertain|즐겁게 하다
+368|entire|전체의
+369|envelope|봉투
+370|equal|평등한, 동일한
+371|escape|탈출하다
+372|especial|특별한
+372|especially|특히
+373|essay|수필
+374|establish|설립하다
+375|estimate|추정치
+376|even|~조차
+377|event|사건, 행사
+377|eventually|결국
+378|ever|언제든, 한번이라도
+379|evidence|증거, 흔적
+380|evil|사악한
+381|exact|정확한
+382|examine|조사하다
+382|examination|시험, 검사
+383|except|~을 제외하고는
+384|exchange|교환하다
+385|excite|들뜨게 만들다
+386|excuse|용서하다, 변명하다
+387|exhaust|다 써 버리다, 지치게 하다
+388|exist|존재하다
+389|exit|출구
+390|expand|확대되다
+391|expect|기대하다
+392|expense|돈, 비용
+392|expensive|비싼
+393|experience|경험
+394|experiment|실험
+395|expert|전문가
+396|explain|설명하다
+397|expose|드러내다, 폭로하다
+398|express|표현하다
+399|extend|연장하다
+400|extra|추가의
+401|extreme|극도의
+402|factor|요인
+403|factory|공장
+404|faint|희미한, 기절할 것 같은
+405|fair|타당한, 공평한
+406|faith|믿음, 신앙
+407|familiar|익숙한, 친숙한
+408|fancy|상상하다, 원하다
+409|fantastic|환상적인
+410|fascinate|마음을 사로잡다
+411|fashion|유행
+412|fault|잘못
+413|favor|호의, 친절
+414|fear|공포, 두려움
+415|feature|특징
+416|fee|수수료
+417|feed|먹이를 주다
+418|fellow|친구, 동료
+419|female|여성인, 여자
+420|fence|울타리
+421|fever|열
+422|few|많지 않은, 적은
+423|figure|숫자, 계산
+424|final|마지막의
+425|finance|재정
+426|firm|단단한, 확고한
+427|fit|적합하다, 적합한
+428|flag|깃발
+429|flame|불꽃
+430|flash|번쩍이다
+431|flat|평평한
+432|flight|비행
+433|float|떠돌다
+434|flood|홍수
+435|flow|흐름, 흐르다
+436|fog|안개
+437|fold|접다
+438|folk|사람들, 무리
+439|follow|따라가다
+440|force|힘
+440|enforce|집행하다, 강요하다
+441|foreign|외국의
+442|forever|영원히
+443|forgive|용서하다
+444|forth|앞으로
+445|fortunate|운 좋은
+446|fortune|운, 재산
+447|forward|앞으로
+448|found|설립하다
+448|foundation|토대, 기초
+449|frame|틀
+450|frankly|솔직히
+451|freeze|얼다
+452|fright|놀람, 두려움
+453|frog|개구리
+454|frustrate|좌절감을 주다
+455|fry|굽다, 튀기다
+456|function|기능
+457|fund|기금
+458|fur|털
+459|furniture|가구
+460|gain|얻다
+461|garage|차고, 주차장
+462|gate|문
+463|gather|모이다
+464|gear|기어
+465|general|일반적인
+466|gentle|온순한, 부드러운
+467|gesture|몸짓, 제스처
+468|ghost|유령, 귀신
+469|giant|거인
+470|gift|선물
+471|giraffe|기린
+472|glance|흘낏 보다
+473|glory|영광
+474|glove|장갑
+475|glue|접착제, 풀
+476|golf|골프
+477|gorgeous|아주 멋진
+478|govern|통치하다
+478|government|정부
+479|grab|붙잡다
+480|grace|우아함, 품위
+481|grade|등급
+481|gradual|점진적인
+482|grand|웅장한
+483|grant|승인하다
+484|graph|그래프
+484|graphic|그래프로 나타내는
+485|greet|환영하다
+486|grocery|식료품 잡화점
+487|guarantee|보증, 보증하다
+488|guard|경비원
+489|guest|손님
+490|guide|안내
+491|guilt|죄책감, 유죄
+491|guilty|유죄의
+*492|gun|총
+493|half|절반
+494|hall|현관, 복도
+495|handle|다루다
+496|handsome|멋진, 잘생긴
+497|happen|발생하다
+498|harm|피해, 손해
+499|health|건강
+499|healthy|건강한
+500|hear|듣다
+501|heaven|천국
+502|height|높이
+503|helicopter|헬리콥터
+!504|hell|지옥
+505|hesitate|주저하다
+506|hide|감추다
+507|highway|고속도로
+508|hint|힌트
+509|hire|고용하다
+510|hole|구멍
+511|honey|꿀
+512|honor|존경
+513|hotel|호텔
+514|hug|포옹하다
+515|huge|거대한
+516|humor|유머
+517|hunger|굶주림, 배고픔
+517|hungry|배고픈
+518|hurt|다치게 하다, 아프다
+519|identity|정체
+519|identify|알아보다
+520|ignore|무시하다
+521|ill|아픈
+522|illustrate|삽화를 넣다
+523|imagine|상상하다
+524|immediate|즉각적인
+525|impress|인상을 주다
+526|improve|개선하다
+527|include|포함하다
+528|income|수입
+529|increase|증가하다
+530|indeed|정말, 확실히
+531|indicate|나타내다
+532|individual|각각의, 개개의
+533|industry|산업
+534|influence|영향
+535|inform|알리다
+536|injure|부상을 입다
+537|innocent|무죄인, 결백한
+538|insist|고집하다
+539|inspect|검사하다
+540|instance|사례
+541|instant|즉각적인
+542|instead|대신에
+543|instruct|가르치다
+544|instrument|기구
+545|insure|보험에 들다, 보증하다
+545|insurance|보험
+546|intend|의도하다
+547|intense|강렬한
+548|intent|작정한
+548|intention|의도
+549|interest|관심, 흥미
+550|internal|내부의
+551|interrupt|방해하다
+552|invent|발명하다
+552|inventor|발명가
+553|invest|투자하다
+554|investigate|조사하다
+555|involve|포함하다
+556|iron|철, 쇠
+557|island|섬
+558|item|항목, 물품
+559|jaw|턱
+*560|jeans|청바지
+561|joke|농담
+562|journey|여행
+563|joy|기쁨
+563|enjoy|즐기다
+564|judge|판사
+565|junior|손아래의
+566|justice|공평성, 정의
+567|knee|무릎
+568|knock|두드리다
+569|knowledge|지식
+570|label|상표
+571|labor|노동
+572|laboratory|실험실
+573|lack|부족, 결핍
+574|lamb|어린 양
+575|lamp|램프
+576|lane|길
+577|language|언어
+578|laugh|웃다
+579|law|법
+580|lawn|잔디밭
+581|lawyer|변호사
+582|lay|놓다, 두다
+582|layer|층
+583|lead|안내하다
+584|leaf|잎
+585|league|리그
+586|lean|기울다
+587|leap|뛰다
+588|leave|떠나다
+589|legal|법률의
+590|lemon|레몬
+591|lend|빌려주다
+592|let|허락하다
+593|level|수평, 높이, 수준
+594|license|면허
+595|lid|뚜껑
+596|lift|들어올리다
+597|limit|한계
+598|link|관련되다
+599|list|목록
+600|living room|거실
+601|load|짐, 무게
+602|loan|대출
+603|local|지역의, 현지의
+604|locate|위치하게 하다
+605|lock|잠그다
+606|log|통나무
+607|loose|헐거워진, 풀린
+608|lose|잃어버리다
+609|loss|분실, 손실
+610|lot|많음
+611|loud|소리가 큰
+612|machine|기계
+613|magazine|잡지
+614|magic|마법
+615|main|주된
+616|maintain|유지하다
+617|major|주요한
+617|majority|대다수, 대부분
+618|male|남자의
+619|manage|간신히 해내다
+620|manner|방식
+621|manufacture|제조하다
+622|mark|표시하다
+623|marvel|놀라운 일
+624|mask|마스크
+625|mass|덩어리
+626|master|주인
+*627|match|경기, 성냥
+628|mate|친구, 동료
+629|matter|문제
+629|material|재료
+630|maximum|최고의, 최대의
+631|maybe|아마
+632|meal|식사
+633|mean|의미하다
+634|measure|측정하다
+635|medical|의학의
+*636|medicine|약, 의학
+637|melon|멜론
+638|melt|녹다
+639|mental|정신의, 마음의
+640|mention|말하다
+641|menu|메뉴
+642|mess|엉망인 상태
+643|message|메시지
+644|metal|금속
+645|method|방법
+646|microwave|전자레인지
+647|military|군사의
+648|mill|방앗간, 공장
+649|minor|작은
+650|minute|분
+651|mirror|거울
+652|mission|임무
+653|mix|섞다
+654|modern|현대의
+655|moment|잠깐, 잠시
+656|monitor|모니터, 화면
+657|mood|기분
+658|moral|도덕의
+659|moreover|게다가
+660|motion|운동, 움직임
+661|motor|모터, 전동기
+*662|mount|오르다, 산
+663|mud|진흙
+664|muscle|근육
+665|museum|박물관
+666|mushroom|버섯
+667|mystery|수수께끼
+668|nail|손톱, 못
+669|narrow|좁은
+670|native|출생지의, 토박이의
+671|navy|해군
+672|neat|정돈된, 깔끔한
+673|necessary|필요한
+674|neighbor|이웃
+675|neither|어느 것도 아니다
+*676|nerve|신경, 용기
+676|nervous|불안해 하는
+677|nest|둥지
+678|net|그물
+679|noise|소음
+680|none|아무도 ~않다
+681|noon|정오, 한낮
+682|nor|~도 또한 아니다
+683|notice|알아차리다, 주목
+684|nowadays|요즘에는
+685|nowhere|아무데도 ~않다
+686|nut|견과
+687|oak|오크 나무
+688|object|물건, 물체
+688|objective|목적, 목표
+689|observe|관찰하다
+690|obvious|분명한
+691|occasion|경우, 때
+692|occur|일어나다
+692|occurrence|발생
+693|ocean|바다
+694|odd|이상한
+695|offer|제안하다
+696|officer|장교
+697|once|한 번
+698|opera|오페라
+699|operate|작동하다
+700|opinion|의견
+701|oppose|반대하다
+702|order|순서
+702|disorder|무질서
+703|ordinary|보통의
+704|other|또 다른, 그 밖의
+705|otherwise|그렇지 않으면
+706|ought|~해야 하다
+707|oven|오븐
+708|overall|종합적인, 전체의
+709|own|자기 자신의
+710|pack|짐을 싸다
+711|pain|고통
+712|pair|쌍, 켤레
+713|palace|궁전
+714|pan|냄비, 팬
+715|panic|공황, 당황
+716|parade|퍼레이드
+717|paragraph|단락
+718|pardon|용서하다
+719|particular|특정한
+719|particularly|특히
+720|past|과거의, 지난
+721|path|길
+722|patient|환자
+723|pattern|양식, 무늬
+724|pause|잠시 멈추다
+725|peace|평화
+725|peaceful|평화로운
+726|pear|배
+727|pepper|후추
+728|per|~마다
+729|perfect|완벽한
+730|perform|수행하다
+731|perhaps|아마, 어쩌면
+732|period|기간
+733|person|사람, 개인
+733|personality|개성, 인격
+734|pet|반려동물
+735|photograph|사진
+736|physical|신체의, 육체의
+737|picnic|소풍
+738|pie|파이
+739|piece|조각
+740|pile|더미
+741|pin|핀
+742|pine|소나무
+743|pipe|관, 파이프
+744|pitch|던지기
+745|pity|연민
+746|plain|분명한, 알기 쉬운
+747|plane|비행기
+748|planet|행성
+749|plant|식물
+750|plate|접시
+751|plenty|풍부함
+752|plus|~을 더하여
+753|pocket|주머니
+754|poem|시
+755|poet|시인
+756|poison|독
+757|pole|막대기
+757|polar|극지방의
+758|policy|정책
+759|polite|예의 바른
+760|politics|정치
+761|pollute|오염시키다
+762|pool|웅덩이, 수영장
+763|pop|펑 하는 소리가 나다
+764|popular|인기 있는
+765|pork|돼지고기
+766|port|항구
+767|possess|소유하다
+768|possible|가능한
+769|post|우편
+769|poster|포스터
+770|pot|냄비, 솥
+771|potential|가능성이 있는
+772|pour|붓다
+773|powder|가루
+774|practical|현실적인, 실제의
+775|practice|연습, 연습하다
+776|pray|기도하다
+777|prefer|선호하다
+778|pregnant|임신한
+779|prepare|준비하다
+780|presence|출석, 존재
+*781|press|누르다, 언론
+782|pretend|~인 척하다
+783|prevent|방지하다
+784|previous|이전의
+785|price|가격
+786|pride|자부심
+787|prime|주된
+787|primary|주된, 첫째의
+788|principle|원칙
+789|prison|교도소
+790|privacy|사생활
+791|private|개인 소유의
+792|prize|상
+793|probable|있을 법한
+793|probably|아마
+794|proceed|계속하다, 진행되다
+794|procedure|절차
+795|process|과정
+796|produce|생산하다
+797|profession|직업
+798|profit|이익, 수익
+799|progress|나아감, 진행
+800|promise|약속하다
+801|promote|촉진하다
+802|pronounce|발음하다
+802|pronunciation|발음
+803|proper|적절한
+804|property|재산
+805|propose|제안하다
+806|protect|보호하다
+807|protest|항의
+808|proud|자랑스러운
+809|prove|증명하다
+810|provide|제공하다
+!811|pub|술집
+812|public|공공의, 공적인
+813|pull|당기다, 끌다
+814|pump|펌프
+815|punch|주먹으로 치다
+816|punish|처벌하다
+817|purchase|구입
+818|pure|순수한
+819|purple|자주색의
+820|purpose|목적
+821|puzzle|퍼즐
+822|quality|질
+822|qualify|자격을 주다
+823|quarter|4분의 1
+824|quit|그만두다
+825|quite|꽤
+826|quote|인용하다
+*827|rail|철도, 난간
+828|rainbow|무지개
+829|raise|들어올리다
+830|range|범위
+831|rapid|빠른
+832|rare|드문
+833|rat|쥐
+834|rate|속도, 비율
+835|rather|다소, 오히려
+836|reach|이르다, 닿다
+837|react|반응하다
+838|real|진짜의
+838|realize|깨닫다
+839|reason|이유
+839|reasonable|타당한
+840|receive|받다
+840|reception|접수처
+841|recent|최근의
+842|recipe|조리법
+843|recognize|알아보다
+844|recommend|추천하다
+845|record|기록
+846|recover|회복되다
+847|reduce|줄이다
+848|refer|언급하다
+849|reflect|반사하다
+850|refuse|거절하다
+851|regard|여기다
+852|region|지방, 지역
+853|register|등록하다
+854|regular|규칙적인
+855|relate|관련시키다
+855|relative|상대적인
+856|relax|휴식을 취하다
+857|release|풀어 주다, 해방하다
+858|relief|안도, 안심
+859|rely|의지하다
+860|remain|남다
+861|remark|발언
+862|remind|상기시키다
+863|remove|없애다
+864|rent|집세
+865|repair|수리하다
+866|repeat|반복하다
+867|replace|대신하다
+868|reply|대답하다
+869|report|알리다, 보고하다
+870|represent|대표하다
+871|request|요청하다
+872|require|필요로 하다
+873|research|연구하다
+874|reserve|예약하다
+875|resist|저항하다
+876|resource|자원
+877|respect|존경하다
+877|respective|각각의
+878|respond|대답하다
+879|responsible|책임이 있는
+880|rest|나머지, 휴식
+881|result|결과
+882|retire|은퇴하다
+883|rice|쌀, 밥
+884|ride|타다
+*885|rise|오르다
+886|risk|위험
+887|rob|털다, 도둑질하다
+888|rocket|로켓
+889|role|역할
+890|roll|구르다
+890|enroll|등록하다
+891|roof|지붕
+892|root|뿌리
+893|rope|밧줄
+894|rough|거친
+895|round|둥근
+896|route|길
+897|row|줄, 열
+898|royal|왕의
+899|rub|문지르다
+899|rubber|고무
+900|rude|무례한
+901|ruin|망치다
+902|rule|규칙
+903|rush|서두르다
+904|sail|항해하다
+905|salary|월급
+906|sample|표본, 샘플
+907|satisfy|만족시키다
+908|sauce|소스
+909|scale|규모
+910|scare|겁먹게 하다
+911|scarf|스카프
+912|scene|현장, 장면
+913|schedule|일정
+914|scratch|긁다
+915|scream|비명을 지르다
+916|screen|화면
+917|seal|밀봉하다
+918|search|찾다
+919|seat|자리
+920|secret|비밀
+921|secretary|비서
+922|section|부분
+923|secure|안전한
+924|seed|씨앗
+925|seek|찾다
+926|seem|~인 듯하다
+927|select|선발하다
+928|self|자기, 자신
+929|senior|손위의
+930|sense|감각
+930|sensation|감각, 느낌
+931|sentence|문장
+932|separate|분리하다, 분리된
+933|series|연속, 시리즈
+934|serious|심각한
+935|serve|제공하다
+936|session|기간, 시간
+937|settle|해결하다, 정하다
+938|several|몇몇의
+939|sew|바느질하다
+!940|sex|성별
+941|shade|그늘
+942|shadow|그림자
+943|shake|흔들다
+944|shall|~일 것이다
+945|shame|수치심
+946|shape|모양
+947|share|공유하다
+948|sharp|날카로운
+949|shave|면도하다
+*950|sheep|양
+951|sheet|한 장
+952|shelf|선반
+953|shell|껍질
+954|shelter|대피소
+955|shift|옮기다
+956|shine|빛나다
+957|shock|충격
+958|shoot|쏘다
+959|shore|해안
+960|shoulder|어깨
+961|shout|외치다
+962|shower|소나기, 샤워
+963|shut|닫다
+964|sight|시력
+965|sign|징조, 표시
+965|significant|중요한
+966|silly|어리석은
+967|silver|은
+968|similar|비슷한
+969|simple|간단한
+970|since|~부터, ~이후
+971|single|단 하나의
+972|sink|가라앉다
+973|site|위치, 장소
+974|situate|위치시키다
+974|situation|상황
+975|skill|기술
+976|slave|노예
+977|slide|미끄러지다
+978|slight|약간의
+979|slip|미끄러지다
+980|smart|똑똑한
+981|smash|박살내다
+982|smoke|연기
+983|smooth|매끈한
+984|snack|간식
+985|snake|뱀
+986|snap|딱 부러뜨리다
+987|social|사회의
+988|society|사회
+989|soil|흙, 토양
+990|soldier|군인
+991|solid|고체의, 단단한
+992|solve|해결하다
+993|somewhat|어느 정도, 약간
+994|soon|곧
+995|sore|아픈
+996|sort|종류
+997|soul|영혼, 마음
+998|sour|신, 시큼한
+999|source|원천, 근원
+*1000|spare|남는, 여분의

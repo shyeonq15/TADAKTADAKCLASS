@@ -24,6 +24,7 @@ import { claimWeekly } from "@/lib/weekly/server";
 import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
+import { claimVocabWeek, clearPart, loadNotebook, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
 
 async function who() {
   const v = await getViewer();
@@ -55,9 +56,9 @@ export async function submitPlacement() {
 
 /* ───── 혼자 하는 게임 ───── */
 
-export async function startGame(game: SoloGame, track: Track) {
+export async function startGame(game: SoloGame, track: Track, opts?: { part?: number }) {
   const w = await who();
-  return w ? issueGame(w, game, track) : NOT_LOGGED_IN;
+  return w ? issueGame(w, game, track, opts) : NOT_LOGGED_IN;
 }
 
 export async function submitGame(sub: GameSubmission) {
@@ -256,4 +257,39 @@ export async function clearBinaryStage(n: number) {
   const first = !ins.error;
   if (first) await addCoins(w.userId, BINARY_FIRST_CLEAR_COINS, `이진수 연습실 ${n}단계`);
   return { first, coins: first ? BINARY_FIRST_CLEAR_COINS : 0, data: await loadUncached(w.userId) };
+}
+
+/* ───────── 영단어 연구소 ───────── */
+
+/** 이번 주 단어 + 틀린 단어장 */
+export async function vocabStatus() {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  const [week, notebook] = await Promise.all([loadVocabWeek(w.userId), loadNotebook(w.userId)]);
+  return { week, notebook };
+}
+
+/** 빈칸 채우기·듣고 쓰기·단어장 복습의 답 (틀린 단어장에 넣고 빼기) */
+export async function vocabAnswers(answers: VocabAnswer[]) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  await recordAnswers(w.userId, Array.isArray(answers) ? answers : []);
+  return { ok: true as const };
+}
+
+/** 빈칸 채우기·듣고 쓰기 묶음 하나를 끝냈을 때 */
+export async function vocabClear(kind: VocabClearKind, part: number) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  const res = await clearPart(w.userId, kind, part);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(w.userId) };
+}
+
+export async function vocabClaimWeek() {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  const res = await claimVocabWeek(w.userId);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(w.userId) };
 }

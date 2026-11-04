@@ -22,18 +22,31 @@ import { recentMedian } from "@/lib/practice/derive";
 import type { Attempt, PracticeData } from "@/lib/practice/types";
 import { rainSequence, replayRain, type RainEvent, type RainResult } from "./rain";
 import { gameSequence } from "./words";
+import { quizParts } from "./quiz";
+import { VOCAB } from "@/config/vocab";
+import { getPart, vocabRainSequence } from "@/lib/vocab/words";
+import { recordAnswers } from "@/lib/vocab/server";
 
-/** v 2: 문장 순서 단어(lv = 학생 단계). v 없음: 예전 낱말 모음(lv = 글 난이도) — 배포 때 진행 중이던 판용 */
-type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: number; h: string; s: number; v?: 2 };
+/** v 2: 문장 순서 단어(lv = 학생 단계). v 없음: 예전 낱말 모음(lv = 글 난이도) — 배포 때 진행 중이던 판용. p: 뜻 비 단어 묶음 */
+type GameTicket = { u: string; g: SoloGame; track: Track; lv: number; seed: number; h: string; s: number; v?: 2; p?: number };
 
-const ticketWords = (t: GameTicket) => (t.v === 2 ? gameSequence(t.track, t.lv, t.seed) : rainSequence(t.track, t.lv, t.seed));
+const ticketWords = (t: GameTicket) =>
+  t.g === "vocab" ? vocabRainSequence(t.p ?? 1, t.seed) : t.v === 2 ? gameSequence(t.track, t.lv, t.seed) : rainSequence(t.track, t.lv, t.seed);
 
 export type IssuedGame = { words: string[]; token: string };
 
-export async function issueGame(who: Who, game: SoloGame, track: Track): Promise<IssuedGame | { error: string }> {
+export async function issueGame(who: Who, game: SoloGame, track: Track, opts?: { part?: number }): Promise<IssuedGame | { error: string }> {
   if (!(game in GAME_LABELS)) return { error: "게임을 찾을 수 없어요." };
   const seed = randomInt(1, 2 ** 31);
   if (!TRACKS.includes(track)) return { error: "트랙을 찾을 수 없어요." };
+  // 뜻 비: 고른 단어 묶음에서 "뜻	영어" 를 섞어서 (영타 트랙 기록으로 저장)
+  if (game === "vocab") {
+    const part = Number(opts?.part);
+    if (!getPart(part)) return { error: "단어 묶음을 찾을 수 없어요." };
+    const words = vocabRainSequence(part, seed);
+    const ticket: GameTicket = { u: who.userId, g: game, track: "english", lv: 0, seed, h: hashLines(words), s: Date.now(), p: part };
+    return { words, token: makeToken(ticket) };
+  }
   const data = await loadUncached(who.userId);
   // 지금 단계 근처 글에서, 문장을 골라 낱말을 순서대로
   const lv = data.progress.unlocked[track];
@@ -96,7 +109,7 @@ export async function saveGame(
   if (cpm > INTEGRITY.maxCpm[ticket.track]) flags.add("too-fast");
   const suspicious = flags.size > 0;
 
-  const level = game === "rain" ? GAMES.rain.level : RUNNER.level;
+  const level = game === "rain" ? GAMES.rain.level : game === "vocab" ? VOCAB.gameLevel : RUNNER.level;
   const ins = await admin
     .from("attempts")
     .insert({
@@ -126,6 +139,14 @@ export async function saveGame(
     ...before.attempts.filter((a) => a.kind === "game" && a.mode === game && a.track === ticket.track && !a.suspicious).map((a) => a.score ?? 0),
   );
   const newBest = !suspicious && result.score > prevBest && prevBest > 0;
+
+  // 뜻 비: 바닥에 떨어뜨린 단어는 틀린 단어장에, 터뜨린 단어는 단어장 복습으로 (탭 뒤가 영어 단어)
+  if (game === "vocab" && sameWords) {
+    const answers = events.flatMap((e) =>
+      e.type === "wrong" || !words[e.i] ? [] : [{ en: quizParts(words[e.i]).answer ?? "", ok: e.type === "hit" }],
+    );
+    await recordAnswers(who.userId, answers);
+  }
 
   let coins = 0;
   if (!suspicious && result.hits > 0) {

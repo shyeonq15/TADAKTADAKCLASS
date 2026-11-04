@@ -11,7 +11,7 @@ import { BINARY_STAGES } from "@/config/binary";
 
 type SortKey = "number" | Track | "practice" | "games" | "explore" | "keystrokes" | "lessons" | "last";
 
-const games = (s: DashStudent) => s.week.rain + s.week.runner + s.week.boss + s.week.race;
+const games = (s: DashStudent) => s.week.rain + s.week.runner + s.week.vocab + s.week.boss + s.week.race;
 const SORTERS: Record<SortKey, (s: DashStudent) => number | string> = {
   number: (s) => s.number,
   korean: (s) => -s.stages.korean,
@@ -77,7 +77,7 @@ export function ClassDashboard({ dash, today }: { dash: ClassDash; today: string
             ["이번 주 참여", `${s.activeWeek} / ${s.members}명`],
             ["오늘 미션 완료", `${s.missionToday} / ${s.members}명`],
             ["연습·미션 판", `${s.week.practice + s.week.mission}판`],
-            ["게임 판", `${s.week.rain + s.week.runner + s.week.boss + s.week.race}판`],
+            ["게임 판", `${s.week.rain + s.week.runner + s.week.vocab + s.week.boss + s.week.race}판`],
             ["교과 탐험 지문", `${s.week.explore}개`],
           ].map(([label, value]) => (
             <div key={label} className="win-bevel-pressed bg-paper px-3 py-2">
@@ -87,7 +87,7 @@ export function ClassDashboard({ dash, today }: { dash: ClassDash; today: string
           ))}
         </div>
         <p className="mt-2 text-small text-text-muted">
-          게임 판 자세히: 단어 비 {s.week.rain} · 토끼 달리기 {s.week.runner} · 보스전 {s.week.boss} · 친구 대결 {s.week.race} · 이번 주 반 전체 {s.week.keystrokes.toLocaleString()}타
+          게임 판 자세히: 단어 비 {s.week.rain} · 토끼 달리기 {s.week.runner} · 뜻 비 {s.week.vocab} · 보스전 {s.week.boss} · 친구 대결 {s.week.race} · 이번 주 반 전체 {s.week.keystrokes.toLocaleString()}타
           (선생님 테스트 계정은 빼고 셌어요)
         </p>
       </RetroWindow>
@@ -190,7 +190,7 @@ export function ClassDashboard({ dash, today }: { dash: ClassDash; today: string
                     </td>
                     <td
                       className="px-1 py-1.5 text-right"
-                      title={`단어 비 ${st.week.rain} · 토끼 ${st.week.runner} · 보스 ${st.week.boss} · 대결 ${st.week.race}`}
+                      title={`단어 비 ${st.week.rain} · 토끼 ${st.week.runner} · 뜻 비 ${st.week.vocab} · 보스 ${st.week.boss} · 대결 ${st.week.race}`}
                     >
                       {games(st)}
                     </td>

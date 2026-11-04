@@ -32,7 +32,7 @@ export function ClassOverview({ dashes }: { dashes: ClassDash[] }) {
           <tbody>
             {dashes.map((d) => {
               const s = d.summary;
-              const games = s.week.rain + s.week.runner + s.week.boss + s.week.race;
+              const games = s.week.rain + s.week.runner + s.week.vocab + s.week.boss + s.week.race;
               return (
                 <tr key={d.classId} className="border-b border-win-shadow">
                   <td className="whitespace-nowrap px-1 py-2 font-bold">
@@ -45,7 +45,7 @@ export function ClassOverview({ dashes }: { dashes: ClassDash[] }) {
                     {s.missionToday}/{s.members}
                   </td>
                   <td className="px-1 py-2 text-right">{s.week.practice + s.week.mission}</td>
-                  <td className="px-1 py-2 text-right" title={`단어 비 ${s.week.rain} · 토끼 ${s.week.runner} · 보스 ${s.week.boss} · 대결 ${s.week.race}`}>
+                  <td className="px-1 py-2 text-right" title={`단어 비 ${s.week.rain} · 토끼 ${s.week.runner} · 뜻 비 ${s.week.vocab} · 보스 ${s.week.boss} · 대결 ${s.week.race}`}>
                     {games}
                   </td>
                   <td className="px-1 py-2 text-right">{s.week.explore}</td>

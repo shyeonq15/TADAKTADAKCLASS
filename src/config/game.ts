@@ -212,8 +212,9 @@ export const GAMES = {
 } as const;
 
 /** 혼자 하는 게임 이름 */
-export type SoloGame = "rain" | "runner";
-export const GAME_LABELS: Record<SoloGame, string> = { rain: "단어 비", runner: "토끼 달리기" };
+/** vocab: 뜻 비 (영단어 연구소, 뜻을 보고 영어 단어를 쳐서 터뜨려요) */
+export type SoloGame = "rain" | "runner" | "vocab";
+export const GAME_LABELS: Record<SoloGame, string> = { rain: "단어 비", runner: "토끼 달리기", vocab: "뜻 비" };
 
 /** 토끼 달리기: 앞에서 다가오는 장애물 단어를 쳐서 점프. 점수 계산은 단어 비와 같음 */
 export const RUNNER = {

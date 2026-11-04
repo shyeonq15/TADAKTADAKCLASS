@@ -17,6 +17,14 @@ const SECTIONS: { title: string; note: string; games: Game[] }[] = [
     ],
   },
   {
+    title: "🔤 영단어 연구소",
+    note: "영어 선생님 단어 목록(301~1000번)으로 익혀요",
+    games: [
+      { href: "/vocab", icon: "🌧️", title: "뜻 비", desc: "떨어지는 뜻을 보고 영어 단어를 쳐서 터뜨려요" },
+      { href: "/vocab", icon: "✏️", title: "빈칸 · 듣고 쓰기", desc: "d_s_rt 빈칸 채우기, 소리 듣고 철자 쓰기, 틀린 단어장" },
+    ],
+  },
+  {
     title: "🔬 정보 실험실",
     note: "수업에서 배운 내용을 쳐 보며 복습해요",
     games: [
