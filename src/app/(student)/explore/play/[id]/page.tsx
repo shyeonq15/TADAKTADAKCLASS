@@ -5,7 +5,7 @@ import { Loading } from "@/components/ui/Loading";
 import { PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { requireStudent } from "@/lib/auth/viewer";
-import { loadExplore } from "@/lib/explore/server";
+import { loadExplore, passageContext } from "@/lib/explore/server";
 import { ExploreRound } from "./ExploreRound";
 
 /** 교과 탐험 지문 한 판 */
@@ -13,7 +13,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const v = await requireStudent();
   const { id } = await params;
-  const data = await loadExplore(v.userId);
+  const [data, context] = await Promise.all([loadExplore(v.userId), passageContext(v.userId, id)]);
   for (const s of data.subjects) {
     for (const u of s.units) {
       const i = u.passages.findIndex((p) => p.id === id);
@@ -27,6 +27,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
           subtitle={`지문 ${i + 1} / ${u.passages.length}`}
           nextId={u.passages[i + 1]?.id ?? null}
           subjectId={s.id}
+          context={{ ...context, step: { n: i + 1, total: u.passages.length } }}
         />
       );
     }

@@ -31,7 +31,24 @@ type Props = {
   onSaved?: (save: SaveResult) => void;
   /** 내 고스트와 레이스: 이 타수(내 최고 기록)로 달리는 고스트를 위에 보여 줘요 */
   ghostCpm?: number | null;
+  /**
+   * 이어 읽기 (교과 탐험): 바로 앞 지문의 끝과 다음 지문의 시작을 타자 칸 위아래에 흐리게 보여 줘요.
+   * 타자 칸(TypingArea)은 그대로 두고 바깥에만 그려요. step: 글 전체에서 몇 번째 지문인지
+   */
+  context?: { before: string[]; after: string[]; step?: { n: number; total: number } };
 };
+
+/** 이어 읽기: 앞뒤 글 (작고 흐리게) */
+function ContextLines({ lines, label }: { lines: string[]; label: string }) {
+  if (!lines.length) return null;
+  return (
+    <div className="px-4 font-typing text-body leading-relaxed text-text-muted opacity-70" aria-label={label}>
+      {lines.map((l, i) => (
+        <p key={i}>{l}</p>
+      ))}
+    </div>
+  );
+}
 
 type Phase =
   | { name: "ready" }
@@ -44,7 +61,7 @@ type Phase =
   | { name: "error"; message: string };
 
 /** 한 판 진행: 준비(PRESS START) → 서버에서 지문 받기 → 타자 → 서버가 채점·저장 → 결과 */
-export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved, ghostCpm }: Props) {
+export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved, ghostCpm, context }: Props) {
   const setData = useSetPracticeData();
   const [phase, setPhase] = useState<Phase>(() => (autoStart ? { name: "loading" } : { name: "ready" }));
   const autoStarted = useRef(false);
@@ -132,6 +149,17 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   if (phase.name === "typing") {
     return (
       <RetroWindow title={windowTitle} className="mx-auto w-full max-w-4xl">
+        {context?.step && (
+          <div className="mb-2 flex items-center gap-2 font-pixel text-small text-navy-900">
+            <span>
+              📖 {context.step.n} / {context.step.total}
+            </span>
+            <div className="win-bevel-pressed h-3 flex-1 bg-paper">
+              <div className="h-full bg-lime-400" style={{ width: `${((context.step.n - 1) / context.step.total) * 100}%` }} />
+            </div>
+          </div>
+        )}
+        {context && <ContextLines lines={context.before} label="앞 내용" />}
         <TypingSession
           key={phase.token}
           lines={phase.lines}
@@ -157,6 +185,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           }
           onFinish={(r) => handleFinish(phase.lines, phase.token, r, phase.note)}
         />
+        {context && <ContextLines lines={context.after} label="다음 내용" />}
       </RetroWindow>
     );
   }

@@ -260,3 +260,18 @@ async function exploreRanks(userId: string, packs: PackRow[]): Promise<ExploreRa
   }
   return { subjects, units };
 }
+
+/* ───────── 이어 읽기: 앞뒤 지문 ───────── */
+
+/** 이 지문의 바로 앞 지문 끝 몇 줄과 다음 지문 첫 몇 줄 (글이 끊기지 않고 이어져 보이게) */
+export async function passageContext(userId: string, passageId: string, lines = 3) {
+  const { packs } = await visiblePacks(userId);
+  for (const p of packs) {
+    const sorted = [...p.passages].sort((a, b) => a.sort - b.sort);
+    const i = sorted.findIndex((x) => x.id === passageId);
+    if (i < 0) continue;
+    const linesOf = (k: number) => (sorted[k]?.body ?? "").split("\n").filter(Boolean).map(stripBlanks);
+    return { before: i > 0 ? linesOf(i - 1).slice(-lines) : [], after: linesOf(i + 1).slice(0, lines) };
+  }
+  return { before: [], after: [] };
+}

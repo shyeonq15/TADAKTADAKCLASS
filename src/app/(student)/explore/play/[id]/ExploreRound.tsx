@@ -13,6 +13,7 @@ export function ExploreRound({
   subtitle,
   nextId,
   subjectId,
+  context,
 }: {
   passageId: string;
   track: Track;
@@ -20,11 +21,14 @@ export function ExploreRound({
   subtitle: string;
   nextId: string | null;
   subjectId: string;
+  /** 이어 읽기: 앞뒤 지문 */
+  context?: { before: string[]; after: string[]; step?: { n: number; total: number } };
 }) {
   const router = useRouter();
   return (
     <RoundRunner
       autoStart
+      context={context}
       request={{ kind: "subject", track, passageId }}
       title={title}
       subtitle={subtitle}
