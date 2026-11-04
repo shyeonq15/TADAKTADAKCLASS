@@ -1,5 +1,5 @@
 // 선생님이 붙여 넣은 글 → 연습 판(passage)들로 나누기. 화면 미리보기와 서버 저장이 같이 씁니다.
-//  · 글: 문장으로 나누고, 긴 문장은 띄어쓰기 기준으로 줄을 나눔 → 문장을 통째로 4줄 안쪽씩 한 판 (문장이 판 사이에서 끊기지 않게)
+//  · 글: 문단마다 줄 끝까지 이어 쓰고(문장마다 줄을 바꾸지 않음), 6줄 안쪽씩 한 판. 판은 문장 경계에서만 나눔 (문장이 판 사이에서 끊기지 않게)
 //  · 코드: 줄바꿈·들여쓰기를 그대로 두고, 빈 줄을 기준으로 끊어 12줄 안쪽으로 한 판
 
 import type { Track } from "@/config/game";
@@ -7,7 +7,8 @@ import type { PracticeMode } from "@/data/packs";
 
 /** 한 줄 최대 글자 수 (타자 화면 폭 기준). 한글은 글자가 넓어서 짧게 */
 export const MAX_LINE: Record<Track, number> = { korean: 30, english: 52, symbol: 40, code: 60 };
-const LINES_PER_ROUND = 4;
+/** 글 한 판의 줄 수 (한글 30자 × 6줄 ≈ 180자, 1~2분) */
+const LINES_PER_ROUND = 6;
 const MAX_CODE_LINES = 12;
 export const MAX_ROUNDS = 60;
 
@@ -43,13 +44,19 @@ function wrap(sentence: string, max: number): string[] {
   return lines;
 }
 
-/** 글을 문장 단위로 (마침표·물음표·느낌표 뒤, 또는 줄바꿈) */
-function sentences(text: string): string[] {
+/** 글 → 문단(줄바꿈) → 문장(마침표·물음표·느낌표 뒤) */
+function paragraphs(text: string): string[][] {
   return text
     .split(/\n+/)
-    .flatMap((para) => para.replace(/\s+/g, " ").trim().split(/(?<=[.!?。])\s+/))
-    .map((s) => s.trim())
-    .filter(Boolean);
+    .map((para) =>
+      para
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(/(?<!\bMrs?\.)(?<=[.!?。]["']?)\s+/)
+        .map((s) => s.trim())
+        .filter(Boolean),
+    )
+    .filter((p) => p.length > 0);
 }
 
 export type SplitResult = { mode: PracticeMode; rounds: string[][] };
@@ -76,17 +83,31 @@ export function splitPassage(raw: string, track: Track): SplitResult {
     return { mode: "code", rounds: rounds.slice(0, MAX_ROUNDS) };
   }
 
-  // 문장 하나는 한 판 안에: 다음 문장을 더하면 4줄을 넘을 때 새 판 (문장 하나가 4줄보다 길면 그 문장만 한 판)
+  // 문단 안 문장들은 줄 끝까지 이어 쓰고, 다음 문장을 더하면 한 판이 넘칠 때 그 문장부터 새 판
+  // (문장 하나가 한 판보다 길면 그 문장만 한 판). 새 문단은 새 줄에서 시작해요
+  const max = MAX_LINE[track];
   const rounds: string[][] = [];
   let cur: string[] = [];
-  for (const s of sentences(text)) {
-    const lines = wrap(s, MAX_LINE[track]);
-    if (cur.length && cur.length + lines.length > LINES_PER_ROUND) {
-      rounds.push(cur);
-      cur = [];
+  let open: string[] = [];
+  const layout = () => (open.length ? wrap(open.join(" "), max) : []);
+  const newRound = () => {
+    if (cur.length) rounds.push(cur);
+    cur = [];
+  };
+  for (const para of paragraphs(text)) {
+    for (const sentence of para) {
+      const lines = wrap([...open, sentence].join(" "), max);
+      if ((cur.length || open.length) && cur.length + lines.length > LINES_PER_ROUND) {
+        cur.push(...layout());
+        newRound();
+        open = [];
+      }
+      open.push(sentence);
     }
-    cur.push(...lines);
+    cur.push(...layout());
+    open = [];
+    if (cur.length >= LINES_PER_ROUND) newRound();
   }
-  if (cur.length) rounds.push(cur);
+  newRound();
   return { mode: "sentences", rounds: rounds.slice(0, MAX_ROUNDS) };
 }

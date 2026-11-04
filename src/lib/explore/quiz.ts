@@ -17,7 +17,8 @@ export const hasBlanks = (text: string) => /\[[^\]\n]+\]/.test(text);
  */
 export function quizSentences(bodies: readonly string[]): QuizSentence[] {
   const text = bodies.join(" ").replace(/\s+/g, " ").trim();
-  const sentences = text.split(/(?<=[.!?])\s+(?![^[]*\])/);
+  // "Mrs." 같은 호칭 뒤에서는 나누지 않아요. 닫는 따옴표 뒤도 문장 끝
+  const sentences = text.split(/(?<!\bMrs?\.)(?<=[.!?]["']?)\s+(?![^[]*\])/);
   const out: QuizSentence[] = [];
   for (const s of sentences) {
     if (!hasBlanks(s)) continue;
@@ -42,12 +43,15 @@ export const sameAnswer = (typed: string, answer: string) => typed.replace(/\s+/
 const CHOSUNG = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
 /** 초성 힌트: "압력" → "ㅇㄹ" (한글이 아닌 글자·띄어쓰기는 그대로) */
 export const chosung = (s: string) =>
-  [...s]
-    .map((ch) => {
-      const c = ch.charCodeAt(0) - 0xac00;
-      return c >= 0 && c < 11172 ? CHOSUNG[Math.floor(c / 588)] : ch;
-    })
-    .join("");
+  /[가-힣]/.test(s)
+    ? [...s]
+        .map((ch) => {
+          const c = ch.charCodeAt(0) - 0xac00;
+          return c >= 0 && c < 11172 ? CHOSUNG[Math.floor(c / 588)] : ch;
+        })
+        .join("")
+    : // 영어 등: 낱말마다 첫 글자만 보여 주고 나머지는 _ ("picked up" → "p_____ u_")
+      s.replace(/[A-Za-z]+/g, (w) => w[0] + "_".repeat(w.length - 1));
 
 /** 퀴즈 전체에서 빈칸의 정답들 (문장 순서대로) */
 export const allAnswers = (sentences: readonly QuizSentence[]) =>
