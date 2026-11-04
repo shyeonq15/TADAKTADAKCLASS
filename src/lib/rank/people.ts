@@ -10,7 +10,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export type RankPerson = { nickname: string; classNo: number };
 /** 랭킹 한 줄 (닉네임만) */
-export type RankEntry = { nickname: string; classNo: number; value: string; me: boolean };
+export type RankEntry = { nickname: string; classNo: number; value: string; me: boolean; detail?: string };
 
 export async function gradePeople(userId: string): Promise<Map<string, RankPerson>> {
   const people = new Map<string, RankPerson>();

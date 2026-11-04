@@ -3,7 +3,9 @@ import "server-only";
 // 교과 탐험 (서버 전용): 과목(subject)이 붙은 연습팩 = 단원. 지문(passages) 하나 = 한 판.
 // 같은 학교 학생에게 보여요 (학년을 정한 단원은 그 학년만). 지문마다 가장 좋은 별을 저장해요.
 
-import { EXPLORE_RANK, SUBJECTS, subjectOf } from "@/config/subjects";
+import { EXPLORE_RANK, quizStars, SUBJECT_POINTS, SUBJECTS, subjectOf } from "@/config/subjects";
+import { caseSetOf } from "@/config/cases";
+import { VOCAB_CLEAR } from "@/config/vocab";
 import type { Track } from "@/config/game";
 import { loadEnrollment } from "@/lib/auth/viewer";
 import { allRows, gradePeople, type RankEntry } from "@/lib/rank/people";
@@ -16,8 +18,10 @@ export type ExplorePassage = { id: string; stars: number };
 export type ExploreUnit = { packId: string; unitNo: number; title: string; grade: number | null; passages: ExplorePassage[]; quiz: number };
 export type ExploreSubject = { id: string; label: string; icon: string; track: Track; units: ExploreUnit[] };
 export type { RankEntry };
-/** 과목별 별 랭킹, 단원별 빠르게 친 친구·퀴즈왕 */
-export type ExploreRanks = { subjects: Record<string, RankEntry[]>; units: Record<string, { speed: RankEntry[]; quiz: RankEntry[] }> };
+/** 내 과목 점수와 재료 */
+export type MyPoints = { score: number; stars: number; improves: number; days: number };
+/** 과목마다 과목 점수 순위 + 내 점수 */
+export type ExploreRanks = { subjects: Record<string, RankEntry[]>; mine: Record<string, MyPoints> };
 export type ExploreData = { ready: boolean; subjects: ExploreSubject[]; ranks?: ExploreRanks };
 
 const missing = (e: { code?: string } | null) => !!e && ["42P01", "PGRST205", "42703", "PGRST204"].includes(e.code ?? "");
@@ -94,8 +98,15 @@ export async function explorePassage(userId: string, passageId: string) {
 /** 지문 별 저장 (더 좋을 때만). 저장한 별 수를 돌려줘요 */
 export async function saveExploreStars(userId: string, passageId: string, stars: number, cpm: number, accuracy: number) {
   const admin = createAdminClient();
-  const { data: cur } = await admin.from("subject_progress").select("stars, best_cpm").eq("student_id", userId).eq("passage_id", passageId).maybeSingle();
+  const q = (cols: string) => admin.from("subject_progress").select(cols).eq("student_id", userId).eq("passage_id", passageId).maybeSingle();
+  // improves 칸이 아직 없으면 (SQL 실행 전) 그 칸 없이
+  let res = await q("stars, best_cpm, improves");
+  const hasImproves = !res.error;
+  if (!hasImproves) res = await q("stars, best_cpm");
+  const cur = res.data as unknown as { stars: number; best_cpm: number; improves?: number } | null;
   if (cur && cur.stars >= stars && cur.best_cpm >= cpm) return cur.stars;
+  // 같은 지문을 다시 쳐서 내 최고 타수를 넘으면 기록 갱신 (과목 점수의 성장)
+  const improved = !!cur && cpm > cur.best_cpm;
   await admin.from("subject_progress").upsert({
     student_id: userId,
     passage_id: passageId,
@@ -103,6 +114,7 @@ export async function saveExploreStars(userId: string, passageId: string, stars:
     best_cpm: Math.max(cpm, cur?.best_cpm ?? 0),
     best_accuracy: accuracy,
     updated_at: new Date().toISOString(),
+    ...(hasImproves ? { improves: (cur?.improves ?? 0) + (improved ? 1 : 0) } : {}),
   });
   return Math.max(stars, cur?.stars ?? 0);
 }
@@ -123,7 +135,7 @@ export async function exploreTotals(userId: string) {
 export const CONCEPT_QUIZ_COINS = 5;
 const quizReason = (title: string) => `개념 퀴즈: ${title}`;
 
-export type ConceptQuiz = { packId: string; title: string; subject: string; icon: string; sentences: QuizSentence[]; done: boolean };
+export type ConceptQuiz = { packId: string; title: string; subject: string; subjectId: string; icon: string; sentences: QuizSentence[]; done: boolean };
 
 /** 이 학생이 볼 수 있는 단원의 퀴즈 (스스로 확인하는 연습이라 정답이 화면에 함께 가요) */
 export async function loadConceptQuiz(userId: string, packId: string): Promise<ConceptQuiz | null> {
@@ -138,7 +150,7 @@ export async function loadConceptQuiz(userId: string, packId: string): Promise<C
     .select("id", { count: "exact", head: true })
     .eq("student_id", userId)
     .eq("reason", quizReason(pack.title));
-  return { packId, title: pack.title, subject: subject?.label ?? "", icon: subject?.icon ?? "", sentences, done: (count ?? 0) > 0 };
+  return { packId, title: pack.title, subject: subject?.label ?? "", subjectId: pack.subject, icon: subject?.icon ?? "", sentences, done: (count ?? 0) > 0 };
 }
 
 /**
@@ -149,7 +161,7 @@ export async function finishConceptQuiz(
   userId: string,
   packId: string,
   sub: { firstAnswers: unknown[]; durationMs: number },
-): Promise<{ coins: number; score: number; total: number; best: boolean } | { error: string }> {
+): Promise<{ coins: number; score: number; total: number; best: boolean; subjectId: string } | { error: string }> {
   const quiz = await loadConceptQuiz(userId, packId);
   if (!quiz) return { error: "퀴즈를 찾을 수 없어요." };
   const { score, total } = scoreFirstAnswers(quiz.sentences, Array.isArray(sub?.firstAnswers) ? sub.firstAnswers.slice(0, 500) : []);
@@ -182,83 +194,123 @@ export async function finishConceptQuiz(
     await addCoins(userId, CONCEPT_QUIZ_COINS, quizReason(quiz.title));
     coins = CONCEPT_QUIZ_COINS;
   }
-  return { coins, score, total, best };
+  return { coins, score, total, best, subjectId: quiz.subjectId };
 }
 
-/* ───────── 랭킹 (CLAUDE.md 6장 예외: 교사 결정 2026-11-04) ───────── */
+/* ───────── 과목 점수·과목 랭킹 (CLAUDE.md 6장 예외: 교사 결정 2026-11-04) ─────────
+ * 과목 점수 = 별 × star + 기록 갱신 × improve + 연습한 날 × day  (config/subjects.ts SUBJECT_POINTS)
+ *  · 별: 지문 별, 개념 퀴즈·사례 퀴즈 별(처음에 맞힌 비율), 영어는 영단어 묶음 단계(단어장·빈칸·듣기)
+ *  · 기록 갱신: 같은 지문에서 내 최고 타수를 넘은 횟수
+ *  · 연습한 날: 그 과목을 연습한 날 수 (activity_log 의 "subject:과목")
+ */
 
-const mmss = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+type Points = { stars: number; improves: number; days: number };
+const pointsOf = (p: Points) => p.stars * SUBJECT_POINTS.star + p.improves * SUBJECT_POINTS.improve + p.days * SUBJECT_POINTS.day;
+const detailOf = (p: Points) => `★${p.stars} · 갱신 ${p.improves} · ${p.days}일`;
 
-/** 같은 학년 학생(선생님 테스트 계정 빼고) 안에서: 과목별 별 합, 단원별 평균 타수·퀴즈 점수 */
+/** 같은 학년 학생(선생님 테스트 계정 빼고) 안에서 과목마다 과목 점수 순위 + 내 점수 */
 async function exploreRanks(userId: string, packs: PackRow[]): Promise<ExploreRanks> {
-  const empty: ExploreRanks = { subjects: {}, units: {} };
-  if (!packs.length) return empty;
+  const empty: ExploreRanks = { subjects: {}, mine: {} };
   const admin = createAdminClient();
   const people = await gradePeople(userId);
   if (!people.size) return empty;
+  const ids = [...people.keys()];
 
   const passageIds = packs.flatMap((p) => p.passages.map((x) => x.id));
-  const packOf = new Map(packs.flatMap((p) => p.passages.map((x) => [x.id, p] as const)));
-  type Prog = { student_id: string; passage_id: string; stars: number; best_cpm: number };
-  const prog = (
-    await allRows<Prog>((a, b) =>
-      admin
-        .from("subject_progress")
-        .select("student_id, passage_id, stars, best_cpm")
-        .in("passage_id", passageIds)
-        .order("student_id")
-        .order("passage_id")
-        .range(a, b),
-    )
-  ).filter((r) => people.has(r.student_id) && r.stars > 0);
-  type QuizRow = { student_id: string; pack_id: string; best_score: number; total: number; best_ms: number };
-  const quiz = (
-    await allRows<QuizRow>((a, b) =>
-      admin
-        .from("concept_quiz_scores")
-        .select("student_id, pack_id, best_score, total, best_ms")
-        .in(
-          "pack_id",
-          packs.map((p) => p.id),
+  const subjectOfPassage = new Map(packs.flatMap((p) => p.passages.map((x) => [x.id, p.subject] as const)));
+  const subjectOfPack = new Map(packs.map((p) => [p.id, p.subject] as const));
+
+  type Prog = { student_id: string; passage_id: string; stars: number; improves?: number };
+  const readProg = (cols: string) =>
+    allRows<Prog>((a, b) =>
+      admin.from("subject_progress").select(cols).in("passage_id", passageIds).order("student_id").order("passage_id").range(a, b) as unknown as PromiseLike<{
+        data: Prog[] | null;
+        error: unknown;
+      }>,
+    );
+  // improves 칸이 아직 없으면 (SQL 실행 전) 별만
+  let prog = passageIds.length ? await readProg("student_id, passage_id, stars, improves") : [];
+  if (passageIds.length && !prog.length) prog = await readProg("student_id, passage_id, stars");
+
+  const [quiz, cases, vocab, days] = await Promise.all([
+    packs.length
+      ? allRows<{ student_id: string; pack_id: string; best_score: number; total: number }>((a, b) =>
+          admin
+            .from("concept_quiz_scores")
+            .select("student_id, pack_id, best_score, total")
+            .in(
+              "pack_id",
+              packs.map((p) => p.id),
+            )
+            .order("student_id")
+            .order("pack_id")
+            .range(a, b),
         )
+      : [],
+    allRows<{ student_id: string; set_id: string; best_score: number; total: number }>((a, b) =>
+      admin.from("case_quiz_scores").select("student_id, set_id, best_score, total").in("student_id", ids).order("student_id").order("set_id").range(a, b),
+    ),
+    allRows<{ student_id: string }>((a, b) =>
+      admin
+        .from("level_clears")
+        .select("student_id")
+        .in("student_id", ids)
+        .in("track", [VOCAB_CLEAR.study, VOCAB_CLEAR.blank, VOCAB_CLEAR.listen])
         .order("student_id")
-        .order("pack_id")
+        .order("track")
+        .order("level")
         .range(a, b),
-    )
-  ).filter((r) => people.has(r.student_id) && r.best_score > 0);
+    ),
+    allRows<{ student_id: string; kind: string }>((a, b) =>
+      admin.from("activity_log").select("student_id, kind").in("student_id", ids).like("kind", "subject:%").order("student_id").order("day").order("kind").range(a, b),
+    ),
+  ]);
 
-  const entry = (id: string, value: string): RankEntry => ({ ...people.get(id)!, value, me: id === userId });
+  // 과목 → 학생 → 점수 재료
+  const table = new Map<string, Map<string, Points>>();
+  const add = (subject: string | undefined, student: string, part: Partial<Points>) => {
+    if (!subject || !people.has(student)) return;
+    const bySubject = table.get(subject) ?? new Map<string, Points>();
+    const p = bySubject.get(student) ?? { stars: 0, improves: 0, days: 0 };
+    p.stars += part.stars ?? 0;
+    p.improves += part.improves ?? 0;
+    p.days += part.days ?? 0;
+    bySubject.set(student, p);
+    table.set(subject, bySubject);
+  };
+  for (const r of prog) add(subjectOfPassage.get(r.passage_id), r.student_id, { stars: r.stars, improves: r.improves ?? 0 });
+  for (const r of quiz) add(subjectOfPack.get(r.pack_id), r.student_id, { stars: quizStars(r.best_score, r.total) });
+  for (const r of cases) add(caseSetOf(r.set_id)?.subject, r.student_id, { stars: quizStars(r.best_score, r.total) });
+  for (const r of vocab) add("english", r.student_id, { stars: 1 });
+  for (const r of days) add(r.kind.slice("subject:".length), r.student_id, { days: 1 });
 
-  // 과목별 별 합
   const subjects: ExploreRanks["subjects"] = {};
-  for (const sub of SUBJECTS) {
-    const sum = new Map<string, number>();
-    for (const r of prog) if (packOf.get(r.passage_id)?.subject === sub.id) sum.set(r.student_id, (sum.get(r.student_id) ?? 0) + r.stars);
-    subjects[sub.id] = [...sum]
-      .sort((a, b) => b[1] - a[1])
+  const mine: ExploreRanks["mine"] = {};
+  for (const s of SUBJECTS) {
+    const bySubject = table.get(s.id) ?? new Map<string, Points>();
+    subjects[s.id] = [...bySubject]
+      .map(([id, p]) => ({ id, p, score: pointsOf(p) }))
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score || b.p.stars - a.p.stars)
       .slice(0, EXPLORE_RANK.subject)
-      .map(([id, n]) => entry(id, `★ ${n}`));
+      .map((x) => ({ ...people.get(x.id)!, value: `${x.score}점`, detail: detailOf(x.p), me: x.id === userId }));
+    const p = bySubject.get(userId);
+    if (p) mine[s.id] = { score: pointsOf(p), ...p };
   }
+  return { subjects, mine };
+}
 
-  // 단원별: 별을 받은 지문의 평균 타수, 퀴즈 점수(같으면 빨리 끝낸 친구가 위)
-  const units: ExploreRanks["units"] = {};
-  for (const p of packs) {
-    const ids = new Set(p.passages.map((x) => x.id));
-    const per = new Map<string, number[]>();
-    for (const r of prog) if (ids.has(r.passage_id)) per.set(r.student_id, [...(per.get(r.student_id) ?? []), r.best_cpm]);
-    const speed = [...per]
-      .map(([id, cpms]) => ({ id, avg: Math.round(cpms.reduce((a, b) => a + b, 0) / cpms.length), n: cpms.length }))
-      .sort((a, b) => b.avg - a.avg)
-      .slice(0, EXPLORE_RANK.unit)
-      .map((x) => entry(x.id, `${x.avg}타 · 지문 ${x.n}개`));
-    const q = quiz
-      .filter((r) => r.pack_id === p.id)
-      .sort((a, b) => b.best_score - a.best_score || a.best_ms - b.best_ms)
-      .slice(0, EXPLORE_RANK.unit)
-      .map((r) => entry(r.student_id, `${r.best_score}/${r.total}칸 · ${mmss(r.best_ms)}`));
-    units[p.id] = { speed, quiz: q };
-  }
-  return { subjects, units };
+/** 한 과목 랭킹만 (영단어 연구소 → 영어) */
+export async function loadSubjectRank(userId: string, subjectId: string) {
+  const { packs } = await visiblePacks(userId);
+  const r = await exploreRanks(userId, packs);
+  return { entries: r.subjects[subjectId] ?? [], mine: r.mine[subjectId] ?? null };
+}
+
+/** 지문이 어느 과목인지 (연습한 날 기록용) */
+export async function passageSubject(passageId: string) {
+  const { data } = await createAdminClient().from("passages").select("packs!inner(subject)").eq("id", passageId).maybeSingle();
+  return ((data?.packs as unknown as { subject: string | null } | undefined)?.subject ?? null) as string | null;
 }
 
 /* ───────── 이어 읽기: 앞뒤 지문 ───────── */

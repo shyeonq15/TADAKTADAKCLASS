@@ -54,7 +54,7 @@ export function CaseQuiz({ set, backHref }: { set: CaseSet; backHref: string }) 
       setSolved(false);
       return;
     }
-    const res = await safeCall(() => caseQuizDone(set.id));
+    const res = await safeCall(() => caseQuizDone(set.id, { score, total: list.length }));
     let message = score === list.length ? "모두 한 번에 맞혔다! 대단해요!" : "끝까지 해냈다! 헷갈린 사례는 이유를 다시 읽어 봐요.";
     if (!("error" in res)) {
       setData(res.data);

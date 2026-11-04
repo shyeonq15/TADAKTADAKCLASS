@@ -18,7 +18,7 @@ import { checkIntegrity, type IntegrityFlag } from "@/lib/typing/integrity";
 import { buildPackRound, buildPlacementRound, buildRound, buildWeakKeyRound, pickCode } from "@/lib/typing/passage";
 import { blankMask, codeNote, lesson, LESSON_COUNT } from "@/data/codeNotes";
 import { isTestStudent } from "@/lib/auth/testAccount";
-import { explorePassage, saveExploreStars } from "@/lib/explore/server";
+import { explorePassage, passageSubject, saveExploreStars } from "@/lib/explore/server";
 import { starsFor } from "@/config/subjects";
 import { dayKeyKST } from "./day";
 import { recentMedian, streakDays, weakKeys } from "./derive";
@@ -550,6 +550,9 @@ export async function saveRound(
     const baseline = recent.length >= 3 ? recent[Math.floor(recent.length / 2)] : null;
     const got = starsFor(accuracy, cpm, baseline);
     subjectStars = got > 0 ? await saveExploreStars(who.userId, req.passageId, got, cpm, accuracy) : 0;
+    // 이 과목을 연습한 날 (과목 점수의 노력)
+    const subject = await passageSubject(req.passageId);
+    if (subject) await logActivity(who, `subject:${subject}`);
   }
 
   // 코인

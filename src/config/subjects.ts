@@ -59,7 +59,23 @@ export const SUBJECT_ACTIVITIES: Readonly<Record<string, readonly SubjectActivit
 export const activitiesOf = (subjectId: string) => SUBJECT_ACTIVITIES[subjectId] ?? [];
 
 /**
- * 교과 탐험 랭킹 (2026-11-04 교사 결정, CLAUDE.md 6장 예외): 같은 학년 안에서 닉네임으로만.
- * subject: 과목별 별 랭킹 인원, unit: 단원별 빠르게 친 친구·퀴즈왕 인원
+ * 과목 랭킹 (2026-11-04 교사 결정, CLAUDE.md 6장 예외): 같은 학년 안에서 닉네임으로만, 과목 탭마다 하나.
+ * subject: 과목 랭킹 인원
  */
-export const EXPLORE_RANK = { subject: 10, unit: 5 } as const;
+export const EXPLORE_RANK = { subject: 10 } as const;
+
+/**
+ * 과목 점수 (실력·성장·노력을 하나로): 별 × star + 기록 갱신 × improve + 연습한 날 × day
+ *  · 별: 지문 별, 퀴즈 별, 영단어 묶음 단계(단어장·빈칸·듣기 한 단계 = 별 1개)
+ *  · 기록 갱신: 같은 지문을 다시 쳐서 내 최고 타수를 넘을 때마다
+ *  · 연습한 날: 그 과목을 연습한 날 수
+ */
+export const SUBJECT_POINTS = { star: 10, improve: 5, day: 5 } as const;
+
+/** 퀴즈 별: 처음에 맞힌 비율로 (끝까지 하면 ★1) */
+export const QUIZ_STARS = { three: 0.95, two: 0.8 } as const;
+export function quizStars(score: number, total: number) {
+  if (total <= 0) return 0;
+  const r = score / total;
+  return r >= QUIZ_STARS.three ? 3 : r >= QUIZ_STARS.two ? 2 : 1;
+}

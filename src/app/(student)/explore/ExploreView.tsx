@@ -5,36 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { activitiesOf, EXPLORE_STARS } from "@/config/subjects";
 import { RetroWindow } from "@/components/ui/RetroWindow";
-import type { ExploreData, RankEntry } from "@/lib/explore/server";
+import type { ExploreData } from "@/lib/explore/server";
+import { SubjectRank } from "@/components/rank/SubjectRank";
 
 const starText = (n: number) => "★".repeat(n) + "☆".repeat(3 - n);
-const MEDALS = ["🥇", "🥈", "🥉"];
-
-/** 랭킹 표 (닉네임만. 아직 기록이 없으면 안내) */
-function RankList({ title, entries, empty }: { title: string; entries: RankEntry[]; empty: string }) {
-  return (
-    <div className="flex-1 border-2 border-navy-900 bg-surface px-3 py-2">
-      <p className="mb-1 font-title text-body">{title}</p>
-      {entries.length === 0 ? (
-        <p className="text-small text-text-muted">{empty}</p>
-      ) : (
-        <ol className="flex flex-col gap-0.5 text-small">
-          {entries.map((e, i) => (
-            <li key={i} className={`flex items-baseline gap-2 ${e.me ? "bg-yellow-400 font-bold" : ""}`}>
-              <span className="w-6 text-center">{MEDALS[i] ?? i + 1}</span>
-              <span className="flex-1 truncate">
-                {e.nickname} <span className="text-text-muted">{e.classNo}반</span>
-                {e.me && " (나)"}
-              </span>
-              <span>{e.value}</span>
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
-
 /** 과목 탭 → 그 과목 활동(이진수 연습실·영단어 연구소 …) + 단원 지도 (지문마다 별) */
 export function ExploreView({ data }: { data: ExploreData }) {
   const params = useSearchParams();
@@ -145,12 +119,6 @@ export function ExploreView({ data }: { data: ExploreData }) {
                       <span className="font-pixel text-small font-normal">빈칸 {u.quiz}개 · 초성 힌트 · 틀리면 다시</span>
                     </Link>
                   )}
-                  {data.ranks?.units[u.packId] && (
-                    <div className="mt-3 flex flex-col gap-2 font-pixel md:flex-row">
-                      <RankList title="⚡ 빠르게 친 친구" entries={data.ranks.units[u.packId].speed} empty="아직 기록이 없어요. 첫 주인공이 되어 봐요!" />
-                      {u.quiz > 0 && <RankList title="🧩 퀴즈왕" entries={data.ranks.units[u.packId].quiz} empty="아직 퀴즈를 끝낸 친구가 없어요!" />}
-                    </div>
-                  )}
                 </li>
               );
             })}
@@ -162,12 +130,13 @@ export function ExploreView({ data }: { data: ExploreData }) {
         </p>
       </RetroWindow>
 
-      {data.ranks && subject.units.length > 0 && (
-        <RetroWindow title={`⭐ ${subject.label} 별 랭킹`}>
-          <div className="font-pixel">
-            <RankList title={`${subject.icon} ${subject.label} 단원에서 별을 가장 많이 모은 친구`} entries={data.ranks.subjects[subject.id] ?? []} empty="아직 별을 모은 친구가 없어요. 첫 별을 모아 봐요!" />
-            <p className="mt-2 text-small text-text-muted">같은 학년 친구들끼리, 닉네임으로만 보여요.</p>
-          </div>
+      {data.ranks && (subject.units.length > 0 || activitiesOf(subject.id).length > 0) && (
+        <RetroWindow title={`🏆 ${subject.label} 랭킹`}>
+          <SubjectRank
+            title={`${subject.icon} ${subject.label} 과목 점수 TOP ${(data.ranks.subjects[subject.id] ?? []).length || ""}`}
+            entries={data.ranks.subjects[subject.id] ?? []}
+            mine={data.ranks.mine[subject.id] ?? null}
+          />
         </RetroWindow>
       )}
     </div>

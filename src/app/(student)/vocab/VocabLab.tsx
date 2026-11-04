@@ -12,8 +12,9 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { safeCall } from "@/lib/practice/call";
 import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
 import { getPart, partLabel, partWords, shuffled, VOCAB_PARTS, type VocabWord } from "@/lib/vocab/words";
-import type { Notebook, VocabRanks, VocabWeek } from "@/lib/vocab/server";
+import type { Notebook, VocabWeek } from "@/lib/vocab/server";
 import type { RankEntry } from "@/lib/rank/people";
+import { SubjectRank, type MyPoints } from "@/components/rank/SubjectRank";
 import { Field as RainField } from "../games/rain/RainGame";
 import { SoloGameFlow } from "../games/SoloGameFlow";
 import { VocabQuiz, type QuizMode, type QuizResult } from "./VocabQuiz";
@@ -29,7 +30,7 @@ type View =
   | { name: "quiz"; mode: QuizMode; part: number | null; words: VocabWord[] }
   | { name: "done"; mode: QuizMode; part: number | null; result: QuizResult; message: string };
 
-type Status = { week: VocabWeek; notebook: Notebook; ranks: VocabRanks };
+type Status = { week: VocabWeek; notebook: Notebook; ranks: { entries: RankEntry[]; mine: MyPoints | null } };
 
 const SETS = [...new Set(VOCAB_PARTS.map((p) => p.set))];
 
@@ -373,41 +374,11 @@ export function VocabLab({ initial }: { initial: Status }) {
           </div>
         </RetroWindow>
 
-        <RetroWindow title="🏆 영단어 랭킹">
-          <div className="flex flex-col gap-2 font-pixel text-navy-900">
-            <RankList title="🌧️ 뜻 비 최고 점수" entries={ranks.rain} empty="아직 뜻 비 기록이 없어요. 첫 주인공이 되어 봐요!" />
-            <RankList title="📚 끝낸 묶음 (빈칸+듣기)" entries={ranks.parts} empty="아직 끝낸 묶음이 없어요!" />
-            <p className="text-small text-text-muted">같은 학년 친구들끼리, 닉네임으로만 보여요.</p>
-          </div>
+        <RetroWindow title="🏆 영어 랭킹">
+          <SubjectRank title="🔤 영어 과목 점수" entries={ranks.entries} mine={ranks.mine} />
+          <p className="mt-2 font-pixel text-small text-text-muted">영단어 단계(단어장·빈칸·듣기) 하나가 별 1개, 뜻 비·복습도 영어를 연습한 날로 들어가요.</p>
         </RetroWindow>
       </div>
-    </div>
-  );
-}
-
-const MEDALS = ["🥇", "🥈", "🥉"];
-
-/** 랭킹 표 (닉네임만) */
-function RankList({ title, entries, empty }: { title: string; entries: RankEntry[]; empty: string }) {
-  return (
-    <div className="border-2 border-navy-900 bg-surface px-3 py-2">
-      <p className="mb-1 font-title text-body">{title}</p>
-      {entries.length === 0 ? (
-        <p className="text-small text-text-muted">{empty}</p>
-      ) : (
-        <ol className="flex flex-col gap-0.5 text-small">
-          {entries.map((e, i) => (
-            <li key={i} className={`flex items-baseline gap-2 ${e.me ? "bg-yellow-400 font-bold" : ""}`}>
-              <span className="w-6 text-center">{MEDALS[i] ?? i + 1}</span>
-              <span className="flex-1 truncate">
-                {e.nickname} <span className="text-text-muted">{e.classNo}반</span>
-                {e.me && " (나)"}
-              </span>
-              <span>{e.value}</span>
-            </li>
-          ))}
-        </ol>
-      )}
     </div>
   );
 }

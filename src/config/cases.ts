@@ -4,6 +4,8 @@
 export type CaseItem = { text: string; answer: number; why: string };
 export type CaseSet = {
   id: string;
+  /** 어느 과목 점수에 들어가는지 (config/subjects.ts SUBJECTS 의 id) */
+  subject: string;
   icon: string;
   title: string;
   /** 문제 위에 늘 보이는 질문 */
@@ -20,6 +22,7 @@ export const CASE_COINS = 5;
 export const CASE_SETS: readonly CaseSet[] = [
   {
     id: "election",
+    subject: "social",
     icon: "🗳️",
     title: "선거 원칙 지킴이",
     question: "어떤 선거 원칙을 어겼을까요?",
@@ -43,6 +46,7 @@ export const CASE_SETS: readonly CaseSet[] = [
   },
   {
     id: "democracy",
+    subject: "social",
     icon: "🏛️",
     title: "민주주의 원리 찾기",
     question: "어떤 민주주의 원리와 관련 있을까요?",

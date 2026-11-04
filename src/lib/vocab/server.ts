@@ -6,7 +6,6 @@ import { VOCAB, VOCAB_CLEAR } from "@/config/vocab";
 import { dayKeyKST } from "@/lib/practice/day";
 import { addCoins } from "@/lib/practice/server";
 import { weekOf } from "@/lib/season";
-import { allRows, gradePeople, type RankEntry } from "@/lib/rank/people";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { findWord, getPart, partLabel, weekPart } from "./words";
 
@@ -27,7 +26,6 @@ export type VocabWeek = {
 };
 export type VocabAnswer = { en: string; ok: boolean };
 export type VocabClearKind = "study" | "blank" | "listen";
-export type VocabRanks = { rain: RankEntry[]; parts: RankEntry[] };
 
 type MistakeRow = { word: string; misses: number; streak: number };
 
@@ -135,61 +133,4 @@ export async function claimVocabWeek(userId: string): Promise<{ coins: number } 
   if (ins.error) return { error: "이번 주 보상은 이미 받았어요." };
   await addCoins(userId, w.coins, `이번 주 영단어 (${w.label})`);
   return { coins: w.coins };
-}
-
-/* ───────── 영단어 랭킹 (CLAUDE.md 6장 예외: 교사 결정 2026-11-04) ───────── */
-
-/** 같은 학년 안에서: 뜻 비 최고 점수, 빈칸 채우기·듣고 쓰기를 모두 끝낸 묶음 수 */
-export async function loadVocabRanks(userId: string): Promise<VocabRanks> {
-  const people = await gradePeople(userId);
-  if (!people.size) return { rain: [], parts: [] };
-  const ids = [...people.keys()];
-  const admin = createAdminClient();
-  const [games, clears] = await Promise.all([
-    allRows<{ student_id: string; score: number | null }>((a, b) =>
-      admin
-        .from("attempts")
-        .select("student_id, score")
-        .in("student_id", ids)
-        .eq("kind", "game")
-        .eq("mode", "vocab")
-        .eq("suspicious", false)
-        .order("id")
-        .range(a, b),
-    ),
-    allRows<{ student_id: string; track: string; level: number }>((a, b) =>
-      admin
-        .from("level_clears")
-        .select("student_id, track, level")
-        .in("student_id", ids)
-        .in("track", [VOCAB_CLEAR.blank, VOCAB_CLEAR.listen])
-        .order("student_id")
-        .order("track")
-        .order("level")
-        .range(a, b),
-    ),
-  ]);
-  const entry = (id: string, value: string): RankEntry => ({ ...people.get(id)!, value, me: id === userId });
-
-  const best = new Map<string, number>();
-  for (const g of games) if ((g.score ?? 0) > (best.get(g.student_id) ?? 0)) best.set(g.student_id, g.score ?? 0);
-  const rain = [...best]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, VOCAB.rankSize)
-    .map(([id, n]) => entry(id, `${n.toLocaleString()}점`));
-
-  // 묶음 하나 = 빈칸 채우기와 듣고 쓰기를 둘 다 끝냈을 때
-  const done = new Map<string, Set<string>>();
-  for (const c of clears) {
-    const set = done.get(c.student_id) ?? new Set<string>();
-    set.add(`${c.track}-${c.level}`);
-    done.set(c.student_id, set);
-  }
-  const parts = [...done]
-    .map(([id, set]) => ({ id, n: [...set].filter((k) => k.startsWith(VOCAB_CLEAR.blank) && set.has(k.replace(VOCAB_CLEAR.blank, VOCAB_CLEAR.listen))).length }))
-    .filter((x) => x.n > 0)
-    .sort((a, b) => b.n - a.n)
-    .slice(0, VOCAB.rankSize)
-    .map((x) => entry(x.id, `${x.n}묶음`));
-  return { rain, parts };
 }

@@ -24,9 +24,9 @@ import { claimWeekly } from "@/lib/weekly/server";
 import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
-import { finishConceptQuiz } from "@/lib/explore/server";
+import { finishConceptQuiz, loadSubjectRank } from "@/lib/explore/server";
 import { CASE_COINS, caseSetOf } from "@/config/cases";
-import { claimVocabWeek, clearPart, loadNotebook, loadVocabRanks, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
+import { claimVocabWeek, clearPart, loadNotebook, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
 
 async function who() {
   const v = await getViewer();
@@ -271,7 +271,7 @@ export async function clearBinaryStage(n: number) {
 export async function vocabStatus() {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
-  const [week, notebook, ranks] = await Promise.all([loadVocabWeek(w.userId), loadNotebook(w.userId), loadVocabRanks(w.userId)]);
+  const [week, notebook, ranks] = await Promise.all([loadVocabWeek(w.userId), loadNotebook(w.userId), loadSubjectRank(w.userId, "english")]);
   return { week, notebook, ranks };
 }
 
@@ -290,6 +290,7 @@ export async function vocabClear(kind: VocabClearKind, part: number) {
   const res = await clearPart(w.userId, kind, part);
   if ("error" in res) return res;
   await logActivity(w, `vocab-${kind}`, String(part));
+  await logActivity(w, "subject:english");
   return { ...res, data: await loadUncached(w.userId) };
 }
 
@@ -309,6 +310,7 @@ export async function conceptQuizDone(packId: string, sub: { firstAnswers: strin
   const res = await finishConceptQuiz(w.userId, String(packId), sub);
   if ("error" in res) return res;
   await logActivity(w, "concept-quiz", String(packId));
+  await logActivity(w, `subject:${res.subjectId}`);
   return { ...res, data: await loadUncached(w.userId) };
 }
 
@@ -317,13 +319,14 @@ export async function vocabReviewDone() {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
   await logActivity(w, "vocab-review");
+  await logActivity(w, "subject:english");
   return { data: await loadUncached(w.userId) };
 }
 
 /* ───────── 사례 분류 퀴즈 ───────── */
 
 /** 사례 분류 퀴즈를 끝까지 했을 때: 학습 활동 + 처음이면 코인 */
-export async function caseQuizDone(setId: string) {
+export async function caseQuizDone(setId: string, result?: { score: number; total: number }) {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
   const set = caseSetOf(String(setId));
@@ -336,6 +339,21 @@ export async function caseQuizDone(setId: string) {
     .eq("reason", reason);
   const coins = (count ?? 0) > 0 ? 0 : CASE_COINS;
   if (coins) await addCoins(w.userId, coins, reason);
+  // 가장 좋은 기록 (퀴즈 별). 화면에서 매긴 점수지만 문제 수를 넘지 않게
+  const total = set.items.length;
+  const score = Math.max(0, Math.min(total, Math.round(Number(result?.score) || 0)));
+  const admin = createAdminClient();
+  const { data: cur, error } = await admin.from("case_quiz_scores").select("best_score, plays").eq("student_id", w.userId).eq("set_id", set.id).maybeSingle();
+  if (!error)
+    await admin.from("case_quiz_scores").upsert({
+      student_id: w.userId,
+      set_id: set.id,
+      best_score: Math.max(score, cur?.best_score ?? 0),
+      total,
+      plays: (cur?.plays ?? 0) + 1,
+      updated_at: new Date().toISOString(),
+    });
   await logActivity(w, "case-quiz", set.id);
+  await logActivity(w, `subject:${set.subject}`);
   return { coins, data: await loadUncached(w.userId) };
 }

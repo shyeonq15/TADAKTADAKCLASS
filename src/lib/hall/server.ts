@@ -18,6 +18,9 @@ export type HallData = { grade: number; boards: HallBoard[]; season: Season & { 
 
 type Who = { studentId: string; nickname: string; classNo: number };
 
+/** 명예의 전당은 타자 기록만 (교사 결정 2026-11-04): 뜻 비는 영어 과목 점수로 */
+const HALL_GAMES = (Object.keys(GAME_LABELS) as (keyof typeof GAME_LABELS)[]).filter((g) => g !== "vocab");
+
 /** 학생별 가장 좋은 기록 하나만 남기고 위에서부터 N명 */
 function topPerStudent<T extends { student_id: string }>(rows: T[], better: (a: T, b: T) => number): T[] {
   const best = new Map<string, T>();
@@ -101,7 +104,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
       .order("cpm", { ascending: false })
       .limit(300),
     Promise.all(
-      (Object.keys(GAME_LABELS) as (keyof typeof GAME_LABELS)[]).map((g) =>
+      HALL_GAMES.map((g) =>
         base().eq("kind", "game").eq("mode", g).not("score", "is", null).order("score", { ascending: false }).limit(300),
       ),
     ),
@@ -203,7 +206,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
     });
   }
 
-  (Object.keys(GAME_LABELS) as (keyof typeof GAME_LABELS)[]).forEach((g, i) => {
+  HALL_GAMES.forEach((g, i) => {
     const rows = topPerStudent((games[i].data ?? []) as Row[], (a, b) => (b.score ?? 0) - (a.score ?? 0));
     boards.push({
       id: `game-${g}`,

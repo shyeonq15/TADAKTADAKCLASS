@@ -11,6 +11,7 @@ import {
   addGamePlayCoins,
   hashLines,
   loadUncached,
+  logActivity,
   makeToken,
   readToken,
   refreshGrowth,
@@ -146,6 +147,7 @@ export async function saveGame(
       e.type === "wrong" || !words[e.i] ? [] : [{ en: quizParts(words[e.i]).answer ?? "", ok: e.type === "hit" }],
     );
     await recordAnswers(who.userId, answers);
+    if (!suspicious) await logActivity(who, "subject:english");
   }
 
   let coins = 0;
