@@ -142,7 +142,7 @@ export function ExploreView({ data }: { data: ExploreData }) {
                         🧩
                       </span>
                       개념 퀴즈 풀기
-                      <span className="font-pixel text-small font-normal">빈칸 {u.quiz}개 · 초성 힌트 · 보기</span>
+                      <span className="font-pixel text-small font-normal">빈칸 {u.quiz}개 · 초성 힌트 · 틀리면 다시</span>
                     </Link>
                   )}
                   {data.ranks?.units[u.packId] && (

@@ -8,19 +8,22 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
-import { allAnswers, chosung, sameAnswer, wordBank, type QuizSentence } from "@/lib/explore/quiz";
+import { allAnswers, chosung, sameAnswer, type QuizSentence } from "@/lib/explore/quiz";
 import { play } from "@/lib/sound";
 import type { ConceptQuiz } from "@/lib/explore/server";
 
 // 개념 빈칸 퀴즈: 문장의 빈칸을 앞에서부터 하나씩 채워요.
-// 빈칸에는 초성 힌트(압력 → ㅇㄹ), 아래에는 보기 단어가 있어요.
-// 틀린 빈칸은 정답을 보여 주고, 그 문장은 맨 뒤에 한 번 더 나와요. 모든 문장을 맞히면 끝!
+// 빈칸에는 초성 힌트(압력 → ㅇㄹ)가 있어요. 틀리면 같은 빈칸을 다시 쳐요.
+// MAX_TRIES 번 틀리면 정답을 보여 주고, 그 문장은 맨 뒤에 한 번 더 나와요. 모든 문장을 맞히면 끝!
 // 랭킹 점수 = 빈칸마다 처음 친 답이 맞은 개수 (서버가 다시 채점)
 
 type Blank = { value: string; state: "ok" | "wrong" } | null;
 
 /** 지금 시각(ms). 걸린 시간 재기용 */
 const clock = () => performance.now();
+
+/** 한 빈칸에서 이만큼 틀리면 정답을 보여 주고 넘어가요 (계속 막히지 않게) */
+const MAX_TRIES = 3;
 
 const blanksOf = (s: QuizSentence) => s.filter((p) => typeof p !== "string") as { answer: string }[];
 
@@ -41,6 +44,9 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
   const [missed, setMissed] = useState<Set<number>>(() => new Set());
   const [end, setEnd] = useState<null | { message: string; score: number; total: number; ms: number }>(null);
   const [saving, setSaving] = useState(false);
+  /** 지금 빈칸에서 틀린 횟수, 흔들기용 번호 */
+  const [tries, setTries] = useState(0);
+  const [shake, setShake] = useState(0);
   // 빈칸마다 처음 친 답 (랭킹 채점용), 시작 시각
   const firstAnswers = useRef<string[]>([]);
   const startedAt = useRef(0);
@@ -52,13 +58,12 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
   const at = filled.length;
   const sentenceDone = sentence && at >= blanks.length;
   const allRight = filled.every((b) => b?.state === "ok");
-  const bank = sentence ? wordBank(sentence, answers, si * 7919 + 17) : [];
-  const usedWords = filled.filter((f) => f?.state === "ok").map((f) => f!.value);
 
   const restart = () => {
     setQueue(quiz.sentences.map((_, i) => i));
     setFilled([]);
     setTyped("");
+    setTries(0);
     setCleared(0);
     setMissed(new Set());
     setEnd(null);
@@ -103,9 +108,18 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
     if (firstAnswers.current[g] === undefined) firstAnswers.current[g] = typed.trim();
     const ok = sameAnswer(typed, blanks[at].answer);
     play(ok ? "pop" : "error");
-    if (!ok) setMissed((m) => new Set(m).add(si));
-    setFilled((f) => [...f, { value: ok ? typed.trim() : blanks[at].answer, state: ok ? "ok" : "wrong" }]);
     setTyped("");
+    if (!ok) {
+      setMissed((m) => new Set(m).add(si));
+      // 다시 칠 기회가 남았으면 같은 빈칸 그대로
+      if (tries + 1 < MAX_TRIES) {
+        setTries(tries + 1);
+        setShake((n) => n + 1);
+        return;
+      }
+    }
+    setTries(0);
+    setFilled((f) => [...f, { value: ok ? typed.trim() : blanks[at].answer, state: ok ? "ok" : "wrong" }]);
   };
 
   if (end) {
@@ -174,20 +188,8 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
           })}
         </p>
 
-        {/* 보기 */}
-        <div className="flex flex-wrap items-center gap-2" aria-label="보기">
-          <span className="text-small font-bold">보기</span>
-          {bank.map((w) => (
-            <span
-              key={w}
-              className={`border-2 border-navy-900 px-3 py-1 text-body ${usedWords.includes(w) ? "bg-win-gray text-text-muted line-through" : "bg-paper"}`}
-            >
-              {w}
-            </span>
-          ))}
-        </div>
-
         <input
+          key={shake}
           value={typed}
           onChange={(e) => {
             const native = e.nativeEvent as InputEvent;
@@ -208,8 +210,14 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
           readOnly={!!sentenceDone || saving}
           aria-label="빈칸에 들어갈 말을 치고 Enter"
           placeholder={sentenceDone ? "Enter를 누르면 다음 문장" : `노란 빈칸(${chosung(blanks[at]?.answer ?? "")})에 들어갈 말을 치고 Enter`}
-          className="win-bevel-pressed h-16 bg-surface px-4 font-typing text-typing outline-none"
+          className={`win-bevel-pressed h-16 bg-surface px-4 font-typing text-typing outline-none ${shake ? "animate-[shake_200ms_steps(2)]" : ""}`}
         />
+
+        {!sentenceDone && tries > 0 && (
+          <p role="status" className="border-3 border-red-500 bg-paper px-3 py-2 text-red-500">
+            아쉬워요! 다시 쳐 봐요. ({MAX_TRIES - tries}번 남았어요 · 초성 힌트 {chosung(blanks[at]?.answer ?? "")})
+          </p>
+        )}
 
         {sentenceDone && (
           <p role="status" className={`border-3 border-navy-900 px-3 py-2 ${allRight ? "bg-lime-200" : "bg-paper"}`}>
