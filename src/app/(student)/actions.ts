@@ -24,6 +24,7 @@ import { claimWeekly } from "@/lib/weekly/server";
 import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
+import { finishConceptQuiz } from "@/lib/explore/server";
 import { claimVocabWeek, clearPart, loadNotebook, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
 
 async function who() {
@@ -290,6 +291,16 @@ export async function vocabClaimWeek() {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
   const res = await claimVocabWeek(w.userId);
+  if ("error" in res) return res;
+  return { ...res, data: await loadUncached(w.userId) };
+}
+
+/* ───────── 교과 탐험 개념 퀴즈 ───────── */
+
+export async function conceptQuizDone(packId: string) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  const res = await finishConceptQuiz(w.userId, String(packId));
   if ("error" in res) return res;
   return { ...res, data: await loadUncached(w.userId) };
 }

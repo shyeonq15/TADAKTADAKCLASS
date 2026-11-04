@@ -6,10 +6,13 @@ import "server-only";
 import { SUBJECTS, subjectOf } from "@/config/subjects";
 import type { Track } from "@/config/game";
 import { loadEnrollment } from "@/lib/auth/viewer";
+import { addCoins } from "@/lib/practice/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { blankCount, quizSentences, stripBlanks, type QuizSentence } from "./quiz";
 
 export type ExplorePassage = { id: string; stars: number };
-export type ExploreUnit = { packId: string; unitNo: number; title: string; grade: number | null; passages: ExplorePassage[] };
+/** quiz: 개념 퀴즈 빈칸 수 (0이면 퀴즈 없음) */
+export type ExploreUnit = { packId: string; unitNo: number; title: string; grade: number | null; passages: ExplorePassage[]; quiz: number };
 export type ExploreSubject = { id: string; label: string; icon: string; track: Track; units: ExploreUnit[] };
 export type ExploreData = { ready: boolean; subjects: ExploreSubject[] };
 
@@ -25,7 +28,7 @@ async function visiblePacks(userId: string) {
   if (!me) return { ready: true, packs: [] as PackRow[] };
   const res = await admin
     .from("packs")
-    .select("id, title, track, subject, unit_no, grade, passages(id, sort)")
+    .select("id, title, track, subject, unit_no, grade, passages(id, sort, body)")
     .eq("school_id", me.school_id)
     .not("subject", "is", null);
   if (res.error) return { ready: !missing(res.error), packs: [] as PackRow[] };
@@ -41,8 +44,10 @@ type PackRow = {
   subject: string;
   unit_no: number | null;
   grade: number | null;
-  passages: { id: string; sort: number }[];
+  passages: { id: string; sort: number; body: string }[];
 };
+
+const bodiesOf = (p: PackRow) => [...p.passages].sort((a, b) => a.sort - b.sort).map((x) => x.body);
 
 export async function loadExplore(userId: string): Promise<ExploreData> {
   const { ready, packs } = await visiblePacks(userId);
@@ -63,6 +68,7 @@ export async function loadExplore(userId: string): Promise<ExploreData> {
         title: p.title,
         grade: p.grade,
         passages: [...p.passages].sort((a, b) => a.sort - b.sort).map((x) => ({ id: x.id, stars: stars.get(x.id) ?? 0 })),
+        quiz: blankCount(bodiesOf(p)),
       })),
   }));
   return { ready, subjects };
@@ -77,7 +83,8 @@ export async function explorePassage(userId: string, passageId: string) {
   const pack = packs.find((p) => p.id === data.pack_id);
   if (!pack) return null;
   const subject = subjectOf(pack.subject);
-  return { lines: data.body.split("\n"), track: subject?.track ?? pack.track, title: pack.title, subject: subject?.label ?? "" };
+  // [대괄호]는 개념 퀴즈 빈칸 표시라서 타자 칠 때는 빼요
+  return { lines: data.body.split("\n").map(stripBlanks), track: subject?.track ?? pack.track, title: pack.title, subject: subject?.label ?? "" };
 }
 
 /** 지문 별 저장 (더 좋을 때만). 저장한 별 수를 돌려줘요 */
@@ -104,4 +111,37 @@ export async function exploreTotals(userId: string) {
     stars: units.reduce((n, u) => n + u.passages.reduce((m, p) => m + p.stars, 0), 0),
     unitsCleared: units.filter((u) => u.passages.length > 0 && u.passages.every((p) => p.stars >= 1)).length,
   };
+}
+
+/* ───────── 개념 빈칸 퀴즈 ───────── */
+
+/** 처음 끝냈을 때 코인 */
+export const CONCEPT_QUIZ_COINS = 5;
+const quizReason = (title: string) => `개념 퀴즈: ${title}`;
+
+export type ConceptQuiz = { packId: string; title: string; subject: string; icon: string; sentences: QuizSentence[]; done: boolean };
+
+/** 이 학생이 볼 수 있는 단원의 퀴즈 (스스로 확인하는 연습이라 정답이 화면에 함께 가요) */
+export async function loadConceptQuiz(userId: string, packId: string): Promise<ConceptQuiz | null> {
+  const { packs } = await visiblePacks(userId);
+  const pack = packs.find((p) => p.id === packId);
+  if (!pack) return null;
+  const sentences = quizSentences(bodiesOf(pack));
+  if (!sentences.length) return null;
+  const subject = subjectOf(pack.subject);
+  const { count } = await createAdminClient()
+    .from("coin_transactions")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", userId)
+    .eq("reason", quizReason(pack.title));
+  return { packId, title: pack.title, subject: subject?.label ?? "", icon: subject?.icon ?? "", sentences, done: (count ?? 0) > 0 };
+}
+
+/** 퀴즈를 끝까지 했을 때: 이 단원 퀴즈를 처음 끝냈으면 코인 */
+export async function finishConceptQuiz(userId: string, packId: string): Promise<{ coins: number } | { error: string }> {
+  const quiz = await loadConceptQuiz(userId, packId);
+  if (!quiz) return { error: "퀴즈를 찾을 수 없어요." };
+  if (quiz.done) return { coins: 0 };
+  await addCoins(userId, CONCEPT_QUIZ_COINS, quizReason(quiz.title));
+  return { coins: CONCEPT_QUIZ_COINS };
 }

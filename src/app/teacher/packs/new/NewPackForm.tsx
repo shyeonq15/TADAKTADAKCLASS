@@ -49,6 +49,9 @@ export function NewPackForm() {
         <p className="text-small text-text-muted">
           과목을 고르면 반에 배포하지 않아도 학생 화면의 &ldquo;교과 탐험&rdquo;에 단원으로 나타나요. 나뉜 판 하나가 지문 하나(별 ★3개)가 돼요.
         </p>
+        <p className="text-small text-text-muted">
+          🧩 핵심어를 <strong>[대괄호]</strong>로 감싸면 그 단원에 개념 빈칸 퀴즈가 생겨요. 예) 면적이 [좁을수록] 압력은 [커진다]. 타자 칠 때는 대괄호가 보이지 않아요.
+        </p>
         <div className="flex flex-wrap gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-small font-bold">과목</span>

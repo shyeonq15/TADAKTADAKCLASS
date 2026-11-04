@@ -86,6 +86,11 @@ export function ExploreView({ data }: { data: ExploreData }) {
                     <strong className="font-title text-heading">{u.unitNo ? `${u.unitNo}단원` : "단원"}</strong>
                     <span className="flex-1">{u.title}</span>
                     {cleared && <span className="border-2 border-navy-900 bg-yellow-400 px-2 text-small">🏁 탐험 완료</span>}
+                    {u.quiz > 0 && (
+                      <Link href={`/explore/quiz/${u.packId}`} className="win-bevel bg-yellow-400 px-3 py-1 text-small font-bold active:win-bevel-pressed">
+                        🧩 개념 퀴즈 ({u.quiz}칸)
+                      </Link>
+                    )}
                     {next && (
                       <Link href={`/explore/play/${next.id}`} className="win-bevel px-3 py-1 text-small font-bold active:win-bevel-pressed">
                         ▶ 이어서 하기
