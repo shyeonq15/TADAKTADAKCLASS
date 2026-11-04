@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
-import { authConfig, isTeacherEmail, schoolYearOf } from "@/lib/auth/config";
+import { authConfig, isTeacherEmail, schoolYearOf, teacherLoginEmail } from "@/lib/auth/config";
 import { requestOrigin } from "@/lib/auth/origin";
 import { isValidSecret, parseStudentNo, weakSecretReason } from "@/lib/auth/pictures";
 import { PIN_LOCK, pinPassword } from "@/lib/auth/pin";
@@ -43,11 +43,11 @@ export async function signInWithGoogle() {
   redirect(data.url);
 }
 
-/** 교사: 이메일 + 비밀번호 (계정은 터미널에서 npm run teacher:create 로 만듦) */
+/** 교사: 이메일(또는 아이디) + 비밀번호 (계정은 터미널에서 npm run teacher:create 로 만듦) */
 export async function teacherLogin(_: FormState, formData: FormData): Promise<FormState> {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const email = teacherLoginEmail(String(formData.get("email") ?? ""));
   const password = String(formData.get("password") ?? "");
-  const fail = { ok: false, message: "이메일이나 비밀번호가 맞지 않아요." };
+  const fail = { ok: false, message: "아이디(이메일)나 비밀번호가 맞지 않아요." };
   if (!isTeacherEmail(email) || !password) return fail;
 
   const supabase = await createClient();

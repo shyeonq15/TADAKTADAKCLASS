@@ -84,7 +84,7 @@ export function LoginForms({ showGoogle }: { showGoogle: boolean }) {
 
         {tab === "teacher" && (
           <form action={teacherAction} className="flex flex-col gap-3">
-            <Field label="이메일" name="email" type="email" required autoComplete="username" />
+            <Field label="아이디 또는 이메일" name="email" type="text" required autoComplete="username" />
             <Field label="비밀번호" name="password" type="password" required autoComplete="current-password" />
             <PixelButton variant="primary" type="submit" disabled={teacherPending}>
               {teacherPending ? "확인 중..." : "로그인"}

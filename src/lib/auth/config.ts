@@ -8,13 +8,23 @@ export function authConfig() {
     allowedDomain: (process.env.ALLOWED_EMAIL_DOMAIN || "").toLowerCase(),
     teacherEmails: (process.env.TEACHER_EMAILS || "")
       .split(",")
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean),
+      .map((e) => e.trim())
+      .filter(Boolean)
+      .map(teacherLoginEmail),
     pinPepper: process.env.PIN_PEPPER || "",
   };
 }
 
-export const isTeacherEmail = (email: string) => authConfig().teacherEmails.includes(email.toLowerCase());
+/** 이메일 없이 아이디만 쓰는 선생님 계정의 내부 이메일 주소 (메일은 가지 않아요) */
+export const TEACHER_ID_DOMAIN = "teachers.example.com";
+
+/** 선생님 로그인 칸에 넣은 값 → 로그인 이메일. "science" 처럼 아이디만 쓰면 science@teachers.example.com */
+export function teacherLoginEmail(input: string) {
+  const v = input.trim().toLowerCase();
+  return v.includes("@") ? v : `${v}@${TEACHER_ID_DOMAIN}`;
+}
+
+export const isTeacherEmail = (email: string) => authConfig().teacherEmails.includes(teacherLoginEmail(email));
 
 /** 학교 도메인 계정이거나 교사 목록에 있으면 허용 */
 export function isAllowedEmail(email: string) {

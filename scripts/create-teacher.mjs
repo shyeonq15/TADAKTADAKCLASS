@@ -10,7 +10,9 @@ if (!url || !secret) {
   console.error(".env.local 에 NEXT_PUBLIC_SUPABASE_URL 과 SUPABASE_SECRET_KEY 가 필요해요.");
   process.exit(1);
 }
-const teacherEmails = TEACHER_EMAILS.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+// "science" 처럼 아이디만 쓰면 science@teachers.example.com 으로 만들어요 (src/lib/auth/config.ts teacherLoginEmail 과 같은 규칙)
+const toEmail = (v) => (v.includes("@") ? v : `${v}@teachers.example.com`);
+const teacherEmails = TEACHER_EMAILS.split(",").map((e) => toEmail(e.trim().toLowerCase())).filter((e) => e !== "@teachers.example.com");
 
 function ask(question, hidden = false) {
   return new Promise((resolve) => {
@@ -26,7 +28,7 @@ function ask(question, hidden = false) {
   });
 }
 
-const email = (await ask("선생님 이메일: ")).toLowerCase();
+const email = toEmail((await ask("선생님 아이디 또는 이메일: ")).toLowerCase());
 if (!teacherEmails.includes(email)) {
   console.error(`\n이 이메일이 .env.local 의 TEACHER_EMAILS 에 없어요. 먼저 거기에 추가해 주세요.`);
   process.exit(1);
@@ -61,4 +63,4 @@ if (res.error) {
   process.exit(1);
 }
 console.log(existing ? "\n✅ 비밀번호를 바꿨어요." : "\n✅ 선생님 계정을 만들었어요.");
-console.log("   로그인 화면 → '선생님' 탭에서 이 이메일과 비밀번호로 들어가세요.");
+console.log("   로그인 화면 → '선생님' 탭에서 이 아이디(이메일)와 비밀번호로 들어가세요.");
