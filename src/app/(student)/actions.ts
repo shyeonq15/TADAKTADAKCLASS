@@ -25,6 +25,7 @@ import { deletePixelArt, savePixelArt } from "@/lib/pixel/server";
 import { checkInvite, setBlockInvites } from "@/lib/games/invites";
 import { changeNickname, saveBio } from "@/lib/profile/server";
 import { finishConceptQuiz } from "@/lib/explore/server";
+import { CASE_COINS, caseSetOf } from "@/config/cases";
 import { claimVocabWeek, clearPart, loadNotebook, loadVocabRanks, loadVocabWeek, recordAnswers, type VocabAnswer, type VocabClearKind } from "@/lib/vocab/server";
 
 async function who() {
@@ -317,4 +318,24 @@ export async function vocabReviewDone() {
   if (!w) return NOT_LOGGED_IN;
   await logActivity(w, "vocab-review");
   return { data: await loadUncached(w.userId) };
+}
+
+/* ───────── 사례 분류 퀴즈 ───────── */
+
+/** 사례 분류 퀴즈를 끝까지 했을 때: 학습 활동 + 처음이면 코인 */
+export async function caseQuizDone(setId: string) {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  const set = caseSetOf(String(setId));
+  if (!set) return { error: "없는 퀴즈예요." };
+  const reason = `사례 퀴즈: ${set.title}`;
+  const { count } = await createAdminClient()
+    .from("coin_transactions")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", w.userId)
+    .eq("reason", reason);
+  const coins = (count ?? 0) > 0 ? 0 : CASE_COINS;
+  if (coins) await addCoins(w.userId, coins, reason);
+  await logActivity(w, "case-quiz", set.id);
+  return { coins, data: await loadUncached(w.userId) };
 }
