@@ -5,9 +5,35 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { activitiesOf, EXPLORE_STARS } from "@/config/subjects";
 import { RetroWindow } from "@/components/ui/RetroWindow";
-import type { ExploreData } from "@/lib/explore/server";
+import type { ExploreData, RankEntry } from "@/lib/explore/server";
 
 const starText = (n: number) => "★".repeat(n) + "☆".repeat(3 - n);
+const MEDALS = ["🥇", "🥈", "🥉"];
+
+/** 랭킹 표 (닉네임만. 아직 기록이 없으면 안내) */
+function RankList({ title, entries, empty }: { title: string; entries: RankEntry[]; empty: string }) {
+  return (
+    <div className="flex-1 border-2 border-navy-900 bg-surface px-3 py-2">
+      <p className="mb-1 font-title text-body">{title}</p>
+      {entries.length === 0 ? (
+        <p className="text-small text-text-muted">{empty}</p>
+      ) : (
+        <ol className="flex flex-col gap-0.5 text-small">
+          {entries.map((e, i) => (
+            <li key={i} className={`flex items-baseline gap-2 ${e.me ? "bg-yellow-400 font-bold" : ""}`}>
+              <span className="w-6 text-center">{MEDALS[i] ?? i + 1}</span>
+              <span className="flex-1 truncate">
+                {e.nickname} <span className="text-text-muted">{e.classNo}반</span>
+                {e.me && " (나)"}
+              </span>
+              <span>{e.value}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
 
 /** 과목 탭 → 그 과목 활동(이진수 연습실·영단어 연구소 …) + 단원 지도 (지문마다 별) */
 export function ExploreView({ data }: { data: ExploreData }) {
@@ -86,11 +112,6 @@ export function ExploreView({ data }: { data: ExploreData }) {
                     <strong className="font-title text-heading">{u.unitNo ? `${u.unitNo}단원` : "단원"}</strong>
                     <span className="flex-1">{u.title}</span>
                     {cleared && <span className="border-2 border-navy-900 bg-yellow-400 px-2 text-small">🏁 탐험 완료</span>}
-                    {u.quiz > 0 && (
-                      <Link href={`/explore/quiz/${u.packId}`} className="win-bevel bg-yellow-400 px-3 py-1 text-small font-bold active:win-bevel-pressed">
-                        🧩 개념 퀴즈 ({u.quiz}칸)
-                      </Link>
-                    )}
                     {next && (
                       <Link href={`/explore/play/${next.id}`} className="win-bevel px-3 py-1 text-small font-bold active:win-bevel-pressed">
                         ▶ 이어서 하기
@@ -112,6 +133,24 @@ export function ExploreView({ data }: { data: ExploreData }) {
                       </Link>
                     ))}
                   </div>
+                  {u.quiz > 0 && (
+                    <Link
+                      href={`/explore/quiz/${u.packId}`}
+                      className="win-bevel mt-3 flex items-center justify-center gap-3 bg-yellow-400 px-4 py-3 font-title text-heading text-navy-900 hover:bg-lime-200 active:win-bevel-pressed"
+                    >
+                      <span className="text-[32px] leading-none" aria-hidden>
+                        🧩
+                      </span>
+                      개념 퀴즈 풀기
+                      <span className="font-pixel text-small font-normal">빈칸 {u.quiz}개 · 초성 힌트 · 보기</span>
+                    </Link>
+                  )}
+                  {data.ranks?.units[u.packId] && (
+                    <div className="mt-3 flex flex-col gap-2 font-pixel md:flex-row">
+                      <RankList title="⚡ 빠르게 친 친구" entries={data.ranks.units[u.packId].speed} empty="아직 기록이 없어요. 첫 주인공이 되어 봐요!" />
+                      {u.quiz > 0 && <RankList title="🧩 퀴즈왕" entries={data.ranks.units[u.packId].quiz} empty="아직 퀴즈를 끝낸 친구가 없어요!" />}
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -122,6 +161,15 @@ export function ExploreView({ data }: { data: ExploreData }) {
           {EXPLORE_STARS.three.accuracy}%에 내 평소 타수 이상. 다른 친구가 아니라 &ldquo;평소의 나&rdquo;와 비교해요!
         </p>
       </RetroWindow>
+
+      {data.ranks && subject.units.length > 0 && (
+        <RetroWindow title={`⭐ ${subject.label} 별 랭킹`}>
+          <div className="font-pixel">
+            <RankList title={`${subject.icon} ${subject.label} 단원에서 별을 가장 많이 모은 친구`} entries={data.ranks.subjects[subject.id] ?? []} empty="아직 별을 모은 친구가 없어요. 첫 별을 모아 봐요!" />
+            <p className="mt-2 text-small text-text-muted">같은 학년 친구들끼리, 닉네임으로만 보여요.</p>
+          </div>
+        </RetroWindow>
+      )}
     </div>
   );
 }

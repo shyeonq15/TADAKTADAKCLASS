@@ -3,18 +3,24 @@ import "server-only";
 // 교과 탐험 (서버 전용): 과목(subject)이 붙은 연습팩 = 단원. 지문(passages) 하나 = 한 판.
 // 같은 학교 학생에게 보여요 (학년을 정한 단원은 그 학년만). 지문마다 가장 좋은 별을 저장해요.
 
-import { SUBJECTS, subjectOf } from "@/config/subjects";
+import { EXPLORE_RANK, SUBJECTS, subjectOf } from "@/config/subjects";
 import type { Track } from "@/config/game";
-import { loadEnrollment } from "@/lib/auth/viewer";
+import { ensureSchoolYear, loadEnrollment } from "@/lib/auth/viewer";
+import { isTestNumber } from "@/lib/auth/testAccount";
+import { classesOf } from "@/lib/battle/server";
 import { addCoins } from "@/lib/practice/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { blankCount, quizSentences, stripBlanks, type QuizSentence } from "./quiz";
+import { blankCount, quizSentences, scoreFirstAnswers, stripBlanks, type QuizSentence } from "./quiz";
 
 export type ExplorePassage = { id: string; stars: number };
 /** quiz: 개념 퀴즈 빈칸 수 (0이면 퀴즈 없음) */
 export type ExploreUnit = { packId: string; unitNo: number; title: string; grade: number | null; passages: ExplorePassage[]; quiz: number };
 export type ExploreSubject = { id: string; label: string; icon: string; track: Track; units: ExploreUnit[] };
-export type ExploreData = { ready: boolean; subjects: ExploreSubject[] };
+/** 랭킹 한 줄 (닉네임만. 같은 학년 안에서) */
+export type RankEntry = { nickname: string; classNo: number; value: string; me: boolean };
+/** 과목별 별 랭킹, 단원별 빠르게 친 친구·퀴즈왕 */
+export type ExploreRanks = { subjects: Record<string, RankEntry[]>; units: Record<string, { speed: RankEntry[]; quiz: RankEntry[] }> };
+export type ExploreData = { ready: boolean; subjects: ExploreSubject[]; ranks?: ExploreRanks };
 
 const missing = (e: { code?: string } | null) => !!e && ["42P01", "PGRST205", "42703", "PGRST204"].includes(e.code ?? "");
 
@@ -49,7 +55,7 @@ type PackRow = {
 
 const bodiesOf = (p: PackRow) => [...p.passages].sort((a, b) => a.sort - b.sort).map((x) => x.body);
 
-export async function loadExplore(userId: string): Promise<ExploreData> {
+export async function loadExplore(userId: string, opts?: { ranks?: boolean }): Promise<ExploreData> {
   const { ready, packs } = await visiblePacks(userId);
   const passageIds = packs.flatMap((p) => p.passages.map((x) => x.id));
   const { data: prog } = passageIds.length
@@ -71,7 +77,7 @@ export async function loadExplore(userId: string): Promise<ExploreData> {
         quiz: blankCount(bodiesOf(p)),
       })),
   }));
-  return { ready, subjects };
+  return { ready, subjects, ...(opts?.ranks ? { ranks: await exploreRanks(userId, packs) } : {}) };
 }
 
 /** 한 판 시작: 이 학생이 볼 수 있는 단원의 지문인지 확인하고 지문을 돌려줘요 */
@@ -137,11 +143,150 @@ export async function loadConceptQuiz(userId: string, packId: string): Promise<C
   return { packId, title: pack.title, subject: subject?.label ?? "", icon: subject?.icon ?? "", sentences, done: (count ?? 0) > 0 };
 }
 
-/** 퀴즈를 끝까지 했을 때: 이 단원 퀴즈를 처음 끝냈으면 코인 */
-export async function finishConceptQuiz(userId: string, packId: string): Promise<{ coins: number } | { error: string }> {
+/**
+ * 퀴즈를 끝까지 했을 때: 서버가 처음 친 답들로 다시 채점해서 가장 좋은 기록을 남기고(퀴즈 랭킹),
+ * 이 단원 퀴즈를 처음 끝냈으면 코인
+ */
+export async function finishConceptQuiz(
+  userId: string,
+  packId: string,
+  sub: { firstAnswers: unknown[]; durationMs: number },
+): Promise<{ coins: number; score: number; total: number; best: boolean } | { error: string }> {
   const quiz = await loadConceptQuiz(userId, packId);
   if (!quiz) return { error: "퀴즈를 찾을 수 없어요." };
-  if (quiz.done) return { coins: 0 };
-  await addCoins(userId, CONCEPT_QUIZ_COINS, quizReason(quiz.title));
-  return { coins: CONCEPT_QUIZ_COINS };
+  const { score, total } = scoreFirstAnswers(quiz.sentences, Array.isArray(sub?.firstAnswers) ? sub.firstAnswers.slice(0, 500) : []);
+  // 사람이 칠 수 없을 만큼 빠른 기록은 랭킹에 넣지 않아요 (빈칸 하나에 최소 1초)
+  const ms = Math.round(Number(sub?.durationMs) || 0);
+  let best = false;
+  if (ms >= total * 1000) {
+    const admin = createAdminClient();
+    const { data: cur, error } = await admin
+      .from("concept_quiz_scores")
+      .select("best_score, best_ms, plays")
+      .eq("student_id", userId)
+      .eq("pack_id", packId)
+      .maybeSingle();
+    if (!error) {
+      best = !cur || score > cur.best_score || (score === cur.best_score && ms < cur.best_ms);
+      await admin.from("concept_quiz_scores").upsert({
+        student_id: userId,
+        pack_id: packId,
+        best_score: best ? score : cur!.best_score,
+        best_ms: best ? ms : cur!.best_ms,
+        total,
+        plays: (cur?.plays ?? 0) + 1,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  }
+  let coins = 0;
+  if (!quiz.done) {
+    await addCoins(userId, CONCEPT_QUIZ_COINS, quizReason(quiz.title));
+    coins = CONCEPT_QUIZ_COINS;
+  }
+  return { coins, score, total, best };
+}
+
+/* ───────── 랭킹 (CLAUDE.md 6장 예외: 교사 결정 2026-11-04) ───────── */
+
+const mmss = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+
+/** 행이 많을 수 있어서 1000개씩 나눠 읽어요 */
+async function allRows<T>(read: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>) {
+  const out: T[] = [];
+  for (let page = 0; page < 50; page++) {
+    const { data, error } = await read(page * 1000, page * 1000 + 999);
+    if (error || !data) break;
+    out.push(...data);
+    if (data.length < 1000) break;
+  }
+  return out;
+}
+
+/** 같은 학년 학생(선생님 테스트 계정 빼고) 안에서: 과목별 별 합, 단원별 평균 타수·퀴즈 점수 */
+async function exploreRanks(userId: string, packs: PackRow[]): Promise<ExploreRanks> {
+  const empty: ExploreRanks = { subjects: {}, units: {} };
+  if (!packs.length) return empty;
+  const admin = createAdminClient();
+  const enrollment = await loadEnrollment(userId);
+  const schoolYearId = enrollment?.schoolYearId ?? (await ensureSchoolYear()).schoolYearId;
+  const classes = await classesOf(schoolYearId, enrollment?.grade ?? 1);
+  if (!classes.length) return empty;
+  const { data: enr } = await admin
+    .from("enrollments")
+    .select("student_id, class_id, number, profiles!inner(nickname, role)")
+    .in(
+      "class_id",
+      classes.map((c) => c.id),
+    );
+  type Enr = { student_id: string; class_id: string; number: number; profiles: { nickname: string | null; role: string } };
+  const people = new Map<string, { nickname: string; classNo: number }>();
+  for (const e of (enr ?? []) as unknown as Enr[]) {
+    if (e.profiles.role !== "student" || isTestNumber(e.number)) continue;
+    people.set(e.student_id, { nickname: e.profiles.nickname ?? "친구", classNo: classes.find((c) => c.id === e.class_id)?.class_no ?? 0 });
+  }
+  if (!people.size) return empty;
+
+  const passageIds = packs.flatMap((p) => p.passages.map((x) => x.id));
+  const packOf = new Map(packs.flatMap((p) => p.passages.map((x) => [x.id, p] as const)));
+  type Prog = { student_id: string; passage_id: string; stars: number; best_cpm: number };
+  const prog = (
+    await allRows<Prog>((a, b) =>
+      admin
+        .from("subject_progress")
+        .select("student_id, passage_id, stars, best_cpm")
+        .in("passage_id", passageIds)
+        .order("student_id")
+        .order("passage_id")
+        .range(a, b),
+    )
+  ).filter((r) => people.has(r.student_id) && r.stars > 0);
+  type QuizRow = { student_id: string; pack_id: string; best_score: number; total: number; best_ms: number };
+  const quiz = (
+    await allRows<QuizRow>((a, b) =>
+      admin
+        .from("concept_quiz_scores")
+        .select("student_id, pack_id, best_score, total, best_ms")
+        .in(
+          "pack_id",
+          packs.map((p) => p.id),
+        )
+        .order("student_id")
+        .order("pack_id")
+        .range(a, b),
+    )
+  ).filter((r) => people.has(r.student_id) && r.best_score > 0);
+
+  const entry = (id: string, value: string): RankEntry => ({ ...people.get(id)!, value, me: id === userId });
+
+  // 과목별 별 합
+  const subjects: ExploreRanks["subjects"] = {};
+  for (const sub of SUBJECTS) {
+    const sum = new Map<string, number>();
+    for (const r of prog) if (packOf.get(r.passage_id)?.subject === sub.id) sum.set(r.student_id, (sum.get(r.student_id) ?? 0) + r.stars);
+    subjects[sub.id] = [...sum]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, EXPLORE_RANK.subject)
+      .map(([id, n]) => entry(id, `★ ${n}`));
+  }
+
+  // 단원별: 별을 받은 지문의 평균 타수, 퀴즈 점수(같으면 빨리 끝낸 친구가 위)
+  const units: ExploreRanks["units"] = {};
+  for (const p of packs) {
+    const ids = new Set(p.passages.map((x) => x.id));
+    const per = new Map<string, number[]>();
+    for (const r of prog) if (ids.has(r.passage_id)) per.set(r.student_id, [...(per.get(r.student_id) ?? []), r.best_cpm]);
+    const speed = [...per]
+      .map(([id, cpms]) => ({ id, avg: Math.round(cpms.reduce((a, b) => a + b, 0) / cpms.length), n: cpms.length }))
+      .sort((a, b) => b.avg - a.avg)
+      .slice(0, EXPLORE_RANK.unit)
+      .map((x) => entry(x.id, `${x.avg}타 · 지문 ${x.n}개`));
+    const q = quiz
+      .filter((r) => r.pack_id === p.id)
+      .sort((a, b) => b.best_score - a.best_score || a.best_ms - b.best_ms)
+      .slice(0, EXPLORE_RANK.unit)
+      .map((r) => entry(r.student_id, `${r.best_score}/${r.total}칸 · ${mmss(r.best_ms)}`));
+    units[p.id] = { speed, quiz: q };
+  }
+  return { subjects, units };
 }

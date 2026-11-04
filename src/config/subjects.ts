@@ -52,3 +52,9 @@ export const SUBJECT_ACTIVITIES: Readonly<Record<string, readonly SubjectActivit
 };
 
 export const activitiesOf = (subjectId: string) => SUBJECT_ACTIVITIES[subjectId] ?? [];
+
+/**
+ * 교과 탐험 랭킹 (2026-11-04 교사 결정, CLAUDE.md 6장 예외): 같은 학년 안에서 닉네임으로만.
+ * subject: 과목별 별 랭킹 인원, unit: 단원별 빠르게 친 친구·퀴즈왕 인원
+ */
+export const EXPLORE_RANK = { subject: 10, unit: 5 } as const;

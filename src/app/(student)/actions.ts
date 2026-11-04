@@ -297,10 +297,10 @@ export async function vocabClaimWeek() {
 
 /* ───────── 교과 탐험 개념 퀴즈 ───────── */
 
-export async function conceptQuizDone(packId: string) {
+export async function conceptQuizDone(packId: string, sub: { firstAnswers: string[]; durationMs: number }) {
   const w = await who();
   if (!w) return NOT_LOGGED_IN;
-  const res = await finishConceptQuiz(w.userId, String(packId));
+  const res = await finishConceptQuiz(w.userId, String(packId), sub);
   if ("error" in res) return res;
   return { ...res, data: await loadUncached(w.userId) };
 }

@@ -9,7 +9,7 @@ import { ExploreView } from "./ExploreView";
 async function Content() {
   await connection();
   const v = await requireStudent();
-  return <ExploreView data={await loadExplore(v.userId)} />;
+  return <ExploreView data={await loadExplore(v.userId, { ranks: true })} />;
 }
 
 export default function ExplorePage() {
