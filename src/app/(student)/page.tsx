@@ -13,6 +13,7 @@ import { RetroWindow } from "@/components/ui/RetroWindow";
 import { HomeDashboard } from "./HomeDashboard";
 import { WeeklyBox } from "./WeeklyBox";
 import { loadWeekly } from "@/lib/weekly/server";
+import { loadVocabWeek } from "@/lib/vocab/server";
 import { dayKeyKST } from "@/lib/practice/day";
 import { daysLeft, seasonOf } from "@/lib/season";
 
@@ -57,6 +58,42 @@ async function HomeWeekly() {
   return <WeeklyBox initial={await loadWeekly(v.userId)} />;
 }
 
+/** 이번 주 영단어: 네 단계 진행과 바로가기 (자세한 건 영단어 연구소에서) */
+async function HomeVocab() {
+  const v = await requireStudent();
+  const w = await loadVocabWeek(v.userId);
+  const steps = [
+    { label: "① 단어장", done: w.study },
+    { label: "② 빈칸", done: w.blank },
+    { label: "③ 듣기", done: w.listen },
+    { label: "④ 뜻 비", done: w.rain },
+  ];
+  const left = steps.filter((s) => !s.done).length;
+  return (
+    <RetroWindow title="🔤 이번 주 영단어" className="mb-6">
+      <div className="flex flex-wrap items-center gap-3 font-pixel text-body text-navy-900">
+        <div className="flex-1">
+          <p className="font-title text-heading">{w.label}</p>
+          <p className="text-small text-text-muted">
+            {w.claimed ? "이번 주 보상을 받았어요! 다른 묶음도 도전해 봐요." : left ? `${left}단계 남았어요 · ②③④를 하면 코인 ${w.coins}개` : "다 했어요! 연구소에서 보상을 받아요."}
+          </p>
+        </div>
+        <ul className="flex flex-wrap gap-1 text-small">
+          {steps.map((s) => (
+            <li key={s.label} className={`border-2 border-navy-900 px-2 py-1 ${s.done ? "bg-lime-200" : "bg-paper"}`}>
+              {s.done ? "✅ " : ""}
+              {s.label}
+            </li>
+          ))}
+        </ul>
+        <PixelLink href="/vocab" variant="success" size="sm">
+          영단어 연구소로 ▶
+        </PixelLink>
+      </div>
+    </RetroWindow>
+  );
+}
+
 // 학생 첫 화면: 맨 위는 반 대결 요약, 아래는 내 연습 현황
 export default function Home() {
   return (
@@ -66,6 +103,7 @@ export default function Home() {
           <PlacementGate>
             <HomeBattle />
             <HomeWeekly />
+            <HomeVocab />
             <ClientOnly fallback={<Loading />}>
               <HomeDashboard />
             </ClientOnly>
