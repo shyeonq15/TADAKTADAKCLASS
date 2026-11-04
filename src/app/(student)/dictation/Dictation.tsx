@@ -29,7 +29,7 @@ function sentencesOf(level: LevelId) {
   const src = LEVELS.find((l) => l.id === level)!.source;
   return PACKS.english.levels
     .filter((l) => src.includes(l.level))
-    .flatMap((l) => l.items.flatMap((t) => t.split(/(?<=[.!?])\s+/)))
+    .flatMap((l) => l.items.flatMap((t) => t.split(/(?<!\bMrs?\.)(?<=[.!?]"?)\s+/)))
     .map((s) => s.trim())
     .filter((s) => s.length > 1);
 }

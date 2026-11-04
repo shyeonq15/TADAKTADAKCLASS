@@ -21,7 +21,8 @@ const cleanWord = (w: string) => w.replace(/^["'“‘(]+|["'”’),.!?…:;]+$
 /** 글 → 문장들 → 문장마다 낱말 순서 */
 function textUnits(text: string): string[][] {
   return text
-    .split(/(?<=[.!?])\s+/)
+    // 문장 끝(. ! ? 뒤, 닫는 따옴표 포함)에서 나눠요. "Mrs." 같은 호칭 뒤에서는 나누지 않아요
+    .split(/(?<!\bMrs?\.)(?<=[.!?]"?)\s+/)
     .map((sentence) => sentence.split(/\s+/).map(cleanWord).filter(Boolean))
     .filter((words) => words.length > 0);
 }

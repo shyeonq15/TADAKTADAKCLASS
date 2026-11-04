@@ -28,7 +28,7 @@ export function rainPool(track: Track, unlockedLevel: number): string[] {
     for (const item of lv.items) {
       if (lv.mode === "sentences" || lv.mode === "paragraph") {
         for (const w of item.split(" ")) {
-          const clean = w.replace(/[.,!?]/g, "");
+          const clean = w.replace(/^["'(]+|["'),.!?…]+$/g, "");
           if (clean.length >= 2) words.add(clean);
         }
       } else if (lv.mode === "code") {
