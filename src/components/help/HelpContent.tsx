@@ -50,6 +50,10 @@ export function GrowthHelp() {
           <li>
             <strong>레벨 첫 클리어</strong> · 새 레벨을 처음 통과하면 {GROWTH.levelFirstClear.points}점
           </li>
+          <li>
+            <strong>학습 활동</strong> · 영단어 단계·개념 퀴즈·이진수·픽셀 아트를 끝낼 때마다 {GROWTH.activity.pointsPerActivity}점 (같은 활동은 하루 한 번, 최대{" "}
+            {GROWTH.activity.max}점)
+          </li>
         </ul>
         <p className="mt-2">
           하루 최대 <strong>{GROWTH.dailyCap}점</strong>까지 모을 수 있어요.

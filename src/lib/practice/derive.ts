@@ -51,6 +51,7 @@ export function todayGrowth(data: PracticeData, now = Date.now()) {
     missionDone: data.progress.missionDays.includes(today),
     streakDays: streakDays(data.attempts, now),
     firstClearToday: data.progress.clearLog.some((c) => dayKeyKST(c.at) === today),
+    activitiesToday: data.progress.activitiesToday,
     placement: data.progress.placement ?? undefined,
   });
 }

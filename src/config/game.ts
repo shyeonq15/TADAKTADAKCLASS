@@ -29,6 +29,8 @@ export const GROWTH = {
   /** 연속 일수 × 2점 */
   streak: { pointsPerDay: 2, max: 10 },
   levelFirstClear: { points: 10 },
+  /** 학습 활동(영단어·개념 퀴즈·이진수·픽셀 아트 …)을 끝낼 때마다. 같은 날 같은 활동은 한 번만 (교사 결정 2026-11-04) */
+  activity: { pointsPerActivity: 2, max: 10 },
   /** 반 대결 집계 주기(일) */
   classBattlePeriodDays: 14,
 } as const;

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GAMES } from "@/config/game";
 import { VOCAB, VOCAB_CLEAR } from "@/config/vocab";
-import { vocabClaimWeek, vocabClear, vocabStatus } from "@/app/(student)/actions";
+import { vocabClaimWeek, vocabClear, vocabReviewDone, vocabStatus } from "@/app/(student)/actions";
 import { DialogBox } from "@/components/ui/DialogBox";
 import { MissionLabel } from "@/components/ui/MissionLabel";
 import { getSettings } from "@/lib/settings";
@@ -69,7 +69,11 @@ export function VocabLab({ initial }: { initial: Status }) {
 
   const finishQuiz = async (mode: QuizMode, p: number | null, result: QuizResult) => {
     let message = result.firstTry === result.total ? "한 번에 모두 맞혔다! 완벽해요!" : `처음에 틀린 ${result.missed.length}개는 틀린 단어장에 넣었다. 다음엔 더!`;
-    if (mode === "review") message = "복습 끝! 연속으로 두 번 맞힌 단어는 단어장에서 빠졌어요.";
+    if (mode === "review") {
+      message = "복습 끝! 연속으로 두 번 맞힌 단어는 단어장에서 빠졌어요.";
+      const res = await safeCall(() => vocabReviewDone());
+      if (!("error" in res)) setData(res.data);
+    }
     if (mode === "study") message = "단어장 따라 치기 끝! 이제 ② 빈칸 채우기로 확인해 봐요.";
     if (p !== null && mode !== "review") {
       const res = await safeCall(() => vocabClear(mode, p));

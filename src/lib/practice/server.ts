@@ -100,6 +100,8 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
   }
   let placement = TRACKS.every((t) => placementCpm[t] !== undefined) ? (placementCpm as Record<Track, number>) : null;
   const cleared = (clears.data ?? []).map((c) => `${c.track}-${c.level}`);
+  // 오늘 끝낸 학습 활동 수 (표가 아직 없으면 0)
+  const acts = await admin.from("activity_log").select("kind", { count: "exact", head: true }).eq("student_id", userId).eq("day", dayKeyKST());
 
   // 지금 단계를 이미 깼는데 다음 단계가 안 열려 있으면 열어 줘요
   // (그랜드마스터가 생기기 전에 레전드 5단계를 깬 학생 → 그랜드마스터 1단계)
@@ -130,6 +132,7 @@ export async function loadUncached(userId: string): Promise<PracticeData> {
         .map((c) => ({ amount: c.amount, reason: c.reason, at: new Date(c.created_at).getTime() }))
         .reverse(),
       missionDays: (missions.data ?? []).map((m) => m.day),
+      activitiesToday: acts.error ? 0 : (acts.count ?? 0),
     },
     packs,
   };
@@ -348,22 +351,34 @@ export async function refreshGrowth(who: Who) {
     missionDone: data.progress.missionDays.includes(today),
     streakDays: streakDays(data.attempts),
     firstClearToday: data.progress.clearLog.some((c) => dayKeyKST(c.at) === today),
+    activitiesToday: data.progress.activitiesToday,
     placement: data.progress.placement ?? undefined,
   });
-  await createAdminClient()
-    .from("growth_scores")
-    .upsert({
-      student_id: who.userId,
-      class_id: who.classId,
-      day: today,
-      participation: g.participation,
-      speed: g.speed,
-      accuracy: g.accuracy,
-      streak: g.streak,
-      first_clear: g.firstClear,
-      total: g.total,
-      updated_at: new Date().toISOString(),
-    });
+  const row = {
+    student_id: who.userId,
+    class_id: who.classId,
+    day: today,
+    participation: g.participation,
+    speed: g.speed,
+    accuracy: g.accuracy,
+    streak: g.streak,
+    first_clear: g.firstClear,
+    total: g.total,
+    updated_at: new Date().toISOString(),
+  };
+  const admin = createAdminClient();
+  // activity 칸이 아직 없으면 (SQL 실행 전) 그 칸만 빼고 저장해요. 합계에는 들어가요
+  const { error } = await admin.from("growth_scores").upsert({ ...row, activity: g.activity });
+  if (error) await admin.from("growth_scores").upsert(row);
+}
+
+/**
+ * 학습 활동을 끝냈을 때: 활동 기록을 남기고 성장 점수를 다시 계산해요.
+ * 같은 날 같은 활동(kind + ref)은 한 번만 세요 (표의 기본 키). 표가 없으면 조용히 넘어가요
+ */
+export async function logActivity(who: Who, kind: string, ref = "") {
+  await createAdminClient().from("activity_log").insert({ student_id: who.userId, day: dayKeyKST(), kind, ref: ref.slice(0, 80) });
+  await refreshGrowth(who);
 }
 
 const SLACK_MS = 3000;

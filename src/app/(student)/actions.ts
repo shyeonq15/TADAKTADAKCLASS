@@ -15,7 +15,7 @@ import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
 import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
-import { addCoins, completeMission, finishPlacement, issueRound, loadUncached, saveRound } from "@/lib/practice/server";
+import { addCoins, completeMission, finishPlacement, issueRound, loadUncached, logActivity, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
 import { BINARY_FIRST_CLEAR_COINS, BINARY_STAGES } from "@/config/binary";
@@ -225,7 +225,10 @@ export async function retireMyBoss(bossId: string) {
 
 export async function savePixel(input: { title: string; bits: number; rows: string[] }) {
   const w = await who();
-  return w ? savePixelArt(w, input) : NOT_LOGGED_IN;
+  if (!w) return NOT_LOGGED_IN;
+  const res = await savePixelArt(w, input);
+  if (!(res && typeof res === "object" && "error" in res)) await logActivity(w, "pixel");
+  return res;
 }
 
 export async function deleteMyPixel(id: string) {
@@ -257,6 +260,7 @@ export async function clearBinaryStage(n: number) {
   const ins = await createAdminClient().from("level_clears").insert({ student_id: w.userId, track: "binary", level: n });
   const first = !ins.error;
   if (first) await addCoins(w.userId, BINARY_FIRST_CLEAR_COINS, `이진수 연습실 ${n}단계`);
+  await logActivity(w, "binary", String(n));
   return { first, coins: first ? BINARY_FIRST_CLEAR_COINS : 0, data: await loadUncached(w.userId) };
 }
 
@@ -284,6 +288,7 @@ export async function vocabClear(kind: VocabClearKind, part: number) {
   if (!w) return NOT_LOGGED_IN;
   const res = await clearPart(w.userId, kind, part);
   if ("error" in res) return res;
+  await logActivity(w, `vocab-${kind}`, String(part));
   return { ...res, data: await loadUncached(w.userId) };
 }
 
@@ -302,5 +307,14 @@ export async function conceptQuizDone(packId: string, sub: { firstAnswers: strin
   if (!w) return NOT_LOGGED_IN;
   const res = await finishConceptQuiz(w.userId, String(packId), sub);
   if ("error" in res) return res;
+  await logActivity(w, "concept-quiz", String(packId));
   return { ...res, data: await loadUncached(w.userId) };
+}
+
+/** 틀린 단어장 복습을 끝냈을 때 (학습 활동) */
+export async function vocabReviewDone() {
+  const w = await who();
+  if (!w) return NOT_LOGGED_IN;
+  await logActivity(w, "vocab-review");
+  return { data: await loadUncached(w.userId) };
 }

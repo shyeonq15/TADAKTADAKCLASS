@@ -43,6 +43,8 @@ export type Progress = {
   clearLog: { id: string; at: number }[];
   /** 미션 완료한 날짜 YYYY-MM-DD (한국 시간) */
   missionDays: string[];
+  /** 오늘 끝낸 학습 활동 수 (성장 점수 "학습 활동") */
+  activitiesToday: number;
 };
 
 /** 선생님이 우리 반에 배포한 연습팩 */
@@ -62,6 +64,7 @@ export const EMPTY_DATA: PracticeData = {
     coinLog: [],
     clearLog: [],
     missionDays: [],
+    activitiesToday: 0,
   },
 };
 

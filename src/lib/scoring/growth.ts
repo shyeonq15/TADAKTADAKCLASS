@@ -44,6 +44,8 @@ export type GrowthBreakdown = {
   accuracy: number;
   streak: number;
   firstClear: number;
+  /** 학습 활동 */
+  activity: number;
   total: number;
 };
 
@@ -69,6 +71,8 @@ export function dailyGrowth(input: {
   missionDone: boolean;
   streakDays: number;
   firstClearToday: boolean;
+  /** 오늘 끝낸 학습 활동 수 (같은 활동은 한 번) */
+  activitiesToday?: number;
   placement?: Partial<Record<Track, number>>;
 }): GrowthBreakdown {
   let speed = 0;
@@ -84,6 +88,7 @@ export function dailyGrowth(input: {
     accuracy,
     streak: Math.min(GROWTH.streak.max, input.streakDays * GROWTH.streak.pointsPerDay),
     firstClear: input.firstClearToday ? GROWTH.levelFirstClear.points : 0,
+    activity: Math.min(GROWTH.activity.max, (input.activitiesToday ?? 0) * GROWTH.activity.pointsPerActivity),
   };
   const sum = Object.values(parts).reduce((a, b) => a + b, 0);
   return { ...parts, total: Math.min(GROWTH.dailyCap, sum) };

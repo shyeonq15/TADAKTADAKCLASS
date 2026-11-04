@@ -25,6 +25,7 @@ const GROWTH_PARTS = [
   ["accuracy", "정확도", GROWTH.accuracy.max],
   ["streak", "연속", GROWTH.streak.max],
   ["firstClear", "첫 클리어", GROWTH.levelFirstClear.points],
+  ["activity", "학습 활동", GROWTH.activity.max],
 ] as const;
 
 export function HomeDashboard() {
