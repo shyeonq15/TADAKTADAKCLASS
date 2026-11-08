@@ -2,6 +2,8 @@
 
 import type { RaceDifficulty, RaceMode, SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
+import { isMobileRequest } from "@/lib/device.server";
+import { PC_ONLY_MESSAGE } from "@/lib/device";
 import {
   issueBossChallenge,
   issueStudentBoss,
@@ -15,7 +17,7 @@ import { issueGame, saveGame, type GameSubmission } from "@/lib/games/server";
 import type { MinimiSlot } from "@/config/shop";
 import { proposeRoomItem, voteRoomItem } from "@/lib/room/server";
 import { buyItem, equipItem } from "@/lib/shop/server";
-import { addCoins, completeMission, finishPlacement, issueRound, loadUncached, logActivity, saveRound } from "@/lib/practice/server";
+import { type Who, addCoins, completeMission, finishPlacement, issueRound, loadUncached, logActivity, saveRound } from "@/lib/practice/server";
 import type { RoundRequest, RoundSubmission } from "@/lib/practice/types";
 import { sendFeedback } from "@/lib/feedback/server";
 import { BINARY_FIRST_CLEAR_COINS, BINARY_STAGES } from "@/config/binary";
@@ -36,49 +38,57 @@ async function who() {
 
 const NOT_LOGGED_IN = { error: "로그인이 풀렸어요. 다시 로그인해 주세요." } as const;
 
+/** 타자 기록이 남는 일은 컴퓨터에서만 (학생이 휴대폰·태블릿이면 거절, 교사 결정 2026-11-09) */
+async function pcWho(): Promise<Who | { error: string }> {
+  const v = await getViewer();
+  if (!v) return NOT_LOGGED_IN;
+  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE } as const;
+  return { userId: v.userId, classId: v.enrollment?.classId ?? null };
+}
+
 export async function startRound(req: RoundRequest) {
-  const w = await who();
-  return w ? issueRound(w, req) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : issueRound(w, req);
 }
 
 export async function submitRound(sub: RoundSubmission) {
-  const w = await who();
-  return w ? saveRound(w, sub) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : saveRound(w, sub);
 }
 
 export async function finishMission() {
-  const w = await who();
-  return w ? completeMission(w) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : completeMission(w);
 }
 
 export async function submitPlacement() {
-  const w = await who();
-  return w ? finishPlacement(w) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : finishPlacement(w);
 }
 
 /* ───── 혼자 하는 게임 ───── */
 
 export async function startGame(game: SoloGame, track: Track, opts?: { part?: number }) {
-  const w = await who();
-  return w ? issueGame(w, game, track, opts) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : issueGame(w, game, track, opts);
 }
 
 export async function submitGame(sub: GameSubmission) {
-  const w = await who();
-  return w ? saveGame(w, sub) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : saveGame(w, sub);
 }
 
 /* ───── 친구 대결 ───── */
 
 export async function raceCreate(track: Track, difficulty: RaceDifficulty, mode: RaceMode = "classic") {
-  const w = await who();
-  return w ? createMatch(w, track, difficulty, mode) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : createMatch(w, track, difficulty, mode);
 }
 
 /** 자동 매치: 화면이 2초마다 불러요 */
 export async function raceQueue(track: Track) {
-  const w = await who();
-  return w ? queueMatch(w, track) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : queueMatch(w, track);
 }
 
 export async function raceQueueLeave() {
@@ -87,8 +97,8 @@ export async function raceQueueLeave() {
 }
 
 export async function raceJoin(matchId: string) {
-  const w = await who();
-  return w ? joinMatch(w, matchId) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : joinMatch(w, matchId);
 }
 
 export async function raceLeave(matchId: string) {
@@ -107,8 +117,8 @@ export async function raceInfo(matchId: string) {
 }
 
 export async function raceSubmit(sub: BossSubmission) {
-  const w = await who();
-  return w ? submitRace(w, sub) : NOT_LOGGED_IN;
+  const w = await pcWho();
+  return "error" in w ? w : submitRace(w, sub);
 }
 
 /* ───── 보스전 ───── */
@@ -116,12 +126,14 @@ export async function raceSubmit(sub: BossSubmission) {
 export async function startBoss(bossId: string) {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
+  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE };
   return issueBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, bossId);
 }
 
 export async function submitBoss(sub: BossSubmission) {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
+  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE };
   return saveBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, sub);
 }
 
