@@ -51,8 +51,12 @@ export function GrowthHelp() {
             <strong>레벨 첫 클리어</strong> · 새 레벨을 처음 통과하면 {GROWTH.levelFirstClear.points}점
           </li>
           <li>
-            <strong>학습 활동</strong> · 영단어 단계·개념 퀴즈·이진수·픽셀 아트를 끝낼 때마다 {GROWTH.activity.pointsPerActivity}점 (같은 활동은 하루 한 번, 최대{" "}
-            {GROWTH.activity.max}점)
+            <strong>학습 활동</strong> · 교과 탐험 지문·영단어 단계·개념 퀴즈·사례 퀴즈·이진수·픽셀 아트를 끝낼 때마다{" "}
+            {GROWTH.activity.pointsPerActivity}점 (같은 활동은 하루 한 번, 최대 {GROWTH.activity.max}점)
+          </li>
+          <li>
+            <strong>연습량</strong> · 연습·미션·게임·대결·교과 탐험을 한 판 끝까지 칠 때마다 {GROWTH.effort.pointsPerRound}점 (정확도{" "}
+            {GROWTH.effort.minAccuracy}% 이상, 최대 {GROWTH.effort.max}점)
           </li>
         </ul>
         <p className="mt-2">
@@ -70,7 +74,10 @@ export function GrowthHelp() {
       <p className="mt-2">
         💡 10타 → 12타도 <strong>20% 향상</strong>이에요. 처음 시작하는 친구일수록 점수가 쑥쑥 올라요.
       </p>
-      <p className="mt-2">우리 반 친구들의 성장 점수 평균이 <strong>반 점수</strong>가 돼요. 2주마다 반 대결 결과가 나와요.</p>
+      <p className="mt-2">
+        우리 반 친구들의 성장 점수 평균이 <strong>반 점수</strong>가 돼요. 쉬는 친구가 있으면 평균이 내려가니까, 반 친구 모두가 매일
+        조금씩 하는 게 가장 강해요! 보통은 2주마다 반 대결 결과가 나와요.
+      </p>
     </>
   );
 }

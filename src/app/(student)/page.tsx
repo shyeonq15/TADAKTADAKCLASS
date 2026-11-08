@@ -15,7 +15,8 @@ import { WeeklyBox } from "./WeeklyBox";
 import { loadWeekly } from "@/lib/weekly/server";
 import { loadVocabWeek } from "@/lib/vocab/server";
 import { dayKeyKST } from "@/lib/practice/day";
-import { daysLeft, seasonOf } from "@/lib/season";
+import { daysLeft, eventToNotice, seasonOf } from "@/lib/season";
+import { EventNotice } from "./EventNotice";
 
 /** 처음 온 학생은 배치 테스트부터 (한 번만) */
 async function PlacementGate({ children }: { children: React.ReactNode }) {
@@ -32,11 +33,18 @@ async function HomeBattle() {
   if (!battle) return null;
   const today = dayKeyKST();
   const season = seasonOf(today);
+  const notice = eventToNotice(today);
   return (
     <RetroWindow title="반대결_순위판.exe" className="mb-6">
+      {notice && <EventNotice event={notice} />}
       <p className="mb-2 font-pixel text-small text-navy-900">
-        <span className="mr-2 border-2 border-navy-900 bg-yellow-400 px-2 font-bold">시즌 {season.n}</span>
-        {daysLeft(season, today)}일 남았어요 · 시즌마다 성장왕과 완주 기록이 프로필에 남아요!
+        <span className="mr-2 border-2 border-navy-900 bg-yellow-400 px-2 font-bold">
+          {season.event ? `🍦 ${season.event.title}` : `시즌 ${season.n}`}
+        </span>
+        {daysLeft(season, today)}일 남았어요 ·{" "}
+        {season.event
+          ? `마지막 날 1위 반에게 ${season.event.prize} 선물!`
+          : "시즌마다 성장왕과 완주 기록이 프로필에 남아요!"}
       </p>
       <BattleBoard data={battle} compact />
       <div className="mt-2 flex flex-wrap gap-2">

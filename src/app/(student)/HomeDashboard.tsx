@@ -26,6 +26,7 @@ const GROWTH_PARTS = [
   ["streak", "연속", GROWTH.streak.max],
   ["firstClear", "첫 클리어", GROWTH.levelFirstClear.points],
   ["activity", "학습 활동", GROWTH.activity.max],
+  ["effort", "연습량", GROWTH.effort.max],
 ] as const;
 
 export function HomeDashboard() {
@@ -93,7 +94,7 @@ export function HomeDashboard() {
           <div className="mt-2">
             <PixelProgressBar value={growth.total / GROWTH.dailyCap} label="오늘의 성장 점수" />
           </div>
-          <ul className="mt-3 grid grid-cols-5 gap-1 text-center font-pixel text-small">
+          <ul className="mt-3 grid grid-cols-4 gap-1 text-center font-pixel text-small">
             {GROWTH_PARTS.map(([k, label, max]) => (
               <li key={k} className="win-bevel-pressed bg-paper px-1 py-1">
                 <span className="block text-text-muted">{label}</span>

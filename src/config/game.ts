@@ -19,8 +19,8 @@ export const GROWTH = {
   baselineSampleSize: 5,
   /** 이 정확도(%) 미만이면 속도 향상 점수 0점 */
   minAccuracyForSpeed: 85,
-  /** 하루 상한 */
-  dailyCap: 50,
+  /** 하루 상한 (2026-11-08: 50 → 100. 학습 활동·연습량으로 더 많이 모을 수 있게) */
+  dailyCap: 100,
   participation: { points: 10 },
   /** 기준값 대비 1% 오를 때마다 1점 */
   speed: { pointsPerPercent: 1, max: 15 },
@@ -29,8 +29,16 @@ export const GROWTH = {
   /** 연속 일수 × 2점 */
   streak: { pointsPerDay: 2, max: 10 },
   levelFirstClear: { points: 10 },
-  /** 학습 활동(영단어·개념 퀴즈·이진수·픽셀 아트 …)을 끝낼 때마다. 같은 날 같은 활동은 한 번만 (교사 결정 2026-11-04) */
-  activity: { pointsPerActivity: 2, max: 10 },
+  /**
+   * 학습 활동(교과 탐험 지문·영단어·개념 퀴즈·사례 퀴즈·이진수·픽셀 아트 …)을 끝낼 때마다.
+   * 같은 날 같은 활동은 한 번만 (교사 결정 2026-11-04 / 2026-11-08: 2점·최대 10 → 3점·최대 30)
+   */
+  activity: { pointsPerActivity: 3, max: 30 },
+  /**
+   * 연습량 (2026-11-08 추가): 오늘 끝까지 친 판(연습·미션·게임·대결·보스·교과 탐험 …)마다.
+   * 정확도 minAccuracy% 이상, 키 minKeys번 이상, 의심 기록이 아닌 판만 세요
+   */
+  effort: { pointsPerRound: 1, max: 20, minAccuracy: 80, minKeys: 20 },
   /** 반 대결 집계 주기(일) */
   classBattlePeriodDays: 14,
 } as const;
@@ -54,12 +62,43 @@ export const HALL = {
 } as const;
 
 /* ── 반 대결 (2주 단위, 월요일 시작) ── */
-export const CLASS_BATTLE = {
+export type BattleEvent = {
+  /** 공지를 한 번만 띄우려고 쓰는 이름 (바꾸면 공지가 다시 떠요) */
+  id: string;
+  title: string;
+  /** 이벤트 기간 (한국 시간, 끝 날 포함). 이 기간은 2주로 끊지 않고 한 번에 집계해요 */
+  start: string;
+  end: string;
+  /** 1위 반 선물 */
+  prize: string;
+  /** 이 날부터 홈에 공지를 띄워요 */
+  noticeFrom: string;
+};
+
+export const CLASS_BATTLE: {
+  firstMonday: string;
+  winnerBonus: number;
+  events: readonly BattleEvent[];
+} = {
   /** 첫 집계가 시작되는 월요일 (YYYY-MM-DD, 한국 시간). 여기서부터 14일씩 끊어요 */
   firstMonday: "2026-10-26",
   /** 1위 반 지갑 보너스 (같은 점수면 같이 1위) */
   winnerBonus: 300,
-} as const;
+  /**
+   * 특별 반 대결: 기간 내내 점수를 쌓아 마지막 날 1위 반이 선물을 받아요.
+   * 끝나면 다음 날부터 다시 2주씩 (교사 결정 2026-11-08). 날짜 순서대로, 겹치지 않게 적어요
+   */
+  events: [
+    {
+      id: "2026-11-papico",
+      title: "11월 빠삐코 대작전",
+      start: "2026-11-09",
+      end: "2026-11-30",
+      prize: "빠삐코",
+      noticeFrom: "2026-11-08",
+    },
+  ],
+};
 
 /* ── 실력 티어 (개인 명예용, 트랙별) ── */
 export const TIERS = ["bronze", "silver", "gold", "diamond", "master", "legend", "grandmaster"] as const;

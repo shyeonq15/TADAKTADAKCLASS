@@ -5,21 +5,20 @@ import "server-only";
 //
 // 기간이 끝나면, 그다음 처음 순위판을 연 사람이 지난 기간 결과를 저장하고 1위 반에 보너스를 줘요.
 
-import { CLASS_BATTLE, GROWTH } from "@/config/game";
+import { CLASS_BATTLE, type BattleEvent } from "@/config/game";
 import { dayKeyKST } from "@/lib/practice/day";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isTestNumber } from "@/lib/auth/testAccount";
+import { seasonOf } from "@/lib/season";
 
 const DAY = 86400000;
 const toMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
 const toDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
-/** 오늘이 속한 2주 기간 { start, end } (YYYY-MM-DD) */
+/** 오늘이 속한 반 대결 기간 { start, end, event? } (YYYY-MM-DD). 보통 2주, 특별 대결은 그 기간 통째로 */
 export function periodOf(day: string) {
-  const len = GROWTH.classBattlePeriodDays;
-  const idx = Math.floor((toMs(day) - toMs(CLASS_BATTLE.firstMonday)) / DAY / len);
-  const start = toMs(CLASS_BATTLE.firstMonday) + idx * len * DAY;
-  return { start: toDay(start), end: toDay(start + (len - 1) * DAY) };
+  const { start, end, event } = seasonOf(day);
+  return { start, end, event };
 }
 
 export type BattleRow = {
@@ -35,10 +34,10 @@ export type BattleRow = {
 
 export type BattleData = {
   grade: number;
-  period: { start: string; end: string; daysLeft: number };
+  period: { start: string; end: string; daysLeft: number; event?: BattleEvent };
   rows: BattleRow[];
   /** 지난 기간 결과 (없으면 null) */
-  last: { start: string; end: string; winners: number[]; bonus: number } | null;
+  last: { start: string; end: string; winners: number[]; bonus: number; event?: BattleEvent } | null;
   /** 내가 이번 기간에 보탠 성장 점수 (학생만) */
   myPoints: number | null;
   ready: boolean;

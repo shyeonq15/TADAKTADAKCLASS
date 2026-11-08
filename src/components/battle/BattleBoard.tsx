@@ -6,6 +6,9 @@ const md = (day: string) => {
   const [, m, d] = day.split("-").map(Number);
   return `${m}/${d}`;
 };
+const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
+/** "11/9(월)" */
+const mdw = (day: string) => `${md(day)}(${WEEKDAY[new Date(`${day}T00:00:00Z`).getUTCDay()]})`;
 
 /** 반 대결 순위판: 반 점수 막대 + 지난 대결 결과. 개인 순위는 보여 주지 않아요 (CLAUDE.md 6장) */
 export function BattleBoard({ data, compact = false }: { data: BattleData; compact?: boolean }) {
@@ -19,17 +22,27 @@ export function BattleBoard({ data, compact = false }: { data: BattleData; compa
       )}
       {data.last && data.last.winners.length > 0 && (
         <p className="border-2 border-navy-900 bg-yellow-400 px-3 py-2 font-bold">
-          🏆 지난 대결({md(data.last.start)}~{md(data.last.end)}) 1위: {data.last.winners.map((n) => `${n}반`).join(", ")}! 반 지갑에 보너스{" "}
-          {data.last.bonus}코인이 들어갔다!
+          🏆 {data.last.event ? data.last.event.title : "지난 대결"}({md(data.last.start)}~{md(data.last.end)}) 1위:{" "}
+          {data.last.winners.map((n) => `${n}반`).join(", ")}! 반 지갑에 보너스 {data.last.bonus}코인이 들어갔다!
+          {data.last.event && ` 🍦 ${data.last.event.prize} 선물도 받는다!`}
         </p>
+      )}
+      {data.period.event && (
+        <div className="border-3 border-pink-400 bg-cream px-3 py-2">
+          <p className="font-title text-heading">🍦 {data.period.event.title}</p>
+          <p className="text-small">
+            {mdw(data.period.start)} ~ {mdw(data.period.end)} 동안 점수가 리셋되지 않고 계속 쌓여요. 마지막 날 1위 반에게{" "}
+            <strong>{data.period.event.prize}</strong>를 선물한다!
+          </p>
+        </div>
       )}
       <p className="flex flex-wrap items-baseline gap-x-3">
         <strong className="font-title text-heading">{data.grade}학년 반 대결</strong>
         <span>
-          {md(data.period.start)}(월) ~ {md(data.period.end)}(일)
+          {mdw(data.period.start)} ~ {mdw(data.period.end)}
         </span>
         <span className="bg-navy-900 px-2 text-paper">D-{data.period.daysLeft}</span>
-        <span className="text-small text-text-muted">결과 발표 {md(announce)}(월)</span>
+        <span className="text-small text-text-muted">결과 발표 {mdw(announce)}</span>
       </p>
 
       {data.rows.length === 0 ? (

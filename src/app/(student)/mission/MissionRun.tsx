@@ -29,6 +29,7 @@ const GROWTH_LABELS = {
   streak: "연속 연습",
   firstClear: "레벨 첫 클리어",
   activity: "학습 활동",
+  effort: "연습량",
 } as const;
 
 export function MissionRun() {

@@ -10,6 +10,8 @@ export type ScoredAttempt = {
   accuracy: number;
   /** 의심 기록은 점수에서 빠짐 */
   suspicious: boolean;
+  /** 친 키 수 (연습량에서 너무 짧은 판을 빼려고) */
+  keystrokes?: number;
 };
 
 export type Baseline = { cpm: number; accuracy: number };
@@ -46,6 +48,8 @@ export type GrowthBreakdown = {
   firstClear: number;
   /** 학습 활동 */
   activity: number;
+  /** 연습량: 오늘 끝까지 친 판 수 */
+  effort: number;
   total: number;
 };
 
@@ -62,6 +66,13 @@ export function improvementPoints(attempt: ScoredAttempt, base: Baseline | null)
     Math.max(0, Math.floor((attempt.accuracy - base.accuracy) * GROWTH.accuracy.pointsPerPoint)),
   );
   return { speed, accuracy };
+}
+
+/** 연습량으로 세는 판 수: 정확도·키 수 기준을 넘고 의심 기록이 아닌 판 */
+export function effortRounds(today: readonly ScoredAttempt[]) {
+  return today.filter(
+    (a) => !a.suspicious && a.accuracy >= GROWTH.effort.minAccuracy && (a.keystrokes ?? GROWTH.effort.minKeys) >= GROWTH.effort.minKeys,
+  ).length;
 }
 
 export function dailyGrowth(input: {
@@ -89,6 +100,7 @@ export function dailyGrowth(input: {
     streak: Math.min(GROWTH.streak.max, input.streakDays * GROWTH.streak.pointsPerDay),
     firstClear: input.firstClearToday ? GROWTH.levelFirstClear.points : 0,
     activity: Math.min(GROWTH.activity.max, (input.activitiesToday ?? 0) * GROWTH.activity.pointsPerActivity),
+    effort: Math.min(GROWTH.effort.max, effortRounds(input.today) * GROWTH.effort.pointsPerRound),
   };
   const sum = Object.values(parts).reduce((a, b) => a + b, 0);
   return { ...parts, total: Math.min(GROWTH.dailyCap, sum) };

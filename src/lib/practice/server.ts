@@ -6,7 +6,7 @@ import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cache } from "react";
-import { BLANK_LEVEL, SUBJECT_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, GAME_COINS, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
+import { BLANK_LEVEL, SUBJECT_LEVEL, LESSON_LEVEL, LESSON_PASS_ACCURACY, COINS, GAME_COINS, GROWTH, INTEGRITY, MISSION, PACK_LEVEL, PLACEMENT, TRACKS, type Track } from "@/config/game";
 import { schoolYearOf } from "@/lib/auth/config";
 import { getLevel } from "@/data/packs";
 import { contentLevelOf, getStage, missingLessons, STAGE_COUNT, startStage, tierOfStage } from "./stages";
@@ -367,9 +367,12 @@ export async function refreshGrowth(who: Who) {
     updated_at: new Date().toISOString(),
   };
   const admin = createAdminClient();
-  // activity 칸이 아직 없으면 (SQL 실행 전) 그 칸만 빼고 저장해요. 합계에는 들어가요
-  const { error } = await admin.from("growth_scores").upsert({ ...row, activity: g.activity });
-  if (error) await admin.from("growth_scores").upsert(row);
+  // activity·effort 칸이 아직 없으면 (SQL 실행 전) 그 칸만 빼고 저장해요. 합계에는 들어가요
+  const full = await admin.from("growth_scores").upsert({ ...row, activity: g.activity, effort: g.effort });
+  if (full.error) {
+    const { error } = await admin.from("growth_scores").upsert({ ...row, activity: g.activity });
+    if (error) await admin.from("growth_scores").upsert(row);
+  }
 }
 
 /**
@@ -553,6 +556,8 @@ export async function saveRound(
     // 이 과목을 연습한 날 (과목 점수의 노력)
     const subject = await passageSubject(req.passageId);
     if (subject) await logActivity(who, `subject:${subject}`);
+    // 교과 탐험 지문 하나하나가 학습 활동 (같은 지문은 하루 한 번, 제대로 친 판만)
+    if (accuracy >= GROWTH.effort.minAccuracy) await logActivity(who, "explore", req.passageId);
   }
 
   // 코인
