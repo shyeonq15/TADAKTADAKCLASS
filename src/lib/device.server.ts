@@ -1,9 +1,9 @@
 import "server-only";
 
 import { headers } from "next/headers";
-import { isMobileUA } from "@/lib/device";
+import { isPhoneUA } from "@/lib/device";
 
-/** 지금 요청이 휴대폰·태블릿에서 왔는지 */
-export async function isMobileRequest() {
-  return isMobileUA((await headers()).get("user-agent") ?? "");
+/** 지금 요청이 휴대폰에서 왔는지 (태블릿은 화면에서 키보드를 확인해요) */
+export async function isPhoneRequest() {
+  return isPhoneUA((await headers()).get("user-agent") ?? "");
 }

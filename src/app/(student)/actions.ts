@@ -2,7 +2,7 @@
 
 import type { RaceDifficulty, RaceMode, SoloGame, Track } from "@/config/game";
 import { getViewer } from "@/lib/auth/viewer";
-import { isMobileRequest } from "@/lib/device.server";
+import { isPhoneRequest } from "@/lib/device.server";
 import { PC_ONLY_MESSAGE } from "@/lib/device";
 import {
   issueBossChallenge,
@@ -38,11 +38,11 @@ async function who() {
 
 const NOT_LOGGED_IN = { error: "로그인이 풀렸어요. 다시 로그인해 주세요." } as const;
 
-/** 타자 기록이 남는 일은 컴퓨터에서만 (학생이 휴대폰·태블릿이면 거절, 교사 결정 2026-11-09) */
+/** 타자 기록이 남는 일은 휴대폰에서 거절 (태블릿은 화면에서 키보드를 확인해요, 교사 결정 2026-11-09) */
 async function pcWho(): Promise<Who | { error: string }> {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
-  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE } as const;
+  if (v.role !== "teacher" && (await isPhoneRequest())) return { error: PC_ONLY_MESSAGE } as const;
   return { userId: v.userId, classId: v.enrollment?.classId ?? null };
 }
 
@@ -126,14 +126,14 @@ export async function raceSubmit(sub: BossSubmission) {
 export async function startBoss(bossId: string) {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
-  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE };
+  if (v.role !== "teacher" && (await isPhoneRequest())) return { error: PC_ONLY_MESSAGE };
   return issueBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, bossId);
 }
 
 export async function submitBoss(sub: BossSubmission) {
   const v = await getViewer();
   if (!v) return NOT_LOGGED_IN;
-  if (v.role !== "teacher" && (await isMobileRequest())) return { error: PC_ONLY_MESSAGE };
+  if (v.role !== "teacher" && (await isPhoneRequest())) return { error: PC_ONLY_MESSAGE };
   return saveBossChallenge({ userId: v.userId, classId: v.enrollment?.classId ?? null }, v.schoolId, sub);
 }
 
