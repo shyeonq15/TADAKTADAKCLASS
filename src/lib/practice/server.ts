@@ -544,6 +544,7 @@ export async function saveRound(
 
   // 교과 탐험: 지문 별 (타수는 내 평소 타수와 비교)
   let subjectStars: number | null = null;
+  let subjectRoundStars: number | null = null;
   if (req.kind === "subject" && !suspicious) {
     const recent = before.attempts
       .filter((a) => a.track === track && !a.suspicious && a.level > 0 && (a.kind === "practice" || a.kind === "mission"))
@@ -552,6 +553,7 @@ export async function saveRound(
       .sort((a, b) => a - b);
     const baseline = recent.length >= 3 ? recent[Math.floor(recent.length / 2)] : null;
     const got = starsFor(accuracy, cpm, baseline);
+    subjectRoundStars = got;
     subjectStars = got > 0 ? await saveExploreStars(who.userId, req.passageId, got, cpm, accuracy) : 0;
     // 이 과목을 연습한 날 (과목 점수의 노력)
     const subject = await passageSubject(req.passageId);
@@ -589,6 +591,7 @@ export async function saveRound(
     coins,
     lessonDone,
     subjectStars,
+    subjectRoundStars,
     // 새 단계가 열리면서 티어가 바뀌었으면 (예: 브론즈 5단계 클리어 → 실버)
     tierUp: unlockedLevel && tierOfStage(unlockedLevel) !== tierOfStage(before.progress.unlocked[track]) ? tierOfStage(unlockedLevel) : null,
   };

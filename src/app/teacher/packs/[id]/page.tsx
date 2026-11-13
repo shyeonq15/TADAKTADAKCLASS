@@ -30,7 +30,7 @@ async function PackDetail({ params }: { params: PageProps<"/teacher/packs/[id]">
 
   const { data: pack } = await admin
     .from("packs")
-    .select("id, title, track, passages(id, body, sort), pack_assignments(class_id, mission_day)")
+    .select("id, title, track, subject, passages(id, body, sort), pack_assignments(class_id, mission_day)")
     .eq("id", id)
     .eq("school_id", t.schoolId)
     .maybeSingle();
@@ -99,7 +99,7 @@ async function PackDetail({ params }: { params: PageProps<"/teacher/packs/[id]">
         </div>
       </RetroWindow>
 
-      <DeletePackButton packId={pack.id} />
+      <DeletePackButton packId={pack.id} explore={!!pack.subject} />
     </div>
   );
 }

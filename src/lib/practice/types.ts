@@ -83,6 +83,8 @@ export type SaveResult = {
   lessonDone?: number | null;
   /** 교과 탐험: 이번 판으로 받은 별(지금까지 가장 좋은 별) */
   subjectStars?: number | null;
+  /** 교과 탐험: 이번 판에서 받은 별 (지문 별은 가장 좋은 기록만 남아서, 이번 판이 더 적으면 안내해요) */
+  subjectRoundStars?: number | null;
 };
 
 /** 한 판을 시작할 때 서버에 보내는 요청 */

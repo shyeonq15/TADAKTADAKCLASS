@@ -26,12 +26,18 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
   if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} ${stageName(attempt.level)}를 클리어했다!`);
   if (save.unlockedLevel) messages.push(`${stageName(save.unlockedLevel)}가 열렸다!`);
   if (save.lessonDone) messages.push(`파이썬 첫걸음 ${save.lessonDone}강을 통과했다!`);
-  if (save.subjectStars != null)
+  if (save.subjectStars != null) {
+    const starText = (n: number) => `${"★".repeat(n)}${"☆".repeat(3 - n)}`;
+    const round = save.subjectRoundStars ?? save.subjectStars;
+    // 별은 더하지 않고 지문마다 가장 좋은 기록만 남아요 (건의함 #25: "별 1개를 더 안 줘요")
     messages.push(
-      save.subjectStars > 0
-        ? `이 지문 별 ${"★".repeat(save.subjectStars)}${"☆".repeat(3 - save.subjectStars)}를 모았다!`
-        : "정확도 85% 이상이면 별을 받아요. 천천히 다시 해 봐요!",
+      round > 0 && round < save.subjectStars
+        ? `이번 판은 ${starText(round)}! 이 지문 최고 기록 ${starText(save.subjectStars)}는 그대로예요. (별은 더해지지 않고 가장 좋은 기록만 남아요)`
+        : save.subjectStars > 0
+          ? `이 지문 별 ${starText(save.subjectStars)}를 모았다!`
+          : "정확도 85% 이상이면 별을 받아요. 천천히 다시 해 봐요!",
     );
+  }
   if (save.tierUp) messages.push(`${TRACK_LABELS[attempt.track]} 티어가 ${TIER_LABELS[save.tierUp]}로 올랐다!`);
 
   const missed = Object.entries(attempt.missedKeys)
