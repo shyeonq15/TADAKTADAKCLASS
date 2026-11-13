@@ -34,6 +34,8 @@ type Props = {
 };
 
 const IGNORED_KEYS = new Set(["Shift", "Control", "Alt", "Meta", "CapsLock", "HangulMode", "Lang1", "Escape", "Tab"]);
+/** 꾹 누르고 있어도 되풀이되는 키 (지우기·화살표). 나머지 키는 꾹 눌러도 한 번만 들어가요 */
+const REPEAT_OK = new Set(["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"]);
 
 function Line({
   text,
@@ -99,6 +101,12 @@ export function TypingArea({ session, code, mask, onInput, onKey, onBlocked, dis
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab") e.preventDefault(); // 포커스가 빠져나가지 않게
+    // 키를 꾹 눌러 같은 글자가 줄줄이 들어가는 것 막기 (Space를 꾹 누르면 줄이 넘어가며 타수가 치솟던 문제, 건의함 #17)
+    // 한글 조합 중인 키(Process)는 입력기가 처리하니 건드리지 않아요
+    if (e.repeat && !REPEAT_OK.has(e.key) && !e.nativeEvent.isComposing && e.key !== "Process") {
+      e.preventDefault();
+      return;
+    }
     if ((e.ctrlKey || e.metaKey) && ["v", "V"].includes(e.key)) {
       e.preventDefault();
       onBlocked();
