@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { TRACK_LABELS } from "@/config/game";
 import { startRound, submitRound } from "@/app/(student)/actions";
 import { Loading } from "@/components/ui/Loading";
@@ -14,6 +15,7 @@ import type { RoundRequest } from "@/lib/practice/types";
 import type { CodeNote } from "@/data/codeNotes";
 import { CodeExplainCard, CodeHint, CodeQuizCard, quizChoices } from "./CodeCards";
 import { ResultPanel } from "./ResultPanel";
+import { PlayControls } from "./PlayControls";
 import { RaceLanes } from "./RaceLanes";
 import { linesKeystrokes } from "@/lib/typing/engine";
 import type { Mask } from "./TypingArea";
@@ -36,6 +38,10 @@ type Props = {
    * 타자 칸(TypingArea)은 그대로 두고 바깥에만 그려요. step: 글 전체에서 몇 번째 지문인지
    */
   context?: { before: string[]; after: string[]; step?: { n: number; total: number } };
+  /** 치는 중에 "그만하기"를 누르면 갈 곳 (기본: 연습 트랙) */
+  quitHref?: string;
+  /** 주소 대신 직접 처리할 때 (미션: 미션 첫 화면으로) */
+  onQuit?: () => void;
 };
 
 /** 글자 수로 자르기 (앞 내용은 끝부분, 다음 내용은 앞부분) */
@@ -68,15 +74,16 @@ type Phase =
   | { name: "ready" }
   | { name: "loading" }
   | { name: "explain"; lines: string[]; token: string; note: CodeNote; mask?: Mask }
-  | { name: "typing"; lines: string[]; token: string; note?: CodeNote; mask?: Mask; code?: boolean }
+  | { name: "typing"; lines: string[]; token: string; note?: CodeNote; mask?: Mask; code?: boolean; try?: number }
   | { name: "saving" }
   | { name: "quiz"; save: SaveResult; lines: string[]; note: CodeNote; choices: string[] }
   | { name: "result"; save: SaveResult }
   | { name: "error"; message: string };
 
 /** 한 판 진행: 준비(PRESS START) → 서버에서 지문 받기 → 타자 → 서버가 채점·저장 → 결과 */
-export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved, ghostCpm, context }: Props) {
+export function RoundRunner({ request, title, subtitle, actions, autoStart, onSaved, ghostCpm, context, quitHref, onQuit }: Props) {
   const setData = useSetPracticeData();
+  const router = useRouter();
   const [phase, setPhase] = useState<Phase>(() => (autoStart ? { name: "loading" } : { name: "ready" }));
   const autoStarted = useRef(false);
   const track = request.track;
@@ -161,8 +168,17 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   }
 
   if (phase.name === "typing") {
+    const typing = phase;
     return (
       <RetroWindow title={windowTitle} className="mx-auto w-full max-w-4xl">
+        {/* 중간에 다시 하기(같은 지문 처음부터) · 그만하기(저장하지 않고 나가기) */}
+        <div className="mb-2">
+          <PlayControls
+            onRestart={() => setPhase({ ...typing, try: (typing.try ?? 0) + 1 })}
+            onQuit={() => (onQuit ? onQuit() : router.push(quitHref ?? "/practice"))}
+            quitConfirm="그만할까요? 이번 판은 저장되지 않아요."
+          />
+        </div>
         {context?.step && (
           <div className="mb-2 flex items-center gap-2 font-pixel text-small text-navy-900">
             <span>
@@ -174,7 +190,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
           </div>
         )}
         <TypingSession
-          key={phase.token}
+          key={`${phase.token}-${phase.try ?? 0}`}
           lines={phase.lines}
           track={track}
           code={phase.code}

@@ -17,6 +17,7 @@ import type { GameSave } from "@/lib/games/server";
 import { safeCall } from "@/lib/practice/call";
 import { usePracticeData, useSetPracticeData } from "@/lib/practice/store";
 import { useOnHide } from "@/lib/games/useOnHide";
+import { PlayControls } from "@/components/typing/PlayControls";
 
 // 혼자 하는 게임 공통 흐름: 트랙 고르기 → 게임 → 서버가 점수 계산 → 결과
 
@@ -71,7 +72,7 @@ type Phase =
   | { name: "loading" }
   | { name: "playing"; words: string[]; token: string }
   | { name: "saving" }
-  | { name: "result"; save: GameSave; reason: "hearts" | "time" }
+  | { name: "result"; save: GameSave; reason: "hearts" | "time" | "quit" }
   | { name: "error"; message: string };
 
 /* ───────── 전체 흐름 ───────── */
@@ -150,19 +151,37 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
 
   if (phase.name === "playing") {
     const token = phase.token;
+    const save = async (end: Omit<GameEnd, "reason">, reason: "hearts" | "time" | "quit", restart = false) => {
+      setPhase({ name: "saving" });
+      const res = await safeCall(() => submitGame({ token, ...end }));
+      if ("error" in res) return setPhase({ name: "error", message: res.error });
+      setData(res.data);
+      if (restart) void start(track);
+      else setPhase({ name: "result", save: res.save, reason });
+    };
+    // 중간에 멈추기: 나가기와 같은 규칙으로 지금까지의 기록을 저장해요 (하트를 다시 채우려고 그만두는 일이 없게)
+    const stopNow = (restart: boolean) => {
+      const snap = snapshot.current?.();
+      if (snap) void save(snap, "quit", restart);
+      // 판이 이미 끝났는데 화면이 남아 있으면 (멈춘 게임에서 못 빠져나오는 일이 없게) 처음 화면으로
+      else if (restart) void start(track);
+      else setPhase({ name: "select" });
+    };
     return (
       <RetroWindow title={fixedTrack ? GAME_LABELS[game] : `${GAME_LABELS[game]} - ${TRACK_LABELS[track]}`} className="mx-auto w-full max-w-4xl">
+        <div className="mb-2">
+          <PlayControls
+            onRestart={() => stopNow(true)}
+            onQuit={() => stopNow(false)}
+            restartConfirm="새 판을 시작할까요? 지금 판은 여기까지 점수로 저장돼요."
+            quitConfirm="그만할까요? 지금 판은 여기까지 점수로 저장돼요."
+          />
+        </div>
         <Field
           words={phase.words}
           track={track}
           onSnapshot={registerSnapshot}
-          onEnd={async ({ events, durationMs, keyTimes, reason }) => {
-            setPhase({ name: "saving" });
-            const res = await safeCall(() => submitGame({ token, events, durationMs, keyTimes }));
-            if ("error" in res) return setPhase({ name: "error", message: res.error });
-            setData(res.data);
-            setPhase({ name: "result", save: res.save, reason });
-          }}
+          onEnd={({ events, durationMs, keyTimes, reason }) => save({ events, durationMs, keyTimes }, reason)}
         />
       </RetroWindow>
     );
@@ -181,9 +200,15 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <div className="text-center">
-        <p className="title-lime text-hero">{save.newBest ? "NEW RECORD!" : reason === "time" ? "TIME UP!" : "GAME OVER"}</p>
+        <p className="title-lime text-hero">
+          {save.newBest ? "NEW RECORD!" : reason === "time" ? "TIME UP!" : reason === "quit" ? "STOP!" : "GAME OVER"}
+        </p>
         <p className="font-pixel text-body text-navy-900">
-          {reason === "time" ? "끝까지 버텼어요! 대단해요." : "다음엔 더! 한 번 더 해 볼까요?"}
+          {reason === "time"
+            ? "끝까지 버텼어요! 대단해요."
+            : reason === "quit"
+              ? "중간에 멈췄어요. 거기까지 점수를 저장했어요."
+              : "다음엔 더! 한 번 더 해 볼까요?"}
         </p>
       </div>
       <RetroWindow title={`${GAME_LABELS[game]} 결과`}>

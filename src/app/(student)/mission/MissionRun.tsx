@@ -73,6 +73,8 @@ export function MissionRun() {
         </p>
         <RoundRunner
           key={phase.index}
+          // 미션 그만하기: 미션 첫 화면으로. 앞에서 끝낸 판은 이미 저장됐고, 미션 완료 보상은 3판을 다 해야 받아요
+          onQuit={() => setPhase({ name: "intro" })}
           autoStart
           request={r.request}
           title={r.title}

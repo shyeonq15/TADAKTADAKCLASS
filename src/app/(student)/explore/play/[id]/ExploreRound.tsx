@@ -28,6 +28,7 @@ export function ExploreRound({
   return (
     <RoundRunner
       autoStart
+      quitHref={`/explore?subject=${subjectId}`}
       context={context}
       request={{ kind: "subject", track, passageId }}
       title={title}

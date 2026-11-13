@@ -15,6 +15,7 @@ import { StatCard } from "@/components/ui/StatCard";
 import { RaceLanes } from "@/components/typing/RaceLanes";
 import type { MinimiLook } from "@/config/shop";
 import { TypingSession } from "@/components/typing/TypingSession";
+import { PlayControls } from "@/components/typing/PlayControls";
 import type { BossResult, BossSummary } from "@/lib/games/boss";
 import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
@@ -259,6 +260,14 @@ export function BossGame({ bosses, myLook, myTier }: { bosses: BossSummary[]; my
     const c = phase.c;
     return (
       <RetroWindow title={`보스전 - ${c.title} (${TRACK_LABELS[c.track]})`} className="mx-auto w-full max-w-4xl">
+        {/* 보스전은 끝까지 쳐야 승부가 나요. 중간에 그만두면 다른 화면으로 갈 때처럼 이번 도전은 무효 */}
+        <div className="mb-2">
+          <PlayControls
+            onRestart={() => void challenge({ id: c.bossId } as BossSummary)}
+            onQuit={() => setPhase({ name: "list" })}
+            quitConfirm="그만할까요? 이번 도전은 무효가 돼요."
+          />
+        </div>
         <Race
           c={c}
           myLook={myLook}

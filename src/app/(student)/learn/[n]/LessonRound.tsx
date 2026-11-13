@@ -45,6 +45,7 @@ export function LessonRound({ n }: { n: number }) {
     <RoundRunner
       key={n}
       autoStart
+      quitHref="/learn"
       request={{ kind: "lesson", track: "code", lesson: n }}
       title={`파이썬 첫걸음 ${n}강 · ${lessonTitle(n)}`}
       subtitle={`${n}강 · ${lessonTitle(n)}`}
