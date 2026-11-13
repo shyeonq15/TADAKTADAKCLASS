@@ -27,7 +27,8 @@ export function ExploreView({ data }: { data: ExploreData }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-center gap-2" role="tablist" aria-label="과목">
-        {data.subjects.map((s) => {
+        {/* 단원·활동이 하나도 없는 과목은 탭을 숨겨요 (1학년에게 역사·기술가정이 보이던 문제, 건의함 #8). 단원을 올리면 저절로 생겨요 */}
+        {(withUnits.length ? withUnits : data.subjects).map((s) => {
           const total = s.units.reduce((n, u) => n + u.passages.length * 3, 0);
           const got = s.units.reduce((n, u) => n + u.passages.reduce((m, p) => m + p.stars, 0), 0);
           return (
