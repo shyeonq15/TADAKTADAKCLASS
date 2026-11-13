@@ -84,6 +84,8 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     onSnapshot?.(() => (s.ended ? null : ((s.ended = true), { events: s.events, durationMs: Math.round(now()), keyTimes: s.keyTimes })));
     let raf = 0;
     const loop = () => {
+      // 판이 이미 끝났으면 (다른 화면으로 가서 저장된 경우 등) 더 돌리지 않아요. 계속 돌면 하트가 0이어도 안 끝나는 판이 돼요
+      if (s.ended) return;
       const t = now();
       const stage = stageOf(s.hits);
 
@@ -107,7 +109,9 @@ function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
       }
       s.pops = s.pops.filter((p) => t - p.at < 700);
 
-      const reason = s.misses >= RUNNER.hearts ? "hearts" : t >= RUNNER.maxSeconds * 1000 ? "time" : null;
+      // 단어를 다 넘었으면 시간이 남아도 끝 (장애물이 더 안 와서 하염없이 달리지 않게)
+      const allDone = s.next >= words.length && s.active.length === 0;
+      const reason = s.misses >= RUNNER.hearts ? "hearts" : t >= RUNNER.maxSeconds * 1000 || allDone ? "time" : null;
       if (reason && !s.ended) {
         s.ended = true;
         onEnd({ events: s.events, durationMs: Math.round(t), keyTimes: s.keyTimes, reason });

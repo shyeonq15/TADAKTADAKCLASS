@@ -82,6 +82,8 @@ export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
     onSnapshot?.(() => (s.ended ? null : ((s.ended = true), { events: s.events, durationMs: Math.round(now()), keyTimes: s.keyTimes })));
     let raf = 0;
     const loop = () => {
+      // 판이 이미 끝났으면 (다른 화면으로 가서 저장된 경우 등) 더 돌리지 않아요. 계속 돌면 하트가 0이어도 안 끝나는 판이 돼요
+      if (s.ended) return;
       const t = now();
       const stage = rainStage(s.hits);
       if (stage > s.lastStage) {
@@ -110,7 +112,9 @@ export function Field({ words, track, onEnd, onSnapshot }: FieldProps) {
       }
       s.pops = s.pops.filter((p) => t - p.at < 700);
 
-      const reason = s.misses >= RAIN.hearts ? "hearts" : t >= RAIN.maxSeconds * 1000 ? "time" : null;
+      // 단어를 다 터뜨렸으면 시간이 남아도 끝 (빈 하늘에서 하염없이 기다리지 않게)
+      const allDone = s.next >= words.length && s.active.length === 0;
+      const reason = s.misses >= RAIN.hearts ? "hearts" : t >= RAIN.maxSeconds * 1000 || allDone ? "time" : null;
       if (reason && !s.ended) {
         s.ended = true;
         onEnd({ events: s.events, durationMs: Math.round(t), keyTimes: s.keyTimes, reason });

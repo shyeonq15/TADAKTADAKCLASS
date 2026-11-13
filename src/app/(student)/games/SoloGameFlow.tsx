@@ -30,7 +30,11 @@ export type FieldProps = { words: string[]; track: Track; onEnd: (r: GameEnd) =>
  * 게임 중에 다른 메뉴로 나가거나 새로고침·창 닫기를 하면 그 자리에서 판을 끝내고 저장해요.
  * (나갔다 들어와서 하트를 다시 채우는 일이 없게. 화면이 사라지는 중이라 sendBeacon 으로 보냄)
  */
-function useEndOnLeave(token: string | null, snapshot: MutableRefObject<GameSnapshot | null>) {
+function useEndOnLeave(token: string | null, snapshot: MutableRefObject<GameSnapshot | null>, onLeft: () => void) {
+  const left = useRef(onLeft);
+  useEffect(() => {
+    left.current = onLeft;
+  });
   useEffect(() => {
     if (!token) return;
     const send = () => {
@@ -38,6 +42,8 @@ function useEndOnLeave(token: string | null, snapshot: MutableRefObject<GameSnap
       if (!snap) return;
       const body = new Blob([JSON.stringify({ token, ...snap })], { type: "application/json" });
       navigator.sendBeacon("/api/games/abandon", body);
+      // 판이 끝났다고 화면에도 알려요. 안 그러면 게임 판만 남아 하트가 0이어도 안 끝나는 것처럼 보여요 (건의함 #41)
+      left.current();
     };
     window.addEventListener("pagehide", send);
     return () => {
@@ -86,11 +92,14 @@ export function SoloGameFlow({ game, Field, mission, rules, help, loadingText, h
   const registerSnapshot = useCallback((fn: GameSnapshot) => {
     snapshot.current = fn;
   }, []);
-  useEndOnLeave(phase.name === "playing" ? phase.token : null, snapshot);
+  const leftMessage = "게임 중에 다른 화면으로 가서 그 판은 거기까지 저장했어요. 새 판을 시작해 주세요!";
+  useEndOnLeave(phase.name === "playing" ? phase.token : null, snapshot, () =>
+    setPhase((p) => (p.name === "playing" ? { name: "error", message: leftMessage } : p)),
+  );
   // 게임 중에 다른 메뉴로 가면 그 판은 저장되고 끝나요. 돌아왔을 때 멈춘 판이 다시 움직이지 않게 안내 화면으로
   useOnHide(() => {
     if (phase.name === "playing" || phase.name === "loading")
-      setPhase({ name: "error", message: "게임 중에 다른 화면으로 가서 그 판은 거기까지 저장했어요. 새 판을 시작해 주세요!" });
+      setPhase({ name: "error", message: leftMessage });
   });
 
   const bestOf = (t: Track) =>
