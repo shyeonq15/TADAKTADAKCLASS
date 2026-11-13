@@ -5,7 +5,7 @@ import type { Track } from "@/config/game";
 
 // 타자 칠 때 화면 왼쪽 아래에 Caps Lock · Num Lock · 한/영 상태를 크게 보여 줘요 (민재 아이디어).
 // 브라우저는 한/영 상태를 직접 알려 주지 않아서, 마지막으로 누른 글자 키로 짐작해요.
-//   · 한글 조합 중(Process) 이거나 한글 자모가 들어오면 → 한글
+//   · 한글 자모·음절이 들어오면 → 한글 (조합 중 표시(Process)만으로는 판단하지 않아요. 태블릿은 영어도 그렇게 보내요)
 //   · 영어 알파벳이 들어오면 → 영어
 // 이 트랙에서 쳐야 하는 것과 다르거나 Caps Lock 이 켜져 있으면 빨갛게 크게 알려 줘요.
 
@@ -26,14 +26,28 @@ export function KeyStatus({ track }: { track: Track }) {
         setNum(e.getModifierState("NumLock"));
       }
       if (e.type !== "keydown") return;
-      if (e.key === "Process" || e.isComposing || HANGUL.test(e.key)) setLang("ko");
+      // "Process"(조합 중)만 보고 한글이라고 하지 않아요: 디벗(태블릿) 키보드는 영어도 조합하듯 보내서
+      // 영어로 치는데 "한글"로 보이던 문제 (건의함 #38, #44, #45). 한글인지는 실제로 들어온 글자로 판단해요
+      if (HANGUL.test(e.key)) setLang("ko");
       else if (/^[a-zA-Z]$/.test(e.key)) setLang("en");
+    };
+    // 실제로 입력된 글자: 한글 자모·음절이면 한글, 알파벳이면 영어 (조합 중인 글자도 data 에 들어와요)
+    const onText = (e: Event) => {
+      const data = (e as InputEvent | CompositionEvent).data;
+      if (!data) return;
+      const last = data.at(-1) ?? "";
+      if (HANGUL.test(last)) setLang("ko");
+      else if (/[a-zA-Z]/.test(last)) setLang("en");
     };
     window.addEventListener("keydown", onKey, true);
     window.addEventListener("keyup", onKey, true);
+    window.addEventListener("input", onText, true);
+    window.addEventListener("compositionupdate", onText, true);
     return () => {
       window.removeEventListener("keydown", onKey, true);
       window.removeEventListener("keyup", onKey, true);
+      window.removeEventListener("input", onText, true);
+      window.removeEventListener("compositionupdate", onText, true);
     };
   }, []);
 
