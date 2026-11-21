@@ -2,7 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { play } from "@/lib/sound";
-import { GROWTH, TIER_LABELS, TRACK_LABELS } from "@/config/game";
+import { GROWTH, INTEGRITY, TIER_LABELS, TRACK_LABELS } from "@/config/game";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { getStage, stageName } from "@/lib/practice/stages";
 import { DialogBox } from "@/components/ui/DialogBox";
@@ -21,7 +21,12 @@ export function ResultPanel({ save, actions }: { save: SaveResult; actions: Reac
   const level = attempt.level > 0 ? getStage(attempt.track, attempt.level) : undefined;
 
   const messages: string[] = [];
-  if (attempt.suspicious) messages.push("이번 기록은 선생님 확인 후에 반영돼요.");
+  if (attempt.suspicious)
+    messages.push(
+      attempt.accuracy < INTEGRITY.mashAccuracy
+        ? "정확도가 너무 낮아서 이번 기록은 넣지 않았어요. 천천히 정확하게 쳐 봐요!"
+        : "이번 기록은 선생님 확인 후에 반영돼요.",
+    );
   if (save.coins > 0) messages.push(`코인 ${save.coins}개를 획득했다!`);
   if (save.firstClear) messages.push(`${TRACK_LABELS[attempt.track]} ${stageName(attempt.level)}를 클리어했다!`);
   if (save.unlockedLevel) messages.push(`${stageName(save.unlockedLevel)}가 열렸다!`);

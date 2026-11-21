@@ -17,6 +17,21 @@ import { loadVocabWeek } from "@/lib/vocab/server";
 import { dayKeyKST } from "@/lib/practice/day";
 import { daysLeft, eventToNotice, seasonOf } from "@/lib/season";
 import { EventNotice } from "./EventNotice";
+import { FeedbackDoneNotice } from "./FeedbackDoneNotice";
+import { loadMyFeedback } from "@/lib/feedback/server";
+
+/** 건의함 글이 반영되면 홈에서 알림 (QA크루 칭호 안내) */
+async function HomeFeedbackNotice() {
+  const v = await requireStudent();
+  if (v.role !== "student") return null;
+  const { items } = await loadMyFeedback(v.userId);
+  const done = items.filter((f) => f.status === "done").map((f) => ({ id: f.id, body: f.body, reply: f.reply }));
+  return done.length ? (
+    <ClientOnly fallback={null}>
+      <FeedbackDoneNotice items={done} />
+    </ClientOnly>
+  ) : null;
+}
 
 /** 처음 온 학생은 배치 테스트부터 (한 번만) */
 async function PlacementGate({ children }: { children: React.ReactNode }) {
@@ -109,6 +124,7 @@ export default function Home() {
       <main className="mx-auto w-full max-w-5xl px-4 py-8">
         <Suspense fallback={<Loading />}>
           <PlacementGate>
+            <HomeFeedbackNotice />
             <HomeBattle />
             <HomeWeekly />
             <HomeVocab />

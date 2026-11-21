@@ -470,19 +470,38 @@ export async function saveRound(
   );
 
   const before = await loadUncached(who.userId);
-  // 자리를 바꿔 친구가 대신 치는 것 막기: 평소(같은 트랙 최근 단계 판의 가운데 값)보다 갑자기 훨씬 빠르면 선생님 확인으로
-  if (req.kind !== "placement" && !(await isTestStudent(who.userId))) {
-    const J = INTEGRITY.jump;
+  // 자리를 바꿔 친구가 대신 치는 것 막기: 같은 종류 판의 내 최고 기록보다 갑자기 훨씬 빠르면 선생님 확인으로
+  const J = INTEGRITY.jump;
+  if (
+    req.kind !== "placement" &&
+    level > 0 &&
+    keystrokes >= J.minKeys &&
+    accuracy >= J.minAccuracy &&
+    !(await isTestStudent(who.userId))
+  ) {
     const recent = before.attempts
-      .filter((a) => a.track === track && !a.suspicious && a.level > 0 && (a.kind === "practice" || a.kind === "mission"))
+      .filter(
+        (a) =>
+          a.track === track &&
+          a.mode === mode &&
+          !a.suspicious &&
+          a.level > 0 &&
+          (a.kind === "practice" || a.kind === "mission") &&
+          a.keystrokes >= J.minKeys &&
+          a.accuracy >= J.minAccuracy,
+      )
       .slice(-J.sample)
-      .map((a) => a.cpm)
-      .sort((a, b) => a - b);
+      .map((a) => a.cpm);
     if (recent.length >= J.minSamples) {
-      const median = recent[Math.floor(recent.length / 2)];
-      if (cpm >= median * J.ratio && cpm - median >= J.minGap) flags.add("big-jump");
+      const best = Math.max(...recent);
+      if (cpm >= best * J.ratio && cpm - best >= J.minGap) flags.add("big-jump");
     }
   }
+  // 정확도가 아주 낮은 기록(키를 막 누름)은 빠르게 나와도 선생님께 넘기지 않고 바로 빼요
+  const mashed = accuracy < INTEGRITY.mashAccuracy;
+  if (mashed) flags.delete("too-fast");
+  // 짧은 판은 입력 간격만으로 판단하기 어려워요
+  if (keystrokes < INTEGRITY.minKeysForCheck) flags.delete("too-regular");
   const suspicious = flags.size > 0;
   const ins = await admin
     .from("attempts")
@@ -500,7 +519,8 @@ export async function saveRound(
       missed_keys: missedKeys,
       flags: [...flags],
       suspicious,
-      review_status: suspicious ? "pending" : "none",
+      // 막 누른 기록은 선생님 확인 목록에 올리지 않고 바로 뺌
+      review_status: suspicious ? (mashed ? "rejected" : "pending") : "none",
     })
     .select("*")
     .single();

@@ -196,13 +196,17 @@ export const INTEGRITY = {
   maxCpm: { korean: 900, english: 800, symbol: 600, code: 600 } as Record<Track, number>,
   /** 입력 간격의 변동계수(표준편차÷평균)가 이보다 작으면 너무 일정한 입력 */
   minIntervalVariation: 0.15,
-  /** 위 검사를 하려면 최소 이만큼의 키 입력이 필요 */
-  minKeysForCheck: 40,
+  /** 위 검사를 하려면 최소 이만큼의 키 입력이 필요 (짧은 판은 간격이 들쭉날쭉해서 판단이 어려워요) */
+  minKeysForCheck: 60,
   /**
-   * 자리를 바꿔 친구가 대신 치는 것 같은 기록: 같은 트랙 최근 단계 판(sample개)의 가운데 값보다
-   * ratio배 이상이면서 minGap타 이상 빠르면 선생님 확인으로 (기록이 minSamples개 이상 있을 때만)
+   * 자리를 바꿔 친구가 대신 치는 것 같은 기록: 같은 트랙·같은 종류(자판/낱말/문장/긴 글) 판 중
+   * 최근 sample개의 "내 최고 기록"보다 ratio배 이상이면서 minGap타 이상 빠르면 선생님 확인으로.
+   * - 내 판이 minSamples개 이상 쌓였을 때만, 키 입력 minKeys개 이상·정확도 minAccuracy% 이상인 판만 봐요.
+   * - 쉬운 판(자판 연습)과 어려운 판(긴 글)을 섞어 비교하면 평범하게 늘어도 걸려서 종류별로 따로 비교해요.
    */
-  jump: { sample: 10, minSamples: 5, ratio: 1.5, minGap: 40 },
+  jump: { sample: 20, minSamples: 5, ratio: 1.3, minGap: 80, minKeys: 60, minAccuracy: 80 },
+  /** 정확도가 이보다 낮은데 걸린 기록은 키를 막 누른 것: 선생님께 넘기지 않고 바로 빼요 */
+  mashAccuracy: 60,
 } as const;
 
 /* ── 배치 테스트 ── */
