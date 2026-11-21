@@ -44,9 +44,9 @@ export function FeedbackDoneNotice({ items }: { items: DoneFeedback[] }) {
     >
       <RetroWindow title="📬 건의함_답장.txt" onClose={close}>
         <div className="flex max-h-[75vh] flex-col gap-3 overflow-y-auto font-pixel text-body leading-7 text-navy-900">
-          <p className="title-lime text-center text-title">🐞 건의가 반영됐어요!</p>
+          <p className="title-lime text-center text-title">📬 건의에 답장이 왔어요!</p>
           <p className="border-3 border-pink-400 bg-cream px-3 py-2 text-center">
-            덕분에 타닥타닥 우리반이 더 좋아졌어요. 고마워요!
+            우리반을 더 좋게 만들려고 의견을 보내 줘서 고마워요!
             <br />
             칭호 <strong>🐞 QA크루</strong>를 얻었다!
           </p>
