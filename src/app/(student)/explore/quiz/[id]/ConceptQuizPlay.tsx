@@ -8,7 +8,7 @@ import { PixelButton, PixelLink } from "@/components/ui/PixelButton";
 import { RetroWindow } from "@/components/ui/RetroWindow";
 import { safeCall } from "@/lib/practice/call";
 import { useSetPracticeData } from "@/lib/practice/store";
-import { allAnswers, chosung, sameAnswer, type QuizSentence } from "@/lib/explore/quiz";
+import { allAnswers, chosung, sameAnswer, type QuizBlank, type QuizSentence } from "@/lib/explore/quiz";
 import { play } from "@/lib/sound";
 import type { ConceptQuiz } from "@/lib/explore/server";
 
@@ -25,7 +25,7 @@ const clock = () => performance.now();
 /** 한 빈칸에서 이만큼 틀리면 정답을 보여 주고 넘어가요 (계속 막히지 않게) */
 const MAX_TRIES = 3;
 
-const blanksOf = (s: QuizSentence) => s.filter((p) => typeof p !== "string") as { answer: string }[];
+const blanksOf = (s: QuizSentence) => s.filter((p) => typeof p !== "string") as QuizBlank[];
 
 export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
   const setData = useSetPracticeData();
@@ -106,7 +106,7 @@ export function ConceptQuizPlay({ quiz }: { quiz: ConceptQuiz }) {
     if (!typed.trim()) return;
     const g = offsets[si] + at;
     if (firstAnswers.current[g] === undefined) firstAnswers.current[g] = typed.trim();
-    const ok = sameAnswer(typed, blanks[at].answer);
+    const ok = sameAnswer(typed, blanks[at]);
     play(ok ? "pop" : "error");
     setTyped("");
     if (!ok) {
