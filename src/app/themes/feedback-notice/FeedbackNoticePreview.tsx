@@ -27,10 +27,12 @@ const MANY: DoneFeedback[] = [
 
 export function FeedbackNoticePreview() {
   const [items, setItems] = useState<DoneFeedback[] | null>(null);
+  const [grantedTo, setGrantedTo] = useState<string | null>(null);
   const [n, setN] = useState(0);
   // 볼 때마다 새 id: 한 번 닫으면 다시 안 뜨는 기능 때문에
-  const show = (list: DoneFeedback[]) => {
+  const show = (list: DoneFeedback[], gift = false) => {
     setN((x) => x + 1);
+    setGrantedTo(gift ? `preview-${Date.now()}` : null);
     setItems(list.map((f) => ({ ...f, id: `preview-${Date.now()}-${f.id}` })));
   };
 
@@ -40,7 +42,7 @@ export function FeedbackNoticePreview() {
         <RetroWindow title="미리보기_건의반영알림.exe">
           <div className="flex flex-col gap-3 font-pixel text-body text-navy-900">
             <p>
-              건의가 <strong>반영했어요!</strong>로 바뀐 학생이 <strong>홈에 들어오면</strong> 한 번 뜨는 창이에요. 닫으면 그
+              건의에 답장이 오거나 선생님이 QA크루를 직접 준 학생이 <strong>홈에 들어오면</strong> 한 번 뜨는 창이에요. 닫으면 그
               컴퓨터에서는 다시 뜨지 않아요.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -48,13 +50,16 @@ export function FeedbackNoticePreview() {
                 건의 1개 반영
               </PixelButton>
               <PixelButton onClick={() => show(MANY)}>건의 3개 반영 (답장 없는 것 포함)</PixelButton>
+              <PixelButton variant="ghost" onClick={() => show([], true)}>
+                선생님이 칭호 선물
+              </PixelButton>
             </div>
             <p className="text-small text-text-muted">예시 글이에요. 실제로는 학생이 쓴 글과 선생님 답장이 나와요.</p>
           </div>
         </RetroWindow>
         {items && (
           <ClientOnly key={n}>
-            <FeedbackDoneNotice items={items} />
+            <FeedbackDoneNotice items={items} grantedTo={grantedTo} />
           </ClientOnly>
         )}
       </main>

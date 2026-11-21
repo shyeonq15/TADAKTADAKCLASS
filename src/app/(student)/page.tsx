@@ -19,6 +19,7 @@ import { daysLeft, eventToNotice, seasonOf } from "@/lib/season";
 import { EventNotice } from "./EventNotice";
 import { FeedbackDoneNotice } from "./FeedbackDoneNotice";
 import { loadMyFeedback } from "@/lib/feedback/server";
+import { QA_CREW_GRANTS } from "@/config/badges";
 
 /** 건의함 글이 반영되면 홈에서 알림 (QA크루 칭호 안내) */
 async function HomeFeedbackNotice() {
@@ -26,9 +27,10 @@ async function HomeFeedbackNotice() {
   if (v.role !== "student") return null;
   const { items } = await loadMyFeedback(v.userId);
   const done = items.filter((f) => f.status === "done").map((f) => ({ id: f.id, body: f.body, reply: f.reply }));
-  return done.length ? (
+  const granted = QA_CREW_GRANTS.has(v.userId);
+  return done.length || granted ? (
     <ClientOnly fallback={null}>
-      <FeedbackDoneNotice items={done} />
+      <FeedbackDoneNotice items={done} grantedTo={granted ? v.userId : null} />
     </ClientOnly>
   ) : null;
 }
