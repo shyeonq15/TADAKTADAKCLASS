@@ -23,6 +23,8 @@ export type BadgeStats = {
   raceWins: number;
   /** 건의함에 보낸 글이 "반영했어요!" 가 된 수 */
   feedbackDone: number;
+  /** 선생님이 직접 QA크루를 준 학생인지 (QA_CREW_GRANTS) */
+  qaGranted: boolean;
   /** 시즌 완주 수 (시즌 안에 FINISH_DAYS 일 이상 연습) */
   seasonsFinished: number;
   /** 교과 탐험: 모은 별, 모든 지문을 ★1 이상 깬 단원 수 */
@@ -74,8 +76,24 @@ export const BADGES: readonly Badge[] = [
   { id: "boss-diamond", icon: "💎", name: "다이아 보스 격파", how: "다이아 이상 보스 격파", check: (s) => atLeast(s.bossTier, "diamond") },
   { id: "race-win", icon: "🏆", name: "첫 우승", how: "친구 대결 시리즈 우승", check: (s) => s.raceWins >= 1 },
   // 함께 만들기
-  { id: "qa-crew", icon: "🐞", name: "QA크루", how: "건의함에 보낸 글이 반영되기", check: (s) => s.feedbackDone >= 1 },
+  { id: "qa-crew", icon: "🐞", name: "QA크루", how: "건의함에 보낸 글이 반영되기", check: (s) => s.feedbackDone >= 1 || s.qaGranted },
 ];
+
+/**
+ * 선생님이 직접 QA크루 칭호를 준 학생 (학생 id). 저장소가 공개라서 이름은 적지 않아요.
+ * - 2026-11-21 교사 결정: 1학년 학생 1명, 2학년 10반 학생 모두(7명)
+ */
+export const QA_CREW_GRANTS: ReadonlySet<string> = new Set([
+  "9813c147-107d-44c0-a316-df990534b9f8",
+  // 2학년 10반
+  "8013f119-216d-4cc5-82f6-ae65a5fb42e8",
+  "c92376bb-2968-41bc-93fe-ab2c2dd4c24b",
+  "361b2da7-0dcb-4ad4-9373-6c70cdf8dc21",
+  "0771b364-2649-4812-9bb5-8b22e16e53c6",
+  "cfaca407-2bff-4297-83ae-4b5072cbf21f",
+  "80d8fdef-1c5b-41d0-a8a0-23081305292d",
+  "5531571c-bffe-483b-9006-aaf491cd9718",
+]);
 
 export const badge = (id: string) => BADGES.find((b) => b.id === id);
 export const earnedBadges = (s: BadgeStats) => BADGES.filter((b) => b.check(s)).map((b) => b.id);

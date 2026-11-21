@@ -2,7 +2,7 @@ import "server-only";
 
 // 칭호 계산에 필요한 기록 모으기 (서버 전용). 표를 따로 두지 않고, 볼 때마다 기록에서 다시 계산해요.
 
-import { SEASON_FINISH_DAYS, earnedBadges, type BadgeStats } from "@/config/badges";
+import { QA_CREW_GRANTS, SEASON_FINISH_DAYS, earnedBadges, type BadgeStats } from "@/config/badges";
 import { TRACKS, type Track } from "@/config/game";
 import { LESSON_COUNT } from "@/data/codeNotes";
 import { bossRanks } from "@/lib/games/boss";
@@ -80,6 +80,7 @@ export async function loadBadgeStats(studentId: string): Promise<BadgeStats> {
     games: rows.filter((a) => a.kind === "game").length,
     raceWins: raceWins.count ?? 0,
     feedbackDone: feedback.error ? 0 : (feedback.count ?? 0),
+    qaGranted: QA_CREW_GRANTS.has(studentId),
     seasonsFinished: [...perSeason.values()].filter((s) => s.size >= SEASON_FINISH_DAYS).length,
     exploreStars: explore.stars,
     exploreUnits: explore.unitsCleared,
