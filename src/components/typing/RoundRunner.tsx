@@ -45,6 +45,23 @@ type Props = {
 };
 
 /** 글자 수로 자르기 (앞 내용은 끝부분, 다음 내용은 앞부분) */
+/**
+ * 지문 미리 받기: 시작 화면에서 begin, "시작하기"를 누르면 take.
+ * 지문 표는 30분 동안 쓸 수 있어서, 미리 받은 지 20분이 지났으면 새로 받아요. 한 번 쓴 지문은 다시 쓰지 않아요.
+ */
+class RoundPrefetch<T = unknown> {
+  private pending: { at: number; res: Promise<T> } | null = null;
+  private static TTL = 20 * 60000;
+  begin(fetch: () => Promise<T>) {
+    if (!this.pending) this.pending = { at: Date.now(), res: fetch() };
+  }
+  take<R extends T>(fetch: () => Promise<R>): Promise<R> {
+    const p = this.pending;
+    this.pending = null;
+    return p && Date.now() - p.at < RoundPrefetch.TTL ? (p.res as Promise<R>) : fetch();
+  }
+}
+
 const CONTEXT_CHARS = 48;
 const tail = (s: string) => (s.length > CONTEXT_CHARS ? `…${s.slice(-CONTEXT_CHARS)}` : s);
 const head = (s: string) => (s.length > CONTEXT_CHARS ? `${s.slice(0, CONTEXT_CHARS)}…` : s);
@@ -88,8 +105,16 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   const autoStarted = useRef(false);
   const track = request.track;
 
+  // 시작 화면이 떠 있는 동안 지문을 미리 받아 둬요. "시작하기"를 누르면 기다림 없이 바로 칠 수 있게
+  // (건의함 #53: "지문을 가져오는 중..." 동안 친 첫 낱말이 사라졌어요. 서버가 느린 날 더 심했음)
+  const [prefetch] = useState(() => new RoundPrefetch());
+  useEffect(() => {
+    if (!autoStart) prefetch.begin(() => safeCall(() => startRound(request)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const fetchRound = async () => {
-    const res = await safeCall(() => startRound(request));
+    const res = await prefetch.take(() => safeCall(() => startRound(request)));
     if ("error" in res) return setPhase({ name: "error", message: res.error });
     // 코드면 설명 카드부터
     if (res.note) setPhase({ name: "explain", lines: res.lines, token: res.token, note: res.note, mask: res.mask });
@@ -97,6 +122,7 @@ export function RoundRunner({ request, title, subtitle, actions, autoStart, onSa
   };
 
   const start = () => {
+    // 미리 받은 지문이 이미 도착했으면 "가져오는 중" 화면은 눈 깜짝할 새 지나가요
     setPhase({ name: "loading" });
     void fetchRound();
   };
