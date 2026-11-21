@@ -31,6 +31,32 @@ function topPerStudent<T extends { student_id: string }>(rows: T[], better: (a: 
   return [...best.values()].sort(better).slice(0, HALL.size);
 }
 
+/** 한 번에 읽는 기록 수, 최대 몇 번까지 더 읽을지 */
+const PAGE = 500;
+const MAX_PAGES = 20;
+
+/**
+ * 좋은 기록 순으로 정렬된 기록을, 서로 다른 학생이 N명 나올 때까지 나눠 읽어요.
+ * (건의함 #51: 예전엔 위에서 300개만 읽어서, 많이 친 몇 명의 기록이 300개를 다 채우면
+ *  다른 친구들이 순위에서 사라졌어요. 코드 트랙은 300개가 4명 기록뿐이었음)
+ */
+async function readUntilDistinct<T extends { student_id: string }>(
+  page: (from: number, to: number) => PromiseLike<{ data: unknown[] | null }>,
+): Promise<T[]> {
+  const rows: T[] = [];
+  const seen = new Set<string>();
+  for (let p = 0; p < MAX_PAGES; p++) {
+    const { data } = await page(p * PAGE, p * PAGE + PAGE - 1);
+    const got = (data ?? []) as T[];
+    for (const r of got) {
+      rows.push(r);
+      seen.add(r.student_id);
+    }
+    if (seen.size >= HALL.size || got.length < PAGE) break;
+  }
+  return rows;
+}
+
 /** 성장 점수 합 (기간 안). 행이 많을 수 있어서 1000개씩 나눠 읽어요 */
 async function growthSums(ids: string[], from: string, to: string) {
   const admin = createAdminClient();
@@ -88,24 +114,36 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   const [speed, symbolAcc, games, progress, topClears, bosses, weekGrowth, seasonGrowth] = await Promise.all([
     Promise.all(
       TRACKS.map((t) =>
-        base()
-          .eq("track", t)
-          .in("kind", ["practice", "mission", "weak"])
-          .gte("accuracy", HALL.minAccuracy)
-          .order("cpm", { ascending: false })
-          .limit(300),
+        readUntilDistinct<Row>((from, to) =>
+          base()
+            .eq("track", t)
+            .in("kind", ["practice", "mission", "weak"])
+            .gte("accuracy", HALL.minAccuracy)
+            .order("cpm", { ascending: false })
+            .order("accuracy", { ascending: false })
+            .range(from, to),
+        ),
       ),
     ),
-    base()
-      .eq("track", "symbol")
-      .in("kind", ["practice", "mission", "weak"])
-      .gte("keystrokes", HALL.minKeystrokes)
-      .order("accuracy", { ascending: false })
-      .order("cpm", { ascending: false })
-      .limit(300),
+    readUntilDistinct<Row>((from, to) =>
+      base()
+        .eq("track", "symbol")
+        .in("kind", ["practice", "mission", "weak"])
+        .gte("keystrokes", HALL.minKeystrokes)
+        .order("accuracy", { ascending: false })
+        .order("cpm", { ascending: false })
+        .range(from, to),
+    ),
     Promise.all(
       HALL_GAMES.map((g) =>
-        base().eq("kind", "game").eq("mode", g).not("score", "is", null).order("score", { ascending: false }).limit(300),
+        readUntilDistinct<Row>((from, to) =>
+          base()
+            .eq("kind", "game")
+            .eq("mode", g)
+            .not("score", "is", null)
+            .order("score", { ascending: false })
+            .range(from, to),
+        ),
       ),
     ),
     admin.from("track_progress").select("student_id, track, unlocked_level").in("student_id", ids),
@@ -139,7 +177,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   growthBoard("growth-season", `🌳 시즌 ${season.n} 성장왕`, `${season.start.slice(5)} ~ ${season.end.slice(5)} 성장 점수 합 · 시즌마다 새로 시작해요`, seasonGrowth);
 
   TRACKS.forEach((t, i) => {
-    const rows = topPerStudent((speed[i].data ?? []) as Row[], (a, b) => b.cpm - a.cpm || Number(b.accuracy) - Number(a.accuracy));
+    const rows = topPerStudent(speed[i], (a, b) => b.cpm - a.cpm || Number(b.accuracy) - Number(a.accuracy));
     boards.push({
       id: `speed-${t}`,
       title: `${TRACK_LABELS[t]} 최고 타수`,
@@ -150,7 +188,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
 
   {
     const rows = topPerStudent(
-      (symbolAcc.data ?? []) as Row[],
+      symbolAcc,
       (a, b) => Number(b.accuracy) - Number(a.accuracy) || b.cpm - a.cpm,
     );
     boards.push({
@@ -207,7 +245,7 @@ export async function loadHall(opts: { schoolYearId: string; grade: number; myId
   }
 
   HALL_GAMES.forEach((g, i) => {
-    const rows = topPerStudent((games[i].data ?? []) as Row[], (a, b) => (b.score ?? 0) - (a.score ?? 0));
+    const rows = topPerStudent(games[i], (a, b) => (b.score ?? 0) - (a.score ?? 0));
     boards.push({
       id: `game-${g}`,
       title: `${GAME_LABELS[g]} 최고 점수`,
